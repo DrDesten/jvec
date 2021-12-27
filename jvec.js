@@ -98,6 +98,14 @@ class vmath {
         if (typeof(v2) == "number") { return  (this.u.DIV(v1.vec, v2)) }
         else                        { return  (this.u.arrDIV(v1.vec, v2.vec)) }
     }
+    
+    // Vector Arithmetic
+    dot(v1, v2) {
+        return arrDOT(v1.vec, v2.vec)
+    }
+    cross(v1, v2) {
+        return arrCROSS(v1.vec, v2.vec)
+    }
 }
 
 
@@ -108,6 +116,9 @@ class vec2 {
         else                       { this.vec = x }
     }
 
+    get components() {
+        return this.vec
+    }
     get dimension() {
         return this.vec.length()
     }
