@@ -107,6 +107,11 @@ class vmath extends jvec_utils {
         if (typeof(v2) == "number") { return  (this.DIV(v1.vec, v2)) }
         else                        { return  (this.arrDIV(v1.vec, v2.vec)) }
     }
+
+    // Generalized Component Operation
+    cop(v, op) {
+        return this.arrOPS(v.vec, op)
+    }
     
     // Vector Arithmetic
     dot(v1, v2) {
@@ -141,7 +146,7 @@ class vec2 extends jvec_utils {
     get length() {
         return Math.sqrt(this.arrDOT(this.vec, this.vec))
     }
-    
+
     normalize() {
         this.vec = this.MUL(this.vec, 1. / this.length())
     }
