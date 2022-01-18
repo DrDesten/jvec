@@ -20,8 +20,9 @@ class jvec_utils {
         return arr
     }
     DIV(arr, scalar) {
+        let rcp = 1./scalar
         for (let i = 0; i < arr.length; i++) {
-            arr[i] /= scalar
+            arr[i] *= rcp
         }
         return arr
     }
@@ -52,6 +53,13 @@ class jvec_utils {
         return arr1
     }
 
+    // Generalized Arithmetic
+    arrOPS(arr, func) { // Scalar Operation
+        for (let i = 0; i < arr.length; i++) {
+            arr[i] = func(arr[i])
+        }
+    }
+
     // Vector Arithmetic
     arrDOT(arr1, arr2) {
         let result = 0.0
@@ -74,29 +82,30 @@ class jvec_utils {
                 throw `jvec_utils: Cross-Product failed\nWrong Dimension: ${arr1.length}d\nOnly 2d and 3d vectors accepted`
         }
     }
+
 }
 
-class vmath {
+class vmath extends jvec_utils {
     constructor() {
-        this.u = jvec_utils()
+        super()
     }
 
     // Basic Arithmetic
     add(v1, v2) { 
-        if (typeof(v2) == "number") { return  (this.u.ADD(v1.vec, v2)) }
-        else                        { return  (this.u.arrADD(v1.vec, v2.vec)) }
+        if (typeof(v2) == "number") { return  (this.ADD(v1.vec, v2)) }
+        else                        { return  (this.arrADD(v1.vec, v2.vec)) }
     }
     sub(v1, v2) { 
-        if (typeof(v2) == "number") { return  (this.u.SUB(v1.vec, v2)) }
-        else                        { return  (this.u.arrSUB(v1.vec, v2.vec)) }
+        if (typeof(v2) == "number") { return  (this.SUB(v1.vec, v2)) }
+        else                        { return  (this.arrSUB(v1.vec, v2.vec)) }
     }
     mul(v1, v2) { 
-        if (typeof(v2) == "number") { return  (this.u.MUL(v1.vec, v2)) }
-        else                        { return  (this.u.arrMUL(v1.vec, v2.vec)) }
+        if (typeof(v2) == "number") { return  (this.MUL(v1.vec, v2)) }
+        else                        { return  (this.arrMUL(v1.vec, v2.vec)) }
     }
     div(v1, v2) { 
-        if (typeof(v2) == "number") { return  (this.u.DIV(v1.vec, v2)) }
-        else                        { return  (this.u.arrDIV(v1.vec, v2.vec)) }
+        if (typeof(v2) == "number") { return  (this.DIV(v1.vec, v2)) }
+        else                        { return  (this.arrDIV(v1.vec, v2.vec)) }
     }
     
     // Vector Arithmetic
@@ -109,12 +118,16 @@ class vmath {
 }
 
 
-class vec2 {
+class vec2 extends jvec_utils {
     constructor(x, y = 0.0) {
-        this.u = new jvec_utils()
+        super()
+
         if (typeof(x) == "number") { this.vec = [x, y] }
         else                       { this.vec = x }
     }
+
+    get x() {return this.vec[0]}
+    get y() {return this.vec[0]}
 
     get components() {
         return this.vec
@@ -123,26 +136,27 @@ class vec2 {
         return this.vec.length()
     }
     get sqmag() {
-        return this.u.arrDOT(this.vec, this.vec)
+        return this.arrDOT(this.vec, this.vec)
     }
     get length() {
-        return Math.sqrt(this.u.arrDOT(this.vec, this.vec))
+        return Math.sqrt(this.arrDOT(this.vec, this.vec))
     }
+    
     normalize() {
-        this.vec = this.u.MUL(this.vec, 1. / this.length())
+        this.vec = this.MUL(this.vec, 1. / this.length())
     }
 
     add(v) {
-        this.vec = this.u.arrADD(this.vec, v)
+        this.vec = this.arrADD(this.vec, v)
     }
     sub(v) {
-        this.vec = this.u.arrSUB(this.vec, v)
+        this.vec = this.arrSUB(this.vec, v)
     }
     mul(v) {
-        this.vec = this.u.arrMUL(this.vec, v)
+        this.vec = this.arrMUL(this.vec, v)
     }
     div(v) {
-        this.vec = this.u.arrDIV(this.vec, v)
+        this.vec = this.arrDIV(this.vec, v)
     }
 
 }
