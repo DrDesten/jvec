@@ -73,6 +73,10 @@ class vec2 extends v {
 
     get x() { return this.vec[0] }
     get y() { return this.vec[0] }
+    get xx() { return new vec2([this.vec[0],this.vec[0]]) }
+    get xy() { return new vec2([this.vec[0],this.vec[1]]) }
+    get yx() { return new vec2([this.vec[1],this.vec[0]]) }
+    get yy() { return new vec2([this.vec[1],this.vec[1]]) }
 
     get components() { return this.vec }
     get dimension()  { return this.vec.length }
