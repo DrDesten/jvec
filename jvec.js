@@ -122,46 +122,88 @@ class vmath extends jvec_utils {
     }
 }
 
+class v {
 
-class vec2 extends jvec_utils {
-    constructor(x, y = 0.0) {
+    constructor() {
+        const tn = "number"
+        const to = "object"
+    }
+
+    errDM(op, d1, d2)         { return `${op} > Dimension Mismatch: ${d1} ≠ ${d2}` } 
+    errTY(op, varname, t, et) { return `${op} > Type Mismatch: ${varname}(${t}) must be ${et}` } 
+
+    // Array Arithmetic (private use)
+    ADD(arr = [], val) {
+        if (typeof(val) == tn)        return arr.map(v => v + val)
+        if (val.length == arr.length) return arr.map((v, i) => v + val[i])
+        else throw this.errDM("Addition", arr.length, val.length)
+    }
+    SUB(arr = [], val) {
+        if (typeof(val) == tn)        return arr.map(v => v - val)
+        if (val.length == arr.length) return arr.map((v, i) => v - val[i])
+        else throw this.errDM("Subtraction", arr.length, val.length)
+    }
+    MUL(arr = [], val) {
+        if (typeof(val) == tn)        return arr.map(v => v * val)
+        if (val.length == arr.length) return arr.map((v, i) => v * val[i])
+        else throw this.errDM("Multiplication", arr.length, val.length)
+    }
+    DIV(arr = [], val) {
+        if (typeof(val) == tn)        return arr.map(v => v / val)
+        if (val.length == arr.length) return arr.map((v, i) => v / val[i])
+        else throw this.errDM("Division", arr.length, val.length)
+    }
+
+    DOT(arr1 = [], arr2 = []) {
+        if (arr1.length == arr2.length) return arr1.reduce((prev, curr, i) => curr * arr2[i] + prev, 0)
+        else throw this.errDM("Dot Product", arr1.length, arr2.length)
+    }
+
+}
+
+class vec2 extends v {
+    constructor(x, y = undefined) {
         super()
 
-        if (typeof(x) == "number") { this.vec = [x, y] }
-        else                       { this.vec = x }
+        this.vec = [0.0,0.0]
+
+        if (y == undefined) {
+            if (typeof(x) == tn) this.vec = [x,x]
+            if (typeof(x) == to) this.vec = x
+            else throw this.errTY("Constructor", "x", typeof(x), "number/object")
+        } else {
+            if (typeof(x) == tn && typeof(y) == tn) this.vec = [x,y]
+            else if (typeof(x) != tn) throw this.errTY("Constructor", "x", typeof(x), tn)
+            else if (typeof(y) != tn) throw this.errTY("Constructor", "y", typeof(y), tn)
+        }
     }
 
-    get x() {return this.vec[0]}
-    get y() {return this.vec[0]}
+    get x() { return this.vec[0] }
+    get y() { return this.vec[0] }
 
-    get components() {
-        return this.vec
-    }
-    get dimension() {
-        return this.vec.length()
-    }
-    get sqmag() {
-        return this.arrDOT(this.vec, this.vec)
-    }
-    get length() {
-        return Math.sqrt(this.arrDOT(this.vec, this.vec))
-    }
+    get components() { return this.vec }
+    get dimension()  { return this.vec.length }
+    get sqmag()      { return this.DOT(this.vec, this.vec) }
+    get length()     { return Math.sqrt(this.DOT(this.vec, this.vec)) }
 
     normalize() {
         this.vec = this.MUL(this.vec, 1. / this.length())
     }
 
-    add(v) {
-        this.vec = this.arrADD(this.vec, v)
+    a(v) {
+        if (typeof(v) == tn) this.vec = this.ADD(this.vec, v)
+        else                 this.vec = this.ADD(this.vec, v.vec)
     }
-    sub(v) {
-        this.vec = this.arrSUB(this.vec, v)
+    s(v) {
+        if (typeof(v) == tn) this.vec = this.SUB(this.vec, v)
+        else                 this.vec = this.SUB(this.vec, v.vec)
     }
-    mul(v) {
-        this.vec = this.arrMUL(this.vec, v)
+    m(v) {
+        if (typeof(v) == tn) this.vec = this.MUL(this.vec, v)
+        else                 this.vec = this.MUL(this.vec, v.vec)
     }
-    div(v) {
-        this.vec = this.arrDIV(this.vec, v)
+    d(v) {
+        if (typeof(v) == tn) this.vec = this.DIV(this.vec, v)
+        else                 this.vec = this.DIV(this.vec, v.vec)
     }
-
 }
