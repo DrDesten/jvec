@@ -1,31 +1,26 @@
 class v {
 
-    constructor() {
-        const tn = "number"
-        const to = "object"
-    }
-
     errDM(op, d1, d2)         { return `${op} > Dimension Mismatch: ${d1} ≠ ${d2}` } 
     errTY(op, varname, t, et) { return `${op} > Type Mismatch: ${varname}(${t}) must be ${et}` } 
 
     // Array Arithmetic (private use)
     ADD(arr = [], val) {
-        if (typeof(val) == tn)        return arr.map(v => v + val)
+        if (typeof(val) == "number")  return arr.map(v => v + val)
         if (val.length == arr.length) return arr.map((v, i) => v + val[i])
         else throw this.errDM("Addition", arr.length, val.length)
     }
     SUB(arr = [], val) {
-        if (typeof(val) == tn)        return arr.map(v => v - val)
+        if (typeof(val) == "number")  return arr.map(v => v - val)
         if (val.length == arr.length) return arr.map((v, i) => v - val[i])
         else throw this.errDM("Subtraction", arr.length, val.length)
     }
     MUL(arr = [], val) {
-        if (typeof(val) == tn)        return arr.map(v => v * val)
+        if (typeof(val) == "number")  return arr.map(v => v * val)
         if (val.length == arr.length) return arr.map((v, i) => v * val[i])
         else throw this.errDM("Multiplication", arr.length, val.length)
     }
     DIV(arr = [], val) {
-        if (typeof(val) == tn)        return arr.map(v => v / val)
+        if (typeof(val) == "number")  return arr.map(v => v / val)
         if (val.length == arr.length) return arr.map((v, i) => v / val[i])
         else throw this.errDM("Division", arr.length, val.length)
     }
@@ -61,13 +56,13 @@ class vec2 extends v {
         this.obj = "vector"
 
         if (y == undefined) {
-            if (typeof(x) == tn) this.vec = [x,x]
-            if (typeof(x) == to) this.vec = x
+            if (typeof(x) == "number") this.vec = [x,x]
+            if (typeof(x) == "object") this.vec = x
             else throw this.errTY("Constructor", "x", typeof(x), "number/object")
         } else {
-            if (typeof(x) == tn && typeof(y) == tn) this.vec = [x,y]
-            else if (typeof(x) != tn) throw this.errTY("Constructor", "x", typeof(x), tn)
-            else if (typeof(y) != tn) throw this.errTY("Constructor", "y", typeof(y), tn)
+            if (typeof(x) == "number" && typeof(y) == "number") this.vec = [x,y]
+            else if (typeof(x) != "number") throw this.errTY("Constructor", "x", typeof(x), "number")
+            else if (typeof(y) != "number") throw this.errTY("Constructor", "y", typeof(y), "number")
         }
     }
 
@@ -84,24 +79,24 @@ class vec2 extends v {
     get length()     { return Math.sqrt(this.DOT(this.vec, this.vec)) }
 
     normalize() {
-        this.vec = this.MUL(this.vec, 1. / this.length())
+        this.vec = this.MUL(this.vec, 1. / this.length)
     }
 
     a(v) {
-        if (typeof(v) == tn) this.vec = this.ADD(this.vec, v)
-        else                 this.vec = this.ADD(this.vec, v.vec)
+        if (typeof(v) == "number") this.vec = this.ADD(this.vec, v)
+        else                       this.vec = this.ADD(this.vec, v.vec)
     }
     s(v) {
-        if (typeof(v) == tn) this.vec = this.SUB(this.vec, v)
-        else                 this.vec = this.SUB(this.vec, v.vec)
+        if (typeof(v) == "number") this.vec = this.SUB(this.vec, v)
+        else                       this.vec = this.SUB(this.vec, v.vec)
     }
     m(v) {
-        if (typeof(v) == tn) this.vec = this.MUL(this.vec, v)
-        else                 this.vec = this.MUL(this.vec, v.vec)
+        if (typeof(v) == "number") this.vec = this.MUL(this.vec, v)
+        else                       this.vec = this.MUL(this.vec, v.vec)
     }
     d(v) {
-        if (typeof(v) == tn) this.vec = this.DIV(this.vec, v)
-        else                 this.vec = this.DIV(this.vec, v.vec)
+        if (typeof(v) == "number") this.vec = this.DIV(this.vec, v)
+        else                       this.vec = this.DIV(this.vec, v.vec)
     }
 
 }
