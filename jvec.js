@@ -159,6 +159,22 @@ class v {
         else throw this.errDM("Dot Product", arr1.length, arr2.length)
     }
 
+    CROSS(arr1 = [], arr2 = []) {
+        if (arr1.length == arr2.length == 2) return (arr1[0]*arr2[1]) - (arr2[0]*arr1[1])
+        else throw this.errDM("Cross Product", arr1.length, `${arr2.length} ≠ 2`)
+    }
+
+
+    // Basic Arithmetic (public)
+
+    dot(v1, v2) {
+        if (v1.obj == v2.obj == "vector") return this.DOT(v1.vec, v2.vec)
+    }
+
+    cross(v1, v2) {
+        if (v1.obj == v2.obj == "vector") return this.CROSS(v1.vec, v2.vec)
+    }
+
 }
 
 class vec2 extends v {
@@ -166,6 +182,7 @@ class vec2 extends v {
         super()
 
         this.vec = [0.0,0.0]
+        this.obj = "vector"
 
         if (y == undefined) {
             if (typeof(x) == tn) this.vec = [x,x]
@@ -206,4 +223,5 @@ class vec2 extends v {
         if (typeof(v) == tn) this.vec = this.DIV(this.vec, v)
         else                 this.vec = this.DIV(this.vec, v.vec)
     }
+
 }
