@@ -78,7 +78,8 @@ function generate( dimension ) {
         function constructor() {
             const params = [
                 fnParameter( "object", `number|${TYPELIKE}|{${DMAP( i => `${iMapXYZW[i]}: number`, ", " )}}|{${DMAP( i => `${iMapRGBA[i]}: number`, ", " )}}`, "0" ),
-                ...DRANGE.slice( 1 ).map( i => fnParameter( iMapXYZW[i], "number", "0" ) ),
+                fnParameter( "y", "number", "object" ),
+                ...DRANGE.slice( 2 ).map( i => fnParameter( iMapXYZW[i], "number", iMapXYZW[i - 1] ) ),
             ]
             const body = `
 if ( typeof object === "number" ) 
@@ -243,10 +244,29 @@ ${DMAP( i => `/** @type {number} ${iMapXYZW[i]}-coordinate of the vector */\nthi
             return fnDeclaration( `v${name}`, Params_v1v2, body, { prefix: "static", type: TYPE } )
         }
 
-        const functions = operations.flatMap( ( [name, op] ) => [
-            general( op, name ), scalar( op, name ), vector( op, name ),
-            staticGeneral( op, name ), staticScalar( op, name ), staticVector( op, name ),
-        ] )
+        function builtinMath( name ) {
+            const body = bodyThis( DRANGE.map( i => `this[${i}] = Math.${name}( this[${i}] )` ) )
+            return fnDeclaration( name, [], body, { type: TYPE } )
+        }
+        function staticBuiltinMath( name ) {
+            const body = bodyResult( DRANGE.map( i => `result[${i}] = Math.${name}( v[${i}] )` ) )
+            return fnDeclaration( name, [Param_v], body, { prefix: "static", type: TYPE } )
+        }
+
+        const functions = []
+        functions.push(
+            ...operations.flatMap( ( [name, op] ) => [
+                general( op, name ), scalar( op, name ), vector( op, name ),
+                staticGeneral( op, name ), staticScalar( op, name ), staticVector( op, name ),
+            ] )
+        )
+        functions.push(
+            ...Object.getOwnPropertyNames( Math )
+                .filter( name => typeof Math[name] === "function" && Math[name].length === 1 )
+                .flatMap( name => [
+                    builtinMath( name ), staticBuiltinMath( name ),
+                ] )
+        )
         return functions.join( "\n\n" )
     }
 
