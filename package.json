@@ -1,0 +1,34 @@
+{
+  "name": "jvec",
+  "version": "1.0.0",
+  "description": "A JavaScript Vector Library inspired by GLSL",
+  "main": "bin/vec.js",
+  "bin": {
+    "jvec": "bin/vec.js"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node test/test.js",
+    "build": "node generator/build.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DrDesten/jvec.git"
+  },
+  "keywords": [
+    "vector",
+    "matrix",
+    "glsl",
+    "webgl",
+    "math"
+  ],
+  "author": "DrDesten",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/DrDesten/jvec/issues"
+  },
+  "homepage": "https://github.com/DrDesten/jvec#readme",
+  "type": "module"
+}
