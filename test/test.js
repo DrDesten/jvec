@@ -1,5 +1,5 @@
 import util from "util"
-import { vec2, vec3, vec4 } from "./vec.js"
+import { vec2, vec3, vec4 } from "../bin/vec.js"
 
 const constructorTests = [
     [[0, 0, 0, 0], [], [[]], [{}]],
