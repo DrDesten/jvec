@@ -356,11 +356,7 @@ ${DMAP( i => `/** @type {number} */\nthis[${i}]`, "\n" )}
             return fnDeclaration( `max`, params, body, { prefix: "static", type: TYPE } )
         }
         function clamp() {
-            const params = [
-                Param_v,
-                fnParameter( "min", "number" ),
-                fnParameter( "max", "number" )
-            ]
+            const params = [Param_v, fnParameter( "min", "number" ), fnParameter( "max", "number" )]
             const body = bodyResult( DRANGE.map( i => `result[${i}] = Math.min( Math.max( v[${i}], min ), max  )` ) )
             return fnDeclaration( `clamp`, params, body, { prefix: "static", type: TYPE } )
         }
