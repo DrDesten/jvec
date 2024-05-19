@@ -3,7 +3,10 @@ import { vec2, vec3, vec4 } from "../bin/vec.js"
 
 const constructorTests = [
     [[0, 0, 0, 0], [], [[]], [{}]],
-    [[1, 0, 0, 0], [1], [[1]], [{ x: 1 }]],
+    [[1, 1, 1, 1], [1]],
+    [[2, 2, 2, 2], [2]],
+
+    [[1, 0, 0, 0], [1, 0], [[1]], [{ x: 1 }]],
     [[1, 2, 0, 0], [1, 2], [[1, 2]], [{ x: 1, y: 2 }]],
     [[1, 2, 3, 0], [1, 2, 3], [[1, 2, 3]], [{ x: 1, y: 2, z: 3 }]],
     [[1, 2, 3, 4], [1, 2, 3, 4], [[1, 2, 3, 4]], [{ x: 1, y: 2, z: 3, w: 4 }]],
@@ -26,3 +29,10 @@ for ( const T of [vec2, vec3, vec4] ) {
         }
     }
 }
+
+
+const spreadTest = [...new vec2, ...new vec3, ...new vec4]
+console.assert(
+    spreadTest.length === 2 + 3 + 4 && spreadTest.every( x => x === 0 ),
+    `Spread Test Failed: [${spreadTest}]`
+)

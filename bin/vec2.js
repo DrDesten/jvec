@@ -22,9 +22,11 @@ export class vec2 {
      * @param {number|vec2Like|{x: number, y: number}|{r: number, g: number}} [object]
      * @param {number} [y]
      */
-    constructor( object = 0, y = object ) {
-        if ( typeof object === "number" ) 
-            this[0] = object, this[1] = +y
+    constructor( object = 0, y ) {
+        if ( typeof object === "number" )
+            y === undefined
+                ? ( this[0] = object, this[1] = object )
+                : ( this[0] = object, this[1] = +y )
         else
             this[0] = +( object[0] ?? object.x ?? object.r ?? 0 ),
             this[1] = +( object[1] ?? object.y ?? object.g ?? 0 )
@@ -213,6 +215,11 @@ export class vec2 {
     /** @returns {vec2} */
     clone() {
         return new vec2( this )
+    }
+
+    *[Symbol.iterator]() {
+        yield this[0]
+        yield this[1]
     }
 
     /** @returns {Int8Array} */

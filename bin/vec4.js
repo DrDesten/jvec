@@ -24,9 +24,11 @@ export class vec4 {
      * @param {number} [z]
      * @param {number} [w]
      */
-    constructor( object = 0, y = object, z = y, w = z ) {
-        if ( typeof object === "number" ) 
-            this[0] = object, this[1] = +y, this[2] = +z, this[3] = +w
+    constructor( object = 0, y, z, w ) {
+        if ( typeof object === "number" )
+            y === undefined
+                ? ( this[0] = object, this[1] = object, this[2] = object, this[3] = object )
+                : ( this[0] = object, this[1] = +y, this[2] = +( z ?? 0 ), this[3] = +( w ?? 0 ) )
         else
             this[0] = +( object[0] ?? object.x ?? object.r ?? 0 ),
             this[1] = +( object[1] ?? object.y ?? object.g ?? 0 ),
@@ -1696,6 +1698,13 @@ export class vec4 {
     /** @returns {vec4} */
     clone() {
         return new vec4( this )
+    }
+
+    *[Symbol.iterator]() {
+        yield this[0]
+        yield this[1]
+        yield this[2]
+        yield this[3]
     }
 
     /** @returns {Int8Array} */

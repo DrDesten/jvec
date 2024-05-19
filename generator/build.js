@@ -78,12 +78,13 @@ function generate( dimension ) {
         function constructor() {
             const params = [
                 fnParameter( "object", `number|${TYPELIKE}|{${DMAP( i => `${iMapXYZW[i]}: number`, ", " )}}|{${DMAP( i => `${iMapRGBA[i]}: number`, ", " )}}`, "0" ),
-                fnParameter( "y", "number", "object" ),
-                ...DRANGE.slice( 2 ).map( i => fnParameter( iMapXYZW[i], "number", iMapXYZW[i - 1] ) ),
+                ...DRANGE.slice( 1 ).map( i => fnParameter( iMapXYZW[i], "number", undefined, true ) ),
             ]
             const body = `
-if ( typeof object === "number" ) 
-    this[0] = object, ${DRANGE.slice( 1 ).map( i => `this[${i}] = +${iMapXYZW[i]}` ).join( ", " )}
+if ( typeof object === "number" )
+    y === undefined
+        ? ( ${DMAP( i => `this[${i}] = object` )} )
+        : ( this[0] = object, this[1] = +y${DRANGE.slice( 2 ).map( i => `, this[${i}] = +( ${iMapXYZW[i]} ?? 0 )` ).join( "" )} )
 else
 ${DMAP( i => `    this[${i}] = +( object[${i}] ?? object.${iMapXYZW[i]} ?? object.${iMapRGBA[i]} ?? 0 )`, ",\n" )}
 ${DMAP( i => `/** @type {number} ${iMapXYZW[i]}-coordinate of the vector */\nthis[${i}]`, "\n" )}
@@ -177,6 +178,13 @@ ${DMAP( i => `/** @type {number} ${iMapXYZW[i]}-coordinate of the vector */\nthi
 
     function clone() {
         return fnDeclaration( "clone", [], `return new ${TYPE}( this )`, { type: TYPE } )
+    }
+
+    function iterator() {
+        return setIndent( `
+            *[Symbol.iterator]() {
+${DMAP( i => `                yield this[${i}]`, "\n" )}
+            }`, 4 )
     }
 
     function conversion() {
@@ -443,6 +451,7 @@ ${DMAP( i => `/** @type {number} ${iMapXYZW[i]}-coordinate of the vector */\nthi
         subtitle( "FIELDS" ),
         fields(),
         clone(),
+        iterator(),
         conversion(),
         subtitle( "COMPARISON" ),
         comparison(),

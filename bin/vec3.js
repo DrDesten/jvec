@@ -23,9 +23,11 @@ export class vec3 {
      * @param {number} [y]
      * @param {number} [z]
      */
-    constructor( object = 0, y = object, z = y ) {
-        if ( typeof object === "number" ) 
-            this[0] = object, this[1] = +y, this[2] = +z
+    constructor( object = 0, y, z ) {
+        if ( typeof object === "number" )
+            y === undefined
+                ? ( this[0] = object, this[1] = object, this[2] = object )
+                : ( this[0] = object, this[1] = +y, this[2] = +( z ?? 0 ) )
         else
             this[0] = +( object[0] ?? object.x ?? object.r ?? 0 ),
             this[1] = +( object[1] ?? object.y ?? object.g ?? 0 ),
@@ -616,6 +618,12 @@ export class vec3 {
     /** @returns {vec3} */
     clone() {
         return new vec3( this )
+    }
+
+    *[Symbol.iterator]() {
+        yield this[0]
+        yield this[1]
+        yield this[2]
     }
 
     /** @returns {Int8Array} */
