@@ -222,24 +222,28 @@ export class vec2 {
         yield this[1]
     }
 
+    /** @returns {string} */
+    toString() { return  `(${this[0]}, ${this[1]})` }
+    /** @returns {number[]} */
+    toArray() { return  [this[0], this[1]] }
     /** @returns {Int8Array} */
-    Int8Array() { return new Int8Array( [...this] ) }
+    toInt8Array() { return new Int8Array( [this[0], this[1]] ) }
     /** @returns {Uint8Array} */
-    Uint8Array() { return new Uint8Array( [...this] ) }
+    toUint8Array() { return new Uint8Array( [this[0], this[1]] ) }
     /** @returns {Uint8ClampedArray} */
-    Uint8ClampedArray() { return new Uint8ClampedArray( [...this] ) }
+    toUint8ClampedArray() { return new Uint8ClampedArray( [this[0], this[1]] ) }
     /** @returns {Int16Array} */
-    Int16Array() { return new Int16Array( [...this] ) }
+    toInt16Array() { return new Int16Array( [this[0], this[1]] ) }
     /** @returns {Uint16Array} */
-    Uint16Array() { return new Uint16Array( [...this] ) }
+    toUint16Array() { return new Uint16Array( [this[0], this[1]] ) }
     /** @returns {Int32Array} */
-    Int32Array() { return new Int32Array( [...this] ) }
+    toInt32Array() { return new Int32Array( [this[0], this[1]] ) }
     /** @returns {Uint32Array} */
-    Uint32Array() { return new Uint32Array( [...this] ) }
+    toUint32Array() { return new Uint32Array( [this[0], this[1]] ) }
     /** @returns {Float32Array} */
-    Float32Array() { return new Float32Array( [...this] ) }
+    toFloat32Array() { return new Float32Array( [this[0], this[1]] ) }
     /** @returns {Float64Array} */
-    Float64Array() { return new Float64Array( [...this] ) }
+    toFloat64Array() { return new Float64Array( [this[0], this[1]] ) }
 
     // ---------------------------
     //      COMPARISON

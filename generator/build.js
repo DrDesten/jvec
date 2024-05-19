@@ -188,16 +188,19 @@ ${DMAP( i => `                yield this[${i}]`, "\n" )}
     }
 
     function conversion() {
+        const arrayExpr = `[${DMAP( i => `this[${i}]` )}]`
         return [
-            fnDeclaration( "Int8Array", [], `return new Int8Array( [...this] )`, { type: "Int8Array", compact: true } ),
-            fnDeclaration( "Uint8Array", [], `return new Uint8Array( [...this] )`, { type: "Uint8Array", compact: true } ),
-            fnDeclaration( "Uint8ClampedArray", [], `return new Uint8ClampedArray( [...this] )`, { type: "Uint8ClampedArray", compact: true } ),
-            fnDeclaration( "Int16Array", [], `return new Int16Array( [...this] )`, { type: "Int16Array", compact: true } ),
-            fnDeclaration( "Uint16Array", [], `return new Uint16Array( [...this] )`, { type: "Uint16Array", compact: true } ),
-            fnDeclaration( "Int32Array", [], `return new Int32Array( [...this] )`, { type: "Int32Array", compact: true } ),
-            fnDeclaration( "Uint32Array", [], `return new Uint32Array( [...this] )`, { type: "Uint32Array", compact: true } ),
-            fnDeclaration( "Float32Array", [], `return new Float32Array( [...this] )`, { type: "Float32Array", compact: true } ),
-            fnDeclaration( "Float64Array", [], `return new Float64Array( [...this] )`, { type: "Float64Array", compact: true } ),
+            fnDeclaration( "toString", [], `return  \`(${DMAP( i => `\${this[${i}]}` )})\``, { type: "string", compact: true } ),
+            fnDeclaration( "toArray", [], `return  ${arrayExpr}`, { type: "number[]", compact: true } ),
+            fnDeclaration( "toInt8Array", [], `return new Int8Array( ${arrayExpr} )`, { type: "Int8Array", compact: true } ),
+            fnDeclaration( "toUint8Array", [], `return new Uint8Array( ${arrayExpr} )`, { type: "Uint8Array", compact: true } ),
+            fnDeclaration( "toUint8ClampedArray", [], `return new Uint8ClampedArray( ${arrayExpr} )`, { type: "Uint8ClampedArray", compact: true } ),
+            fnDeclaration( "toInt16Array", [], `return new Int16Array( ${arrayExpr} )`, { type: "Int16Array", compact: true } ),
+            fnDeclaration( "toUint16Array", [], `return new Uint16Array( ${arrayExpr} )`, { type: "Uint16Array", compact: true } ),
+            fnDeclaration( "toInt32Array", [], `return new Int32Array( ${arrayExpr} )`, { type: "Int32Array", compact: true } ),
+            fnDeclaration( "toUint32Array", [], `return new Uint32Array( ${arrayExpr} )`, { type: "Uint32Array", compact: true } ),
+            fnDeclaration( "toFloat32Array", [], `return new Float32Array( ${arrayExpr} )`, { type: "Float32Array", compact: true } ),
+            fnDeclaration( "toFloat64Array", [], `return new Float64Array( ${arrayExpr} )`, { type: "Float64Array", compact: true } ),
         ].join( "\n" )
     }
 
