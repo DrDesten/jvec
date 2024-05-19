@@ -280,20 +280,17 @@ ${DMAP( i => `/** @type {number} */\nthis[${i}]`, "\n" )}
         }
 
         function normalize() {
-            const body = `
-                const factor = 1 / Math.sqrt( ${DMAP( i => `this[${i}] * this[${i}]`, " + " )} )
-                ${DMAP( i => `this[${i}] *= factor`, "\n" )}
-                return this
-            `
+            const body = bodyThis( [
+                `const factor = 1 / Math.sqrt( ${DMAP( i => `this[${i}] * this[${i}]`, " + " )} )`,
+                ...DRANGE.map( i => `this[${i}] *= factor` )
+            ] )
             return fnDeclaration( `normalize`, [], body, { type: TYPE } )
         }
         function staticNormalize() {
-            const body = `
-                const result = new ${TYPE}
-                const factor = 1 / Math.sqrt( ${DMAP( i => `v[${i}] * v[${i}]`, " + " )} )
-                ${DMAP( i => `result[${i}] = v[${i}] * factor`, "\n" )}
-                return result
-            `
+            const body = bodyResult( [
+                `const factor = 1 / Math.sqrt( ${DMAP( i => `v[${i}] * v[${i}]`, " + " )} )`,
+                ...DRANGE.map( i => `result[${i}] = v[${i}] * factor` )
+            ] )
             return fnDeclaration( `normalize`, [Param_v], body, { prefix: "static", type: TYPE } )
         }
 
@@ -358,20 +355,12 @@ ${DMAP( i => `/** @type {number} */\nthis[${i}]`, "\n" )}
 
         function min() {
             const params = [Param_v, fnParameter( "min", "number" )]
-            const body = `
-                const result = new ${TYPE}
-                ${DMAP( i => `result[${i}] = Math.min( v[${i}], min )`, "\n" )}
-                return result
-            `
+            const body = bodyResult( DRANGE.map( i => `result[${i}] = Math.min( v[${i}], min )` ) )
             return fnDeclaration( `min`, params, body, { prefix: "static", type: TYPE } )
         }
         function max() {
             const params = [Param_v, fnParameter( "max", "number" )]
-            const body = `
-                const result = new ${TYPE}
-                ${DMAP( i => `result[${i}] = Math.max( v[${i}], max )`, "\n" )}
-                return result
-            `
+            const body = bodyResult( DRANGE.map( i => `result[${i}] = Math.max( v[${i}], max )` ) )
             return fnDeclaration( `max`, params, body, { prefix: "static", type: TYPE } )
         }
         function clamp() {
@@ -380,28 +369,16 @@ ${DMAP( i => `/** @type {number} */\nthis[${i}]`, "\n" )}
                 fnParameter( "min", "number" ),
                 fnParameter( "max", "number" )
             ]
-            const body = `
-                const result = new ${TYPE}
-                ${DMAP( i => `result[${i}] = Math.min( Math.max( v[${i}], min ), max  )`, "\n" )}
-                return result
-            `
+            const body = bodyResult( DRANGE.map( i => `result[${i}] = Math.min( Math.max( v[${i}], min ), max  )` ) )
             return fnDeclaration( `clamp`, params, body, { prefix: "static", type: TYPE } )
         }
         function saturate() {
-            const body = `
-                const result = new ${TYPE}
-                ${DMAP( i => `result[${i}] = Math.min( Math.max( v[${i}], 0 ), 1  )`, "\n" )}
-                return result
-            `
+            const body = bodyResult( DRANGE.map( i => `result[${i}] = Math.min( Math.max( v[${i}], 0 ), 1 )` ) )
             return fnDeclaration( `saturate`, [Param_v], body, { prefix: "static", type: TYPE } )
         }
         function mix() {
             const params = [Param_v1, Param_v2, fnParameter( "t", "number" )]
-            const body = `
-                const result = new ${TYPE}
-                ${DMAP( i => `result[${i}] = v1[${i}] * ( 1 - t ) + v2[${i}] * t`, "\n" )}
-                return result
-            `
+            const body = bodyResult( DRANGE.map( i => `result[${i}] = v1[${i}] * ( 1 - t ) + v2[${i}] * t` ) )
             return fnDeclaration( `mix`, params, body, { prefix: "static", type: TYPE } )
         }
 

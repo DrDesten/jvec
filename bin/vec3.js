@@ -1040,9 +1040,9 @@ export class vec3 extends Float32Array {
     /** @param {vec3Like} v @returns {vec3} */
     static saturate( v ) {
         const result = new vec3
-        result[0] = Math.min( Math.max( v[0], 0 ), 1  )
-        result[1] = Math.min( Math.max( v[1], 0 ), 1  )
-        result[2] = Math.min( Math.max( v[2], 0 ), 1  )
+        result[0] = Math.min( Math.max( v[0], 0 ), 1 )
+        result[1] = Math.min( Math.max( v[1], 0 ), 1 )
+        result[2] = Math.min( Math.max( v[2], 0 ), 1 )
         return result
     }
 

@@ -2133,10 +2133,10 @@ export class vec4 extends Float32Array {
     /** @param {vec4Like} v @returns {vec4} */
     static saturate( v ) {
         const result = new vec4
-        result[0] = Math.min( Math.max( v[0], 0 ), 1  )
-        result[1] = Math.min( Math.max( v[1], 0 ), 1  )
-        result[2] = Math.min( Math.max( v[2], 0 ), 1  )
-        result[3] = Math.min( Math.max( v[3], 0 ), 1  )
+        result[0] = Math.min( Math.max( v[0], 0 ), 1 )
+        result[1] = Math.min( Math.max( v[1], 0 ), 1 )
+        result[2] = Math.min( Math.max( v[2], 0 ), 1 )
+        result[3] = Math.min( Math.max( v[3], 0 ), 1 )
         return result
     }
 
