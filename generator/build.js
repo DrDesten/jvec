@@ -20,7 +20,7 @@ for ( let dim = MIN_DIMENSION; dim <= MAX_DIMENSION; dim++ ) {
     writeFileSync( join( __dirname, OUTPUT_DIR, `vec${dim}.js` ), file, { encoding: "utf8" } )
 }
 
-const vec = Range( MIN_DIMENSION, MAX_DIMENSION )
+const vec = Range( MIN_DIMENSION, MAX_DIMENSION + 1 )
     .map( dim => `export { vec${dim} } from "./vec${dim}.js"` )
     .join( "\n" )
 writeFileSync( join( __dirname, OUTPUT_DIR, `vec.js` ), vec, { encoding: "utf8" } )
