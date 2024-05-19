@@ -6,8 +6,11 @@ import { join } from "path"
 const __dirname = path.dirname( url.fileURLToPath( import.meta.url ) )
 
 // Custom includes
-import { Range, JSDoc } from "./genlib.js"
-/** @typedef {import("./genlib.js").JSDocStatement} JSDocStatement */
+import {} from "./codegen.js"
+import { JSDoc } from "./docgen.js"
+/** @typedef {import("./docgen.js").JSDocStatement} JSDocStatement */
+/** @typedef {import("./docgen.js").JSDocOptions} JSDocOptions */
+import { Range, setIndent, forceIndent } from "./genlib.js"
 
 const MIN_DIMENSION = 2
 const MAX_DIMENSION = 4
@@ -41,20 +44,6 @@ function generate( dimension ) {
     /** @param {(component: number) => any} callback @param {string} [join] */
     const DMAP = function ( callback, join = ", " ) {
         return DRANGE.map( callback ).join( join )
-    }
-
-    /** @param {string} string @param {number} [indent] */
-    function forceIndent( string, indent = 0 ) {
-        return string.trim().replace( /^\s*/gm, " ".repeat( indent ) )
-    }
-    /** @param {string} string @param {number} [indent] */
-    function setIndent( string, indent = 0 ) {
-        string = string.replace( /(?<=\r?\n|^)\s*(\r?\n)|\s*$/g, "" )
-        const minIndent = Math.min(
-            ...string.split( /\r?\n/g ).map( line => line.search( /\S/ ) ) )
-        string = string.split( /\r?\n/g )
-            .map( line => " ".repeat( indent ) + line.slice( minIndent ) ).join( "\n" )
-        return string
     }
 
     /** @param {{type: string, name: string}[]} definitions  */
