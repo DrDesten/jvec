@@ -19,7 +19,7 @@ export class vec2 {
     // ---------------------------
 
     /**
-     * @param {number|vec2Like|{x: number, y: number}|{r: number, g: number}} [object]
+     * @param {number|vec2Like|{x: number, y: number}|{r: number, g: number}} [object=0]
      * @param {number} [y]
      */
     constructor( object = 0, y ) {
@@ -36,7 +36,7 @@ export class vec2 {
         this[1]
     }
 
-    /** @param {ArrayLike<number>} array @param {number} [index] @param {number} [stride] @returns {vec2} */
+    /** @param {ArrayLike<number>} array @param {number} [index=0] @param {number} [stride=1] @returns {vec2} */
     static fromArray( array, index = 0, stride = 1 ) {
         return new vec2( array[0 * stride + index], array[1 * stride + index] )
     }

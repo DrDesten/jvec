@@ -4,7 +4,7 @@ import { JSDoc } from "./docgen.js"
 
 /** 
  * @typedef {{name: string, type: string, expr?: string, optional: boolean, string: string, jsdoc: JSDocStatement}} Parameter 
- * @typedef {{prefix?: string, type?: string, compact?: boolean, indentFn?: (text:string, indent:number) => string, jsdocOpts?: JSDocOptions}} FunctionOptions
+ * @typedef {{prefix?: string, type?: string, description?: string, compact?: boolean, indentFn?: (text:string, indent:number) => string, jsdocOpts?: JSDocOptions}} FunctionOptions
  */
 
 
@@ -27,7 +27,7 @@ export function fnParameter( name, type, expr, optional = !!expr ) {
     return {
         name, type, expr, optional,
         string: expr ? name + " = " + expr : name,
-        jsdoc: ["param", type, optional ? `[${name}]` : name]
+        jsdoc: ["param", type, name, { optional, default: expr }]
     }
 }
 
@@ -41,7 +41,10 @@ function formatBody( body, compact = false ) {
 /** @param {string} name @param {Parameter[]} params @param {string|string[]} body  @param {FunctionOptions} [opts] @returns {string} */
 export function fnDeclaration( name, params, body, opts = {} ) {
     opts = { compact: false, indentFn: forceIndent, ...opts }
-    const fnJsdocStmts = params.map( p => p.jsdoc ).concat( opts.type ? [["returns", opts.type]] : [] )
+    const fnJsdocStmts = []
+    opts.description && fnJsdocStmts.push( [opts.description] )
+    fnJsdocStmts.push( ...params.map( p => p.jsdoc ) )
+    opts.type && fnJsdocStmts.push( ["returns", opts.type] )
     const fnJsdoc = JSDoc( fnJsdocStmts, opts.jsdocOpts )
     const fnBody = typeof body === "string" ? opts.indentFn( body, opts.compact ? 0 : 4 ) : formatBody( body, opts.compact )
     const fnParams = params.map( p => p.string ).join( ", " )

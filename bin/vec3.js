@@ -19,7 +19,7 @@ export class vec3 {
     // ---------------------------
 
     /**
-     * @param {number|vec3Like|{x: number, y: number, z: number}|{r: number, g: number, b: number}} [object]
+     * @param {number|vec3Like|{x: number, y: number, z: number}|{r: number, g: number, b: number}} [object=0]
      * @param {number} [y]
      * @param {number} [z]
      */
@@ -40,7 +40,7 @@ export class vec3 {
         this[2]
     }
 
-    /** @param {ArrayLike<number>} array @param {number} [index] @param {number} [stride] @returns {vec3} */
+    /** @param {ArrayLike<number>} array @param {number} [index=0] @param {number} [stride=1] @returns {vec3} */
     static fromArray( array, index = 0, stride = 1 ) {
         return new vec3( array[0 * stride + index], array[1 * stride + index], array[2 * stride + index] )
     }

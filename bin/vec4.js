@@ -19,7 +19,7 @@ export class vec4 {
     // ---------------------------
 
     /**
-     * @param {number|vec4Like|{x: number, y: number, z: number, w: number}|{r: number, g: number, b: number, a: number}} [object]
+     * @param {number|vec4Like|{x: number, y: number, z: number, w: number}|{r: number, g: number, b: number, a: number}} [object=0]
      * @param {number} [y]
      * @param {number} [z]
      * @param {number} [w]
@@ -44,7 +44,7 @@ export class vec4 {
         this[3]
     }
 
-    /** @param {ArrayLike<number>} array @param {number} [index] @param {number} [stride] @returns {vec4} */
+    /** @param {ArrayLike<number>} array @param {number} [index=0] @param {number} [stride=1] @returns {vec4} */
     static fromArray( array, index = 0, stride = 1 ) {
         return new vec4( array[0 * stride + index], array[1 * stride + index], array[2 * stride + index], array[3 * stride + index] )
     }
