@@ -2039,7 +2039,7 @@ export class vec4 extends Float32Array {
 
     /** @param {vec4Like} from @param {vec4Like} to @returns {vec4} */
     static pointTo( from, to ) {
-        const result = new vec4 
+        const result = new vec4
         result[0] = to[0] - from[0]
         result[1] = to[1] - from[1]
         result[2] = to[2] - from[2]

@@ -219,10 +219,7 @@ ${DMAP( i => `/** @type {number} */\nthis[${i}]`, "\n" )}
         }
         /** @param {string} operation  */
         function vector( operation, name ) {
-            const body = `
-                ${DMAP( i => `this[${i}] ${operation}= v[${i}]`, "\n" )}
-                return this
-            `
+            const body = bodyThis( DRANGE.map( i => `this[${i}] ${operation}= v[${i}]` ) )
             return fnDeclaration( `v${name}`, [Param_v], body, { type: TYPE } )
         }
 
@@ -234,20 +231,12 @@ ${DMAP( i => `/** @type {number} */\nthis[${i}]`, "\n" )}
         }
         /** @param {string} operation  */
         function staticScalar( operation, name ) {
-            const body = `
-                const result = new ${TYPE}
-                ${DMAP( i => `result[${i}] = v[${i}] ${operation} s`, "\n" )}
-                return result
-            `
+            const body = bodyResult( DRANGE.map( i => `result[${i}] = v[${i}] ${operation} s` ) )
             return fnDeclaration( `s${name}`, [Param_v, Param_s], body, { prefix: "static", type: TYPE } )
         }
         /** @param {string} operation  */
         function staticVector( operation, name ) {
-            const body = `
-                const result = new ${TYPE}
-                ${DMAP( i => `result[${i}] = v1[${i}] ${operation} v2[${i}]`, "\n" )}
-                return result
-            `
+            const body = bodyResult( DRANGE.map( i => `result[${i}] = v1[${i}] ${operation} v2[${i}]` ) )
             return fnDeclaration( `v${name}`, Params_v1v2, body, { prefix: "static", type: TYPE } )
         }
 
@@ -281,16 +270,12 @@ ${DMAP( i => `/** @type {number} */\nthis[${i}]`, "\n" )}
 
     function vectorOperations() {
         function pointTo() {
-            const body = `${DMAP( i => `this[${i}] = v[${i}] - this[${i}]`, "\n" )}\nreturn this`
+            const body = bodyThis( DRANGE.map( i => `this[${i}] = v[${i}] - this[${i}]` ) )
             return fnDeclaration( `pointTo`, [Param_v], body, { type: TYPE } )
         }
         function staticPointTo() {
             const params = [fnParameter( "from", TYPELIKE ), fnParameter( "to", TYPELIKE )]
-            const body = `
-                const result = new ${TYPE} 
-                ${DMAP( i => `result[${i}] = to[${i}] - from[${i}]`, "\n" )}
-                return result
-            `
+            const body = bodyResult( DRANGE.map( i => `result[${i}] = to[${i}] - from[${i}]` ) )
             return fnDeclaration( `pointTo`, params, body, { prefix: "static", type: TYPE } )
         }
 

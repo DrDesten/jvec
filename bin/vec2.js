@@ -506,7 +506,7 @@ export class vec2 extends Float32Array {
 
     /** @param {vec2Like} from @param {vec2Like} to @returns {vec2} */
     static pointTo( from, to ) {
-        const result = new vec2 
+        const result = new vec2
         result[0] = to[0] - from[0]
         result[1] = to[1] - from[1]
         return result
