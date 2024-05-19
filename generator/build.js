@@ -6,11 +6,10 @@ import { join } from "path"
 const __dirname = path.dirname( url.fileURLToPath( import.meta.url ) )
 
 // Custom includes
-import {} from "./codegen.js"
+import { setIndent, forceIndent, fnParameter, fnDeclaration } from "./codegen.js"
 import { JSDoc } from "./docgen.js"
-/** @typedef {import("./docgen.js").JSDocStatement} JSDocStatement */
-/** @typedef {import("./docgen.js").JSDocOptions} JSDocOptions */
-import { Range, setIndent, forceIndent } from "./genlib.js"
+/** @typedef {import("./docgen.js").JSDocStatement} JSDocStatement @typedef {import("./docgen.js").JSDocOptions} JSDocOptions */
+import { Range } from "./genlib.js"
 
 const MIN_DIMENSION = 2
 const MAX_DIMENSION = 4
@@ -54,34 +53,12 @@ function generate( dimension ) {
         )
     }
 
-    /** @typedef {{name: string, type: string, expr?: string, optional: boolean, string: string, jsdoc: JSDocStatement}} Parameter */
-    /** @param {string} name @param {string} type @param {string} [expr] @param {boolean} [optional]  @returns {Parameter} */
-    function fnParameter( name, type, expr, optional = !!expr ) {
-        return {
-            name, type, expr, optional,
-            string: expr ? name + " = " + expr : name,
-            jsdoc: ["param", type, optional ? `[${name}]` : name]
-        }
-    }
-
     const Param_s = fnParameter( "s", "number" )
     const Param_v = fnParameter( "v", TYPELIKE )
     const Param_x = fnParameter( "x", TYPELIKE_OR_NUM )
     const Param_v1 = fnParameter( "v1", TYPELIKE )
     const Param_v2 = fnParameter( "v2", TYPELIKE )
     const Params_v1v2 = [Param_v1, Param_v2]
-
-    /** @param {string} name @param {Parameter[]} params @param {string} body  @param {{prefix?: string, type?: string, compact?: boolean, indentFn?: forceIndent|setIndent, jsdocOpts?: import("./genlib.js").JSDocOptions}} [opts] @returns {string} */
-    function fnDeclaration( name, params, body, opts = {} ) {
-        opts = { compact: false, indentFn: forceIndent, ...opts }
-        const fnJsdocStmts = params.map( p => p.jsdoc ).concat( opts.type ? [["returns", opts.type]] : [] )
-        const fnJsdoc = JSDoc( fnJsdocStmts, opts.jsdocOpts )
-        const fnBody = opts.indentFn( body, opts.compact ? 0 : 4 )
-        const fnParams = params.map( p => p.string ).join( ", " )
-        const fnHead = `${opts.prefix ? `${opts.prefix} ` : ""}${name}(${fnParams ? ` ${fnParams} ` : ""})`
-        const fnDecl = opts.compact ? `${fnHead} { ${fnBody} }` : `${fnHead} {\n${fnBody}\n}`
-        return setIndent( `${fnJsdoc}\n${fnDecl}`, 4 )
-    }
 
     function title( text, indent = 0 ) {
         return forceIndent( `
