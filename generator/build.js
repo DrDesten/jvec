@@ -119,7 +119,7 @@ ${DMAP( i => `/** @type {number} ${iMapXYZW[i]}-coordinate of the vector */\nthi
             return fnDeclaration( `randomDir`, [], body, { prefix: "static", type: TYPE } )
         }
         function randomSphere() {
-            const body = `return new ${TYPE}( ${DMAP( _ => `randomNorm()` )} ).normalize().mul( Math.random() ** ${1 / dimension} )`
+            const body = `return new ${TYPE}( ${DMAP( _ => `randomNorm()` )} ).setLength( Math.random() ** ${1 / dimension} )`
             return fnDeclaration( `randomSphere`, [], body, { prefix: "static", type: TYPE } )
         }
 

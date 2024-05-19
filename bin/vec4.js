@@ -71,7 +71,7 @@ export class vec4 {
 
     /** @returns {vec4} */
     static randomSphere() {
-        return new vec4( randomNorm(), randomNorm(), randomNorm(), randomNorm() ).normalize().mul( Math.random() ** 0.25 )
+        return new vec4( randomNorm(), randomNorm(), randomNorm(), randomNorm() ).setLength( Math.random() ** 0.25 )
     }
 
     // ---------------------------
