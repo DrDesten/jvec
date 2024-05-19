@@ -45,14 +45,6 @@ function generate( dimension ) {
         return DRANGE.map( callback ).join( join )
     }
 
-    /** @param {{type: string, name: string}[]} definitions  */
-    function typedef( definitions ) {
-        return JSDoc(
-            definitions.map( d => ["typedef", d.type, d.name] ),
-            { multiline: true }
-        )
-    }
-
     const Param_s = fnParameter( "s", "number" )
     const Param_v = fnParameter( "v", TYPELIKE )
     const Param_x = fnParameter( "x", TYPELIKE_OR_NUM )
