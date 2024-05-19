@@ -404,6 +404,7 @@ ${DMAP( i => `/** @type {number} ${iMapXYZW[i]}-coordinate of the vector */\nthi
             ["typedef", `ArrayLike<number>`, `${TYPE}Like`],
         ] ),
         `export class ${TYPE} {`,
+        `    static get NaN() { return new ${TYPE}( ${DMAP( () => "NaN" )} ) }`,
         subtitle( "CONSTRUCTORS" ),
         constructors(),
         subtitle( "FIELDS" ),

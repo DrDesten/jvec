@@ -12,6 +12,8 @@ import { vec4 } from "./vec4.js"
 
 export class vec2 {
 
+    static get NaN() { return new vec2( NaN, NaN ) }
+
     // ---------------------------
     //      CONSTRUCTORS
     // ---------------------------
