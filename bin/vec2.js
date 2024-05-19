@@ -852,6 +852,23 @@ export class vec2 {
         return result
     }
 
+    /** @param {number} s @returns {vec2} */
+    setLength( s ) {
+        const factor = s / Math.sqrt( this[0] * this[0] + this[1] * this[1] )
+        this[0] *= factor
+        this[1] *= factor
+        return this
+    }
+
+    /** @param {number} s @param {vec2Like} v @returns {vec2} */
+    static setLength( s, v ) {
+        const result = new vec2
+        const factor = s / Math.sqrt( v[0] * v[0] + v[1] * v[1] )
+        result[0] = v[0] * factor
+        result[1] = v[1] * factor
+        return result
+    }
+
     /** @param {vec2Like} v @returns {number} */
     dot( v ) {
         return this[0] * v[0] + this[1] * v[1]

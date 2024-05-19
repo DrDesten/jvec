@@ -1320,6 +1320,25 @@ export class vec3 {
         return result
     }
 
+    /** @param {number} s @returns {vec3} */
+    setLength( s ) {
+        const factor = s / Math.sqrt( this[0] * this[0] + this[1] * this[1] + this[2] * this[2] )
+        this[0] *= factor
+        this[1] *= factor
+        this[2] *= factor
+        return this
+    }
+
+    /** @param {number} s @param {vec3Like} v @returns {vec3} */
+    static setLength( s, v ) {
+        const result = new vec3
+        const factor = s / Math.sqrt( v[0] * v[0] + v[1] * v[1] + v[2] * v[2] )
+        result[0] = v[0] * factor
+        result[1] = v[1] * factor
+        result[2] = v[2] * factor
+        return result
+    }
+
     /** @param {vec3Like} v @returns {number} */
     dot( v ) {
         return this[0] * v[0] + this[1] * v[1] + this[2] * v[2]

@@ -2465,6 +2465,27 @@ export class vec4 {
         return result
     }
 
+    /** @param {number} s @returns {vec4} */
+    setLength( s ) {
+        const factor = s / Math.sqrt( this[0] * this[0] + this[1] * this[1] + this[2] * this[2] + this[3] * this[3] )
+        this[0] *= factor
+        this[1] *= factor
+        this[2] *= factor
+        this[3] *= factor
+        return this
+    }
+
+    /** @param {number} s @param {vec4Like} v @returns {vec4} */
+    static setLength( s, v ) {
+        const result = new vec4
+        const factor = s / Math.sqrt( v[0] * v[0] + v[1] * v[1] + v[2] * v[2] + v[3] * v[3] )
+        result[0] = v[0] * factor
+        result[1] = v[1] * factor
+        result[2] = v[2] * factor
+        result[3] = v[3] * factor
+        return result
+    }
+
     /** @param {vec4Like} v @returns {number} */
     dot( v ) {
         return this[0] * v[0] + this[1] * v[1] + this[2] * v[2] + this[3] * v[3]

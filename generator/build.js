@@ -353,6 +353,21 @@ ${DMAP( i => `                yield this[${i}]`, "\n" )}
             return fnDeclaration( `normalize`, [Param_v], body, { prefix: "static", type: TYPE } )
         }
 
+        function setLength() {
+            const body = bodyThis( [
+                `const factor = s / Math.sqrt( ${DMAP( i => `this[${i}] * this[${i}]`, " + " )} )`,
+                ...DRANGE.map( i => `this[${i}] *= factor` )
+            ] )
+            return fnDeclaration( `setLength`, [Param_s], body, { type: TYPE } )
+        }
+        function staticSetLength() {
+            const body = bodyResult( [
+                `const factor = s / Math.sqrt( ${DMAP( i => `v[${i}] * v[${i}]`, " + " )} )`,
+                ...DRANGE.map( i => `result[${i}] = v[${i}] * factor` )
+            ] )
+            return fnDeclaration( `setLength`, [Param_s, Param_v], body, { prefix: "static", type: TYPE } )
+        }
+
         function dot() {
             const body = `return ${DMAP( i => `this[${i}] * v[${i}]`, " + " )}`
             return fnDeclaration( `dot`, [Param_v], body, { type: "number" } )
@@ -389,6 +404,8 @@ ${DMAP( i => `                yield this[${i}]`, "\n" )}
             staticPointTo(),
             normalize(),
             staticNormalize(),
+            setLength(),
+            staticSetLength(),
             dot(),
             staticDot(),
         ]
