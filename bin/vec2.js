@@ -39,6 +39,11 @@ export class vec2 {
         return new vec2( array[0 * stride + index], array[1 * stride + index] )
     }
 
+    /** @param {(index: number) => number} fn @returns {vec2} */
+    static fromFunction( fn ) {
+        return new vec2( fn( 0 ), fn( 1 ) )
+    }
+
     /** @param {number} angle @returns {vec2} */
     static fromAngle( angle ) {
         return new vec2( Math.cos( angle ), Math.sin( angle ) )

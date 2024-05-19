@@ -47,6 +47,11 @@ export class vec4 {
         return new vec4( array[0 * stride + index], array[1 * stride + index], array[2 * stride + index], array[3 * stride + index] )
     }
 
+    /** @param {(index: number) => number} fn @returns {vec4} */
+    static fromFunction( fn ) {
+        return new vec4( fn( 0 ), fn( 1 ), fn( 2 ), fn( 3 ) )
+    }
+
     /** @returns {vec4} */
     static random() {
         return new vec4( Math.random(), Math.random(), Math.random(), Math.random() )

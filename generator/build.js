@@ -92,8 +92,13 @@ ${DMAP( i => `/** @type {number} ${iMapXYZW[i]}-coordinate of the vector */\nthi
         }
         function fromArray() {
             const params = [fnParameter( "array", "ArrayLike<number>" ), fnParameter( "index", "number", "0" ), fnParameter( "stride", "number", "1" )]
-            const body = `return new ${TYPE}( ${DMAP( i => `array[${i} * stride + index]`, ", " )} )`
+            const body = `return new ${TYPE}( ${DMAP( i => `array[${i} * stride + index]` )} )`
             return fnDeclaration( `fromArray`, params, body, { prefix: "static", type: TYPE } )
+        }
+        function fromFunction() {
+            const params = [fnParameter( "fn", "(index: number) => number" )]
+            const body = `return new ${TYPE}( ${DMAP( i => `fn( ${i} )` )} )`
+            return fnDeclaration( `fromFunction`, params, body, { prefix: "static", type: TYPE } )
         }
         function fromAngle2() {
             const params = [fnParameter( "angle", "number" )]
@@ -101,23 +106,23 @@ ${DMAP( i => `/** @type {number} ${iMapXYZW[i]}-coordinate of the vector */\nthi
             return fnDeclaration( `fromAngle`, params, body, { prefix: "static", type: TYPE } )
         }
         function random() {
-            const body = `return new ${TYPE}( ${DMAP( _ => `Math.random()`, ", " )} )`
+            const body = `return new ${TYPE}( ${DMAP( _ => `Math.random()` )} )`
             return fnDeclaration( `random`, [], body, { prefix: "static", type: TYPE } )
         }
         function randomNorm() {
-            const body = `return new ${TYPE}( ${DMAP( _ => `randomNorm()`, ", " )} )`
+            const body = `return new ${TYPE}( ${DMAP( _ => `randomNorm()` )} )`
             return fnDeclaration( `randomNorm`, [], body, { prefix: "static", type: TYPE } )
         }
         function randomDir() {
-            const body = `return new ${TYPE}( ${DMAP( _ => `randomNorm()`, ", " )} ).normalize()`
+            const body = `return new ${TYPE}( ${DMAP( _ => `randomNorm()` )} ).normalize()`
             return fnDeclaration( `randomDir`, [], body, { prefix: "static", type: TYPE } )
         }
         function randomSphere() {
-            const body = `return new ${TYPE}( ${DMAP( _ => `randomNorm()`, ", " )} ).normalize().mul( Math.random ** ${1 / dimension} )`
+            const body = `return new ${TYPE}( ${DMAP( _ => `randomNorm()` )} ).normalize().mul( Math.random ** ${1 / dimension} )`
             return fnDeclaration( `randomSphere`, [], body, { prefix: "static", type: TYPE } )
         }
 
-        const functions = [constructor(), fromArray()]
+        const functions = [constructor(), fromArray(), fromFunction()]
         if ( dimension === 2 ) functions.push( fromAngle2() )
         functions.push( random(), randomNorm(), randomDir(), randomSphere() )
         return functions.join( "\n\n" )

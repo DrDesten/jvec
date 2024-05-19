@@ -43,6 +43,11 @@ export class vec3 {
         return new vec3( array[0 * stride + index], array[1 * stride + index], array[2 * stride + index] )
     }
 
+    /** @param {(index: number) => number} fn @returns {vec3} */
+    static fromFunction( fn ) {
+        return new vec3( fn( 0 ), fn( 1 ), fn( 2 ) )
+    }
+
     /** @returns {vec3} */
     static random() {
         return new vec3( Math.random(), Math.random(), Math.random() )
