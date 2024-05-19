@@ -31,8 +31,8 @@ for ( const T of [vec2, vec3, vec4] ) {
 }
 
 
-const spreadTest = [...new vec2, ...new vec3, ...new vec4]
+const spreadTest = [...new vec2( 1 ), ...new vec3( 1 ), ...new vec4( 1 )]
 console.assert(
-    spreadTest.length === 2 + 3 + 4 && spreadTest.every( x => x === 0 ),
+    spreadTest.length === 2 + 3 + 4 && spreadTest.every( x => x === 1 ),
     `Spread Test Failed: [${spreadTest}]`
 )
