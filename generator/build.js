@@ -104,14 +104,22 @@ ${DMAP( i => `/** @type {number} ${iMapXYZW[i]}-coordinate of the vector */\nthi
             const body = `return new ${TYPE}( ${DMAP( _ => `Math.random()`, ", " )} )`
             return fnDeclaration( `random`, [], body, { prefix: "static", type: TYPE } )
         }
+        function randomNorm() {
+            const body = `return new ${TYPE}( ${DMAP( _ => `randomNorm()`, ", " )} )`
+            return fnDeclaration( `randomNorm`, [], body, { prefix: "static", type: TYPE } )
+        }
         function randomDir() {
             const body = `return new ${TYPE}( ${DMAP( _ => `randomNorm()`, ", " )} ).normalize()`
             return fnDeclaration( `randomDir`, [], body, { prefix: "static", type: TYPE } )
         }
+        function randomSphere() {
+            const body = `return new ${TYPE}( ${DMAP( _ => `randomNorm()`, ", " )} ).normalize().mul( Math.random ** ${1 / dimension} )`
+            return fnDeclaration( `randomSphere`, [], body, { prefix: "static", type: TYPE } )
+        }
 
         const functions = [constructor(), fromArray()]
         if ( dimension === 2 ) functions.push( fromAngle2() )
-        functions.push( random(), randomDir() )
+        functions.push( random(), randomNorm(), randomDir(), randomSphere() )
         return functions.join( "\n\n" )
     }
 

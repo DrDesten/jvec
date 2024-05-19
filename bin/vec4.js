@@ -53,8 +53,18 @@ export class vec4 {
     }
 
     /** @returns {vec4} */
+    static randomNorm() {
+        return new vec4( randomNorm(), randomNorm(), randomNorm(), randomNorm() )
+    }
+
+    /** @returns {vec4} */
     static randomDir() {
         return new vec4( randomNorm(), randomNorm(), randomNorm(), randomNorm() ).normalize()
+    }
+
+    /** @returns {vec4} */
+    static randomSphere() {
+        return new vec4( randomNorm(), randomNorm(), randomNorm(), randomNorm() ).normalize().mul( Math.random ** 0.25 )
     }
 
     // ---------------------------

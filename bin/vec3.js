@@ -49,8 +49,18 @@ export class vec3 {
     }
 
     /** @returns {vec3} */
+    static randomNorm() {
+        return new vec3( randomNorm(), randomNorm(), randomNorm() )
+    }
+
+    /** @returns {vec3} */
     static randomDir() {
         return new vec3( randomNorm(), randomNorm(), randomNorm() ).normalize()
+    }
+
+    /** @returns {vec3} */
+    static randomSphere() {
+        return new vec3( randomNorm(), randomNorm(), randomNorm() ).normalize().mul( Math.random ** 0.3333333333333333 )
     }
 
     // ---------------------------

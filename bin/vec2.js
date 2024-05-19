@@ -50,8 +50,18 @@ export class vec2 {
     }
 
     /** @returns {vec2} */
+    static randomNorm() {
+        return new vec2( randomNorm(), randomNorm() )
+    }
+
+    /** @returns {vec2} */
     static randomDir() {
         return new vec2( randomNorm(), randomNorm() ).normalize()
+    }
+
+    /** @returns {vec2} */
+    static randomSphere() {
+        return new vec2( randomNorm(), randomNorm() ).normalize().mul( Math.random ** 0.5 )
     }
 
     // ---------------------------
