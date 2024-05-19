@@ -31,12 +31,19 @@ export function fnParameter( name, type, expr, optional = !!expr ) {
     }
 }
 
-/** @param {string} name @param {Parameter[]} params @param {string} body  @param {FunctionOptions} [opts] @returns {string} */
+/** @param {string[]} body @param {boolean} [compact]  */
+function formatBody( body, compact = false ) {
+    return body.map( statement =>
+        statement.trim().split( "\n" ).map( line => "    " + line.trim() ).join( compact ? " " : "\n" )
+    ).join( compact ? "; " : "\n" )
+}
+
+/** @param {string} name @param {Parameter[]} params @param {string|string[]} body  @param {FunctionOptions} [opts] @returns {string} */
 export function fnDeclaration( name, params, body, opts = {} ) {
     opts = { compact: false, indentFn: forceIndent, ...opts }
     const fnJsdocStmts = params.map( p => p.jsdoc ).concat( opts.type ? [["returns", opts.type]] : [] )
     const fnJsdoc = JSDoc( fnJsdocStmts, opts.jsdocOpts )
-    const fnBody = opts.indentFn( body, opts.compact ? 0 : 4 )
+    const fnBody = typeof body === "string" ? opts.indentFn( body, opts.compact ? 0 : 4 ) : formatBody( body, opts.compact )
     const fnParams = params.map( p => p.string ).join( ", " )
     const fnHead = `${opts.prefix ? `${opts.prefix} ` : ""}${name}(${fnParams ? ` ${fnParams} ` : ""})`
     const fnDecl = opts.compact ? `${fnHead} { ${fnBody} }` : `${fnHead} {\n${fnBody}\n}`

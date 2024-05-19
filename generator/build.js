@@ -60,6 +60,13 @@ function generate( dimension ) {
     const Param_v2 = fnParameter( "v2", TYPELIKE )
     const Params_v1v2 = [Param_v1, Param_v2]
 
+    function bodyThis( statements ) {
+        return [...statements, "return this"]
+    }
+    function bodyResult( statements ) {
+        return [`const result = new ${TYPE}`, ...statements, "return result"]
+    }
+
     function title( text, indent = 0 ) {
         return forceIndent( `
             // ${"#".repeat( 47 )}
@@ -108,7 +115,7 @@ ${DMAP( i => `/** @type {number} */\nthis[${i}]`, "\n" )}
             return fnDeclaration( `random`, [], body, { prefix: "static", type: TYPE } )
         }
         function randomDir() {
-            const body = `return new ${TYPE}( ${DMAP( _ => `gaussianRandom()`, ", " )} ).normalize()`
+            const body = `return new ${TYPE}( ${DMAP( _ => `randomNorm()`, ", " )} ).normalize()`
             return fnDeclaration( `randomDir`, [], body, { prefix: "static", type: TYPE } )
         }
 
@@ -207,10 +214,7 @@ ${DMAP( i => `/** @type {number} */\nthis[${i}]`, "\n" )}
         }
         /** @param {string} operation  */
         function scalar( operation, name ) {
-            const body = `
-                ${DMAP( i => `this[${i}] ${operation}= s`, "\n" )}
-                return this
-            `
+            const body = bodyThis( DRANGE.map( i => `this[${i}] ${operation}= s` ) )
             return fnDeclaration( `s${name}`, [Param_s], body, { type: TYPE } )
         }
         /** @param {string} operation  */
@@ -430,14 +434,13 @@ ${DMAP( i => `/** @type {number} */\nthis[${i}]`, "\n" )}
 
     const segments = [
         [
-            `import { gaussianRandom } from "./vechelper.js"`,
-            ...Range( MAX_DIMENSION + 1 )
-                .filter( i => i >= MIN_DIMENSION && i !== dimension )
+            `import { randomNorm } from "./vechelper.js"`,
+            ...Range( MIN_DIMENSION, MAX_DIMENSION + 1 ).filter( i => i !== dimension )
                 .map( i => `import { vec${i} } from "./vec${i}.js"\n/** @typedef {import("./vec${i}.js").vec${i}Like} vec${i}Like */` )
         ].join( "\n" ),
         title( TYPE ),
-        typedef( [
-            { name: `${TYPE}Like`, type: `ArrayLike<number>` },
+        JSDoc( [
+            ["typedef", `ArrayLike<number>`, `${TYPE}Like`],
         ] ),
         `export class ${TYPE} extends Float32Array {`,
         subtitle( "CONSTRUCTORS" ),

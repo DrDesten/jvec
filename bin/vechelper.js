@@ -1,5 +1,5 @@
 /** Box-Muller transform to generate a standard normal distributed random variable */
-export function gaussianRandom() {
+export function randomNorm() {
     let u = 0, v = 0
     while ( u === 0 ) u = Math.random() // Convert [0,1) to (0,1)
     while ( v === 0 ) v = Math.random()

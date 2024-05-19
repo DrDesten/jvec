@@ -1,4 +1,4 @@
-import { gaussianRandom } from "./vechelper.js"
+import { randomNorm } from "./vechelper.js"
 import { vec2 } from "./vec2.js"
 /** @typedef {import("./vec2.js").vec2Like} vec2Like */
 import { vec3 } from "./vec3.js"
@@ -8,9 +8,7 @@ import { vec3 } from "./vec3.js"
 //      vec4
 // ###############################################
 
-/**
- * @typedef {ArrayLike<number>} vec4Like
- */
+/** @typedef {ArrayLike<number>} vec4Like */
 
 export class vec4 extends Float32Array {
 
@@ -57,7 +55,7 @@ export class vec4 extends Float32Array {
 
     /** @returns {vec4} */
     static randomDir() {
-        return new vec4( gaussianRandom(), gaussianRandom(), gaussianRandom(), gaussianRandom() ).normalize()
+        return new vec4( randomNorm(), randomNorm(), randomNorm(), randomNorm() ).normalize()
     }
 
     // ---------------------------
