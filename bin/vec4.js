@@ -1681,6 +1681,25 @@ export class vec4 {
         return new vec4( this )
     }
 
+    /** @returns {Int8Array} */
+    Int8Array() { return new Int8Array( [...this] ) }
+    /** @returns {Uint8Array} */
+    Uint8Array() { return new Uint8Array( [...this] ) }
+    /** @returns {Uint8ClampedArray} */
+    Uint8ClampedArray() { return new Uint8ClampedArray( [...this] ) }
+    /** @returns {Int16Array} */
+    Int16Array() { return new Int16Array( [...this] ) }
+    /** @returns {Uint16Array} */
+    Uint16Array() { return new Uint16Array( [...this] ) }
+    /** @returns {Int32Array} */
+    Int32Array() { return new Int32Array( [...this] ) }
+    /** @returns {Uint32Array} */
+    Uint32Array() { return new Uint32Array( [...this] ) }
+    /** @returns {Float32Array} */
+    Float32Array() { return new Float32Array( [...this] ) }
+    /** @returns {Float64Array} */
+    Float64Array() { return new Float64Array( [...this] ) }
+
     // ---------------------------
     //      COMPARISON
     // ---------------------------
