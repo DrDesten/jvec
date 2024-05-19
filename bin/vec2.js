@@ -29,7 +29,7 @@ export class vec2 {
                 : ( this[0] = object, this[1] = +y )
         else
             this[0] = +( object[0] ?? object.x ?? object.r ?? 0 ),
-            this[1] = +( object[1] ?? object.y ?? object.g ?? 0 )
+                this[1] = +( object[1] ?? object.y ?? object.g ?? 0 )
         /** @type {number} x-coordinate of the vector */
         this[0]
         /** @type {number} y-coordinate of the vector */
@@ -509,6 +509,21 @@ export class vec2 {
         return result
     }
 
+    /** @param {(value: number, index: number, vector: vec2) => number} fn @returns {vec2} */
+    apply( fn ) {
+        this[0] = fn( this[0], 0, this )
+        this[1] = fn( this[1], 1, this )
+        return this
+    }
+
+    /** @param {vec2Like} v @param {(value: number, index: number, vector: vec2Like) => number} fn @returns {vec2} */
+    static apply( v, fn ) {
+        const result = new vec2
+        result[0] = fn( v[0], 0, v )
+        result[1] = fn( v[1], 1, v )
+        return result
+    }
+
     /** @returns {vec2} */
     abs() {
         this[0] = Math.abs( this[0] )
@@ -880,8 +895,8 @@ export class vec2 {
     /** @param {vec2Like} v @param {number} min @param {number} max @returns {vec2} */
     static clamp( v, min, max ) {
         const result = new vec2
-        result[0] = Math.min( Math.max( v[0], min ), max  )
-        result[1] = Math.min( Math.max( v[1], min ), max  )
+        result[0] = Math.min( Math.max( v[0], min ), max )
+        result[1] = Math.min( Math.max( v[1], min ), max )
         return result
     }
 

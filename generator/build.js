@@ -265,6 +265,17 @@ ${DMAP( i => `                yield this[${i}]`, "\n" )}
             return fnDeclaration( `v${name}`, Params_v1v2, body, { prefix: "static", type: TYPE } )
         }
 
+        function apply() {
+            const params = [fnParameter( "fn", `(value: number, index: number, vector: ${TYPE}) => number` )]
+            const body = bodyThis( DRANGE.map( i => `this[${i}] = fn( this[${i}], ${i}, this )` ) )
+            return fnDeclaration( "apply", params, body, { type: TYPE } )
+        }
+        function staticApply() {
+            const params = [Param_v, fnParameter( "fn", `(value: number, index: number, vector: ${TYPELIKE}) => number` )]
+            const body = bodyResult( DRANGE.map( i => `result[${i}] = fn(v[${i}], ${i}, v)` ) )
+            return fnDeclaration( "apply", params, body, { prefix: "static", type: TYPE } )
+        }
+
         function builtinMath( name ) {
             const body = bodyThis( DRANGE.map( i => `this[${i}] = Math.${name}( this[${i}] )` ) )
             return fnDeclaration( name, [], body, { type: TYPE } )
@@ -285,6 +296,7 @@ ${DMAP( i => `                yield this[${i}]`, "\n" )}
             ] )
         )
         functions.push(
+            apply(), staticApply(),
             ...mathCandidates.map( name => builtinMath( name ) ),
             ...staticMathCandidates.map( name => staticBuiltinMath( name ) )
         )

@@ -937,6 +937,23 @@ export class vec3 {
         return result
     }
 
+    /** @param {(value: number, index: number, vector: vec3) => number} fn @returns {vec3} */
+    apply( fn ) {
+        this[0] = fn( this[0], 0, this )
+        this[1] = fn( this[1], 1, this )
+        this[2] = fn( this[2], 2, this )
+        return this
+    }
+
+    /** @param {vec3Like} v @param {(value: number, index: number, vector: vec3Like) => number} fn @returns {vec3} */
+    static apply( v, fn ) {
+        const result = new vec3
+        result[0] = fn(v[0], 0, v)
+        result[1] = fn(v[1], 1, v)
+        result[2] = fn(v[2], 2, v)
+        return result
+    }
+
     /** @returns {vec3} */
     abs() {
         this[0] = Math.abs( this[0] )

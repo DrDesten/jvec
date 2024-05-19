@@ -2042,6 +2042,25 @@ export class vec4 {
         return result
     }
 
+    /** @param {(value: number, index: number, vector: vec4) => number} fn @returns {vec4} */
+    apply( fn ) {
+        this[0] = fn( this[0], 0, this )
+        this[1] = fn( this[1], 1, this )
+        this[2] = fn( this[2], 2, this )
+        this[3] = fn( this[3], 3, this )
+        return this
+    }
+
+    /** @param {vec4Like} v @param {(value: number, index: number, vector: vec4Like) => number} fn @returns {vec4} */
+    static apply( v, fn ) {
+        const result = new vec4
+        result[0] = fn(v[0], 0, v)
+        result[1] = fn(v[1], 1, v)
+        result[2] = fn(v[2], 2, v)
+        result[3] = fn(v[3], 3, v)
+        return result
+    }
+
     /** @returns {vec4} */
     abs() {
         this[0] = Math.abs( this[0] )
