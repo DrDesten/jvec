@@ -1730,6 +1730,23 @@ export class vec4 {
     /** @returns {Float64Array} */
     toFloat64Array() { return new Float64Array( [this[0], this[1], this[2], this[3]] ) }
 
+    /** @param {{hex?: boolean}} [options={}] @returns {string} */
+    toCSSColor( options = {} ) {
+        if ( options.hex ) {
+            const r = Math.round( Math.min( Math.max( this[0] * 255, 0 ), 255 ) ).toString( 16 ).padStart( 2, 0 )
+            const g = Math.round( Math.min( Math.max( this[1] * 255, 0 ), 255 ) ).toString( 16 ).padStart( 2, 0 )
+            const b = Math.round( Math.min( Math.max( this[2] * 255, 0 ), 255 ) ).toString( 16 ).padStart( 2, 0 )
+            const a = Math.round( Math.min( Math.max( this[3] * 255, 0 ), 255 ) ).toString( 16 ).padStart( 2, 0 )
+            return `#${r}${g}${b}${a}`
+        } else {
+            const r = Math.min( Math.max( this[0] * 100, 0 ), 100 )
+            const g = Math.min( Math.max( this[1] * 100, 0 ), 100 )
+            const b = Math.min( Math.max( this[2] * 100, 0 ), 100 )
+            const a = Math.min( Math.max( this[3] * 100, 0 ), 100 )
+            return `rgba(${r}%, ${g}%, ${b}%, ${a}%)`
+        }
+    }
+
     // ---------------------------
     //      COMPARISON
     // ---------------------------

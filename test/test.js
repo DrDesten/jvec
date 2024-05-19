@@ -36,3 +36,8 @@ console.assert(
     spreadTest.length === 2 + 3 + 4 && spreadTest.every( x => x === 1 ),
     `Spread Test Failed: [${spreadTest}]`
 )
+
+const colorTests = [
+    [[], "#000000"],
+    [[1], "#ffffff"],
+]

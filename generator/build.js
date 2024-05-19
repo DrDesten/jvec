@@ -36,8 +36,8 @@ function generate( dimension ) {
     const TYPELIKE = `vec${dimension}Like`
     const TYPELIKE_OR_NUM = `number|${TYPELIKE}`
     const IFNUM = ( isnum, notnum, varname = "x" ) => `typeof ${varname} === "number" ? ${isnum} : ${notnum}`
-    const iMapXYZW = ["x", "y", "z", "w"]
-    const iMapRGBA = ["r", "g", "b", "a"]
+    const iMapXYZW = "xyzw"
+    const iMapRGBA = "rgba"
 
     const DRANGE = Range( dimension )
     /** @param {(component: number) => any} callback @param {string} [join] */
@@ -189,19 +189,36 @@ ${DMAP( i => `                yield this[${i}]`, "\n" )}
 
     function conversion() {
         const arrayExpr = `[${DMAP( i => `this[${i}]` )}]`
-        return [
-            fnDeclaration( "toString", [], `return  \`(${DMAP( i => `\${this[${i}]}` )})\``, { type: "string", compact: true } ),
-            fnDeclaration( "toArray", [], `return  ${arrayExpr}`, { type: "number[]", compact: true } ),
-            fnDeclaration( "toInt8Array", [], `return new Int8Array( ${arrayExpr} )`, { type: "Int8Array", compact: true } ),
-            fnDeclaration( "toUint8Array", [], `return new Uint8Array( ${arrayExpr} )`, { type: "Uint8Array", compact: true } ),
-            fnDeclaration( "toUint8ClampedArray", [], `return new Uint8ClampedArray( ${arrayExpr} )`, { type: "Uint8ClampedArray", compact: true } ),
-            fnDeclaration( "toInt16Array", [], `return new Int16Array( ${arrayExpr} )`, { type: "Int16Array", compact: true } ),
-            fnDeclaration( "toUint16Array", [], `return new Uint16Array( ${arrayExpr} )`, { type: "Uint16Array", compact: true } ),
-            fnDeclaration( "toInt32Array", [], `return new Int32Array( ${arrayExpr} )`, { type: "Int32Array", compact: true } ),
-            fnDeclaration( "toUint32Array", [], `return new Uint32Array( ${arrayExpr} )`, { type: "Uint32Array", compact: true } ),
-            fnDeclaration( "toFloat32Array", [], `return new Float32Array( ${arrayExpr} )`, { type: "Float32Array", compact: true } ),
-            fnDeclaration( "toFloat64Array", [], `return new Float64Array( ${arrayExpr} )`, { type: "Float64Array", compact: true } ),
-        ].join( "\n" )
+        const conversions = [
+            [
+                fnDeclaration( "toString", [], `return  \`(${DMAP( i => `\${this[${i}]}` )})\``, { type: "string", compact: true } ),
+                fnDeclaration( "toArray", [], `return  ${arrayExpr}`, { type: "number[]", compact: true } ),
+                fnDeclaration( "toInt8Array", [], `return new Int8Array( ${arrayExpr} )`, { type: "Int8Array", compact: true } ),
+                fnDeclaration( "toUint8Array", [], `return new Uint8Array( ${arrayExpr} )`, { type: "Uint8Array", compact: true } ),
+                fnDeclaration( "toUint8ClampedArray", [], `return new Uint8ClampedArray( ${arrayExpr} )`, { type: "Uint8ClampedArray", compact: true } ),
+                fnDeclaration( "toInt16Array", [], `return new Int16Array( ${arrayExpr} )`, { type: "Int16Array", compact: true } ),
+                fnDeclaration( "toUint16Array", [], `return new Uint16Array( ${arrayExpr} )`, { type: "Uint16Array", compact: true } ),
+                fnDeclaration( "toInt32Array", [], `return new Int32Array( ${arrayExpr} )`, { type: "Int32Array", compact: true } ),
+                fnDeclaration( "toUint32Array", [], `return new Uint32Array( ${arrayExpr} )`, { type: "Uint32Array", compact: true } ),
+                fnDeclaration( "toFloat32Array", [], `return new Float32Array( ${arrayExpr} )`, { type: "Float32Array", compact: true } ),
+                fnDeclaration( "toFloat64Array", [], `return new Float64Array( ${arrayExpr} )`, { type: "Float64Array", compact: true } ),
+            ].join( "\n" )
+        ]
+
+        function cssColor() {
+            const params = [fnParameter( "options", "{hex?: boolean}", "{}" )]
+            const body = `
+if ( options.hex ) {
+${DMAP( i => `    const ${iMapRGBA[i]} = Math.round( Math.min( Math.max( this[${i}] * 255, 0 ), 255 ) ).toString( 16 ).padStart( 2, 0 )`, "\n" )}
+    return \`#${DMAP( i => `\${${iMapRGBA[i]}}`, "" )}\`
+} else {
+${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0 ), 100 )`, "\n" )}
+    return \`${iMapRGBA.slice( 0, dimension )}(${DMAP( i => `\${${iMapRGBA[i]}}%` )})\`
+}`
+            return fnDeclaration( "toCSSColor", params, body, { type: "string", indentFn: setIndent } )
+        }
+        if ( dimension >= 3 ) conversions.push( cssColor() )
+        return conversions.join( "\n\n" )
     }
 
     function comparison() {
