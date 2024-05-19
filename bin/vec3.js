@@ -922,6 +922,62 @@ export class vec3 {
         return this
     }
 
+    /** @returns {vec3} */
+    ceil() {
+        this[0] = Math.ceil( this[0] )
+        this[1] = Math.ceil( this[1] )
+        this[2] = Math.ceil( this[2] )
+        return this
+    }
+
+    /** @returns {vec3} */
+    cbrt() {
+        this[0] = Math.cbrt( this[0] )
+        this[1] = Math.cbrt( this[1] )
+        this[2] = Math.cbrt( this[2] )
+        return this
+    }
+
+    /** @returns {vec3} */
+    floor() {
+        this[0] = Math.floor( this[0] )
+        this[1] = Math.floor( this[1] )
+        this[2] = Math.floor( this[2] )
+        return this
+    }
+
+    /** @returns {vec3} */
+    round() {
+        this[0] = Math.round( this[0] )
+        this[1] = Math.round( this[1] )
+        this[2] = Math.round( this[2] )
+        return this
+    }
+
+    /** @returns {vec3} */
+    sign() {
+        this[0] = Math.sign( this[0] )
+        this[1] = Math.sign( this[1] )
+        this[2] = Math.sign( this[2] )
+        return this
+    }
+
+    /** @returns {vec3} */
+    sqrt() {
+        this[0] = Math.sqrt( this[0] )
+        this[1] = Math.sqrt( this[1] )
+        this[2] = Math.sqrt( this[2] )
+        return this
+    }
+
+    /** @returns {vec3} */
+    trunc() {
+        this[0] = Math.trunc( this[0] )
+        this[1] = Math.trunc( this[1] )
+        this[2] = Math.trunc( this[2] )
+        return this
+    }
+
     /** @param {vec3Like} v @returns {vec3} */
     static abs( v ) {
         const result = new vec3
@@ -929,14 +985,6 @@ export class vec3 {
         result[1] = Math.abs( v[1] )
         result[2] = Math.abs( v[2] )
         return result
-    }
-
-    /** @returns {vec3} */
-    acos() {
-        this[0] = Math.acos( this[0] )
-        this[1] = Math.acos( this[1] )
-        this[2] = Math.acos( this[2] )
-        return this
     }
 
     /** @param {vec3Like} v @returns {vec3} */
@@ -948,14 +996,6 @@ export class vec3 {
         return result
     }
 
-    /** @returns {vec3} */
-    acosh() {
-        this[0] = Math.acosh( this[0] )
-        this[1] = Math.acosh( this[1] )
-        this[2] = Math.acosh( this[2] )
-        return this
-    }
-
     /** @param {vec3Like} v @returns {vec3} */
     static acosh( v ) {
         const result = new vec3
@@ -963,14 +1003,6 @@ export class vec3 {
         result[1] = Math.acosh( v[1] )
         result[2] = Math.acosh( v[2] )
         return result
-    }
-
-    /** @returns {vec3} */
-    asin() {
-        this[0] = Math.asin( this[0] )
-        this[1] = Math.asin( this[1] )
-        this[2] = Math.asin( this[2] )
-        return this
     }
 
     /** @param {vec3Like} v @returns {vec3} */
@@ -982,14 +1014,6 @@ export class vec3 {
         return result
     }
 
-    /** @returns {vec3} */
-    asinh() {
-        this[0] = Math.asinh( this[0] )
-        this[1] = Math.asinh( this[1] )
-        this[2] = Math.asinh( this[2] )
-        return this
-    }
-
     /** @param {vec3Like} v @returns {vec3} */
     static asinh( v ) {
         const result = new vec3
@@ -997,14 +1021,6 @@ export class vec3 {
         result[1] = Math.asinh( v[1] )
         result[2] = Math.asinh( v[2] )
         return result
-    }
-
-    /** @returns {vec3} */
-    atan() {
-        this[0] = Math.atan( this[0] )
-        this[1] = Math.atan( this[1] )
-        this[2] = Math.atan( this[2] )
-        return this
     }
 
     /** @param {vec3Like} v @returns {vec3} */
@@ -1016,14 +1032,6 @@ export class vec3 {
         return result
     }
 
-    /** @returns {vec3} */
-    atanh() {
-        this[0] = Math.atanh( this[0] )
-        this[1] = Math.atanh( this[1] )
-        this[2] = Math.atanh( this[2] )
-        return this
-    }
-
     /** @param {vec3Like} v @returns {vec3} */
     static atanh( v ) {
         const result = new vec3
@@ -1031,14 +1039,6 @@ export class vec3 {
         result[1] = Math.atanh( v[1] )
         result[2] = Math.atanh( v[2] )
         return result
-    }
-
-    /** @returns {vec3} */
-    ceil() {
-        this[0] = Math.ceil( this[0] )
-        this[1] = Math.ceil( this[1] )
-        this[2] = Math.ceil( this[2] )
-        return this
     }
 
     /** @param {vec3Like} v @returns {vec3} */
@@ -1050,14 +1050,6 @@ export class vec3 {
         return result
     }
 
-    /** @returns {vec3} */
-    cbrt() {
-        this[0] = Math.cbrt( this[0] )
-        this[1] = Math.cbrt( this[1] )
-        this[2] = Math.cbrt( this[2] )
-        return this
-    }
-
     /** @param {vec3Like} v @returns {vec3} */
     static cbrt( v ) {
         const result = new vec3
@@ -1065,14 +1057,6 @@ export class vec3 {
         result[1] = Math.cbrt( v[1] )
         result[2] = Math.cbrt( v[2] )
         return result
-    }
-
-    /** @returns {vec3} */
-    expm1() {
-        this[0] = Math.expm1( this[0] )
-        this[1] = Math.expm1( this[1] )
-        this[2] = Math.expm1( this[2] )
-        return this
     }
 
     /** @param {vec3Like} v @returns {vec3} */
@@ -1084,31 +1068,6 @@ export class vec3 {
         return result
     }
 
-    /** @returns {vec3} */
-    clz32() {
-        this[0] = Math.clz32( this[0] )
-        this[1] = Math.clz32( this[1] )
-        this[2] = Math.clz32( this[2] )
-        return this
-    }
-
-    /** @param {vec3Like} v @returns {vec3} */
-    static clz32( v ) {
-        const result = new vec3
-        result[0] = Math.clz32( v[0] )
-        result[1] = Math.clz32( v[1] )
-        result[2] = Math.clz32( v[2] )
-        return result
-    }
-
-    /** @returns {vec3} */
-    cos() {
-        this[0] = Math.cos( this[0] )
-        this[1] = Math.cos( this[1] )
-        this[2] = Math.cos( this[2] )
-        return this
-    }
-
     /** @param {vec3Like} v @returns {vec3} */
     static cos( v ) {
         const result = new vec3
@@ -1116,14 +1075,6 @@ export class vec3 {
         result[1] = Math.cos( v[1] )
         result[2] = Math.cos( v[2] )
         return result
-    }
-
-    /** @returns {vec3} */
-    cosh() {
-        this[0] = Math.cosh( this[0] )
-        this[1] = Math.cosh( this[1] )
-        this[2] = Math.cosh( this[2] )
-        return this
     }
 
     /** @param {vec3Like} v @returns {vec3} */
@@ -1135,14 +1086,6 @@ export class vec3 {
         return result
     }
 
-    /** @returns {vec3} */
-    exp() {
-        this[0] = Math.exp( this[0] )
-        this[1] = Math.exp( this[1] )
-        this[2] = Math.exp( this[2] )
-        return this
-    }
-
     /** @param {vec3Like} v @returns {vec3} */
     static exp( v ) {
         const result = new vec3
@@ -1150,14 +1093,6 @@ export class vec3 {
         result[1] = Math.exp( v[1] )
         result[2] = Math.exp( v[2] )
         return result
-    }
-
-    /** @returns {vec3} */
-    floor() {
-        this[0] = Math.floor( this[0] )
-        this[1] = Math.floor( this[1] )
-        this[2] = Math.floor( this[2] )
-        return this
     }
 
     /** @param {vec3Like} v @returns {vec3} */
@@ -1169,31 +1104,6 @@ export class vec3 {
         return result
     }
 
-    /** @returns {vec3} */
-    fround() {
-        this[0] = Math.fround( this[0] )
-        this[1] = Math.fround( this[1] )
-        this[2] = Math.fround( this[2] )
-        return this
-    }
-
-    /** @param {vec3Like} v @returns {vec3} */
-    static fround( v ) {
-        const result = new vec3
-        result[0] = Math.fround( v[0] )
-        result[1] = Math.fround( v[1] )
-        result[2] = Math.fround( v[2] )
-        return result
-    }
-
-    /** @returns {vec3} */
-    log() {
-        this[0] = Math.log( this[0] )
-        this[1] = Math.log( this[1] )
-        this[2] = Math.log( this[2] )
-        return this
-    }
-
     /** @param {vec3Like} v @returns {vec3} */
     static log( v ) {
         const result = new vec3
@@ -1201,14 +1111,6 @@ export class vec3 {
         result[1] = Math.log( v[1] )
         result[2] = Math.log( v[2] )
         return result
-    }
-
-    /** @returns {vec3} */
-    log1p() {
-        this[0] = Math.log1p( this[0] )
-        this[1] = Math.log1p( this[1] )
-        this[2] = Math.log1p( this[2] )
-        return this
     }
 
     /** @param {vec3Like} v @returns {vec3} */
@@ -1220,14 +1122,6 @@ export class vec3 {
         return result
     }
 
-    /** @returns {vec3} */
-    log2() {
-        this[0] = Math.log2( this[0] )
-        this[1] = Math.log2( this[1] )
-        this[2] = Math.log2( this[2] )
-        return this
-    }
-
     /** @param {vec3Like} v @returns {vec3} */
     static log2( v ) {
         const result = new vec3
@@ -1235,14 +1129,6 @@ export class vec3 {
         result[1] = Math.log2( v[1] )
         result[2] = Math.log2( v[2] )
         return result
-    }
-
-    /** @returns {vec3} */
-    log10() {
-        this[0] = Math.log10( this[0] )
-        this[1] = Math.log10( this[1] )
-        this[2] = Math.log10( this[2] )
-        return this
     }
 
     /** @param {vec3Like} v @returns {vec3} */
@@ -1254,14 +1140,6 @@ export class vec3 {
         return result
     }
 
-    /** @returns {vec3} */
-    round() {
-        this[0] = Math.round( this[0] )
-        this[1] = Math.round( this[1] )
-        this[2] = Math.round( this[2] )
-        return this
-    }
-
     /** @param {vec3Like} v @returns {vec3} */
     static round( v ) {
         const result = new vec3
@@ -1269,14 +1147,6 @@ export class vec3 {
         result[1] = Math.round( v[1] )
         result[2] = Math.round( v[2] )
         return result
-    }
-
-    /** @returns {vec3} */
-    sign() {
-        this[0] = Math.sign( this[0] )
-        this[1] = Math.sign( this[1] )
-        this[2] = Math.sign( this[2] )
-        return this
     }
 
     /** @param {vec3Like} v @returns {vec3} */
@@ -1288,14 +1158,6 @@ export class vec3 {
         return result
     }
 
-    /** @returns {vec3} */
-    sin() {
-        this[0] = Math.sin( this[0] )
-        this[1] = Math.sin( this[1] )
-        this[2] = Math.sin( this[2] )
-        return this
-    }
-
     /** @param {vec3Like} v @returns {vec3} */
     static sin( v ) {
         const result = new vec3
@@ -1303,14 +1165,6 @@ export class vec3 {
         result[1] = Math.sin( v[1] )
         result[2] = Math.sin( v[2] )
         return result
-    }
-
-    /** @returns {vec3} */
-    sinh() {
-        this[0] = Math.sinh( this[0] )
-        this[1] = Math.sinh( this[1] )
-        this[2] = Math.sinh( this[2] )
-        return this
     }
 
     /** @param {vec3Like} v @returns {vec3} */
@@ -1322,14 +1176,6 @@ export class vec3 {
         return result
     }
 
-    /** @returns {vec3} */
-    sqrt() {
-        this[0] = Math.sqrt( this[0] )
-        this[1] = Math.sqrt( this[1] )
-        this[2] = Math.sqrt( this[2] )
-        return this
-    }
-
     /** @param {vec3Like} v @returns {vec3} */
     static sqrt( v ) {
         const result = new vec3
@@ -1337,14 +1183,6 @@ export class vec3 {
         result[1] = Math.sqrt( v[1] )
         result[2] = Math.sqrt( v[2] )
         return result
-    }
-
-    /** @returns {vec3} */
-    tan() {
-        this[0] = Math.tan( this[0] )
-        this[1] = Math.tan( this[1] )
-        this[2] = Math.tan( this[2] )
-        return this
     }
 
     /** @param {vec3Like} v @returns {vec3} */
@@ -1356,14 +1194,6 @@ export class vec3 {
         return result
     }
 
-    /** @returns {vec3} */
-    tanh() {
-        this[0] = Math.tanh( this[0] )
-        this[1] = Math.tanh( this[1] )
-        this[2] = Math.tanh( this[2] )
-        return this
-    }
-
     /** @param {vec3Like} v @returns {vec3} */
     static tanh( v ) {
         const result = new vec3
@@ -1371,14 +1201,6 @@ export class vec3 {
         result[1] = Math.tanh( v[1] )
         result[2] = Math.tanh( v[2] )
         return result
-    }
-
-    /** @returns {vec3} */
-    trunc() {
-        this[0] = Math.trunc( this[0] )
-        this[1] = Math.trunc( this[1] )
-        this[2] = Math.trunc( this[2] )
-        return this
     }
 
     /** @param {vec3Like} v @returns {vec3} */

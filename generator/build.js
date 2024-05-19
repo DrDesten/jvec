@@ -252,6 +252,9 @@ ${DMAP( i => `/** @type {number} ${iMapXYZW[i]}-coordinate of the vector */\nthi
             const body = bodyResult( DRANGE.map( i => `result[${i}] = Math.${name}( v[${i}] )` ) )
             return fnDeclaration( name, [Param_v], body, { prefix: "static", type: TYPE } )
         }
+        const mathFunctions = Object.getOwnPropertyNames( Math ).filter( name => typeof Math[name] === "function" && Math[name].length === 1 )
+        const mathCandidates = mathFunctions.filter( name => !/sin|cos|tan|log|exp|fround|clz32/.test( name ) ) // filter trig/exp/misc
+        const staticMathCandidates = mathFunctions.filter( name => !/fround|clz32/.test( name ) ) // filter misc
 
         const functions = []
         functions.push(
@@ -261,11 +264,8 @@ ${DMAP( i => `/** @type {number} ${iMapXYZW[i]}-coordinate of the vector */\nthi
             ] )
         )
         functions.push(
-            ...Object.getOwnPropertyNames( Math )
-                .filter( name => typeof Math[name] === "function" && Math[name].length === 1 )
-                .flatMap( name => [
-                    builtinMath( name ), staticBuiltinMath( name ),
-                ] )
+            ...mathCandidates.map( name => builtinMath( name ) ),
+            ...staticMathCandidates.map( name => staticBuiltinMath( name ) )
         )
         return functions.join( "\n\n" )
     }
