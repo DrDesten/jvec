@@ -10,7 +10,7 @@ import { vec3 } from "./vec3.js"
 
 /** @typedef {ArrayLike<number>} vec4Like */
 
-export class vec4 extends Float32Array {
+export class vec4 {
 
     // ---------------------------
     //      CONSTRUCTORS
@@ -22,24 +22,21 @@ export class vec4 extends Float32Array {
      * @param {number} [z]
      * @param {number} [w]
      */
-    constructor( object, y, z, w ) {
-        super( 4 )
-        if ( object !== undefined ) {
-            if ( typeof object === "number" ) 
-                this[0] = object, this[1] = y ?? 0, this[2] = z ?? 0, this[3] = w ?? 0
-            else 
-                this[0] = object[0] ?? object.x ?? object.r ?? 0,
-                this[1] = object[1] ?? object.y ?? object.g ?? 0,
-                this[2] = object[2] ?? object.z ?? object.b ?? 0,
-                this[3] = object[3] ?? object.w ?? object.a ?? 0
-        }
-        /** @type {number} */
+    constructor( object = 0, y = 0, z = 0, w = 0 ) {
+        if ( typeof object === "number" ) 
+            this[0] = object, this[1] = +y, this[2] = +z, this[3] = +w
+        else
+            this[0] = +( object[0] ?? object.x ?? object.r ?? 0 ),
+            this[1] = +( object[1] ?? object.y ?? object.g ?? 0 ),
+            this[2] = +( object[2] ?? object.z ?? object.b ?? 0 ),
+            this[3] = +( object[3] ?? object.w ?? object.a ?? 0 )
+        /** @type {number} x-coordinate of the vector */
         this[0]
-        /** @type {number} */
+        /** @type {number} y-coordinate of the vector */
         this[1]
-        /** @type {number} */
+        /** @type {number} z-coordinate of the vector */
         this[2]
-        /** @type {number} */
+        /** @type {number} w-coordinate of the vector */
         this[3]
     }
 

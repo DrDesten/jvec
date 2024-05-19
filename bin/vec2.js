@@ -10,7 +10,7 @@ import { vec4 } from "./vec4.js"
 
 /** @typedef {ArrayLike<number>} vec2Like */
 
-export class vec2 extends Float32Array {
+export class vec2 {
 
     // ---------------------------
     //      CONSTRUCTORS
@@ -20,18 +20,15 @@ export class vec2 extends Float32Array {
      * @param {number|vec2Like|{x: number, y: number}|{r: number, g: number}} [object]
      * @param {number} [y]
      */
-    constructor( object, y ) {
-        super( 2 )
-        if ( object !== undefined ) {
-            if ( typeof object === "number" ) 
-                this[0] = object, this[1] = y ?? 0
-            else 
-                this[0] = object[0] ?? object.x ?? object.r ?? 0,
-                this[1] = object[1] ?? object.y ?? object.g ?? 0
-        }
-        /** @type {number} */
+    constructor( object = 0, y = 0 ) {
+        if ( typeof object === "number" ) 
+            this[0] = object, this[1] = +y
+        else
+            this[0] = +( object[0] ?? object.x ?? object.r ?? 0 ),
+            this[1] = +( object[1] ?? object.y ?? object.g ?? 0 )
+        /** @type {number} x-coordinate of the vector */
         this[0]
-        /** @type {number} */
+        /** @type {number} y-coordinate of the vector */
         this[1]
     }
 

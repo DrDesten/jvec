@@ -77,18 +77,15 @@ function generate( dimension ) {
     function constructors() {
         function constructor() {
             const params = [
-                fnParameter( "object", `number|${TYPELIKE}|{${DMAP( i => `${iMapXYZW[i]}: number`, ", " )}}|{${DMAP( i => `${iMapRGBA[i]}: number`, ", " )}}`, undefined, true ),
-                ...DRANGE.slice( 1 ).map( i => fnParameter( iMapXYZW[i], "number", undefined, true ) ),
+                fnParameter( "object", `number|${TYPELIKE}|{${DMAP( i => `${iMapXYZW[i]}: number`, ", " )}}|{${DMAP( i => `${iMapRGBA[i]}: number`, ", " )}}`, "0" ),
+                ...DRANGE.slice( 1 ).map( i => fnParameter( iMapXYZW[i], "number", "0" ) ),
             ]
             const body = `
-super( ${dimension} )
-if ( object !== undefined ) {
-    if ( typeof object === "number" ) 
-        this[0] = object, ${DRANGE.slice( 1 ).map( i => `this[${i}] = ${iMapXYZW[i]} ?? 0` ).join( ", " )}
-    else 
-${DMAP( i => `        this[${i}] = object[${i}] ?? object.${iMapXYZW[i]} ?? object.${iMapRGBA[i]} ?? 0`, ",\n" )}
-}
-${DMAP( i => `/** @type {number} */\nthis[${i}]`, "\n" )}
+if ( typeof object === "number" ) 
+    this[0] = object, ${DRANGE.slice( 1 ).map( i => `this[${i}] = +${iMapXYZW[i]}` ).join( ", " )}
+else
+${DMAP( i => `    this[${i}] = +( object[${i}] ?? object.${iMapXYZW[i]} ?? object.${iMapRGBA[i]} ?? 0 )`, ",\n" )}
+${DMAP( i => `/** @type {number} ${iMapXYZW[i]}-coordinate of the vector */\nthis[${i}]`, "\n" )}
             `
             return fnDeclaration( "constructor", params, body, { indentFn: setIndent, jsdocOpts: { multiline: true } } )
         }
@@ -392,7 +389,7 @@ ${DMAP( i => `/** @type {number} */\nthis[${i}]`, "\n" )}
         JSDoc( [
             ["typedef", `ArrayLike<number>`, `${TYPE}Like`],
         ] ),
-        `export class ${TYPE} extends Float32Array {`,
+        `export class ${TYPE} {`,
         subtitle( "CONSTRUCTORS" ),
         constructors(),
         subtitle( "FIELDS" ),
