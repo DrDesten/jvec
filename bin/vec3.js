@@ -665,27 +665,166 @@ export class vec3 {
     }
 
     // ---------------------------
-    //      COMPARISON
+    //      BOOLEAN
     // ---------------------------
 
     /** @param {vec3Like} v @returns {boolean} */
-    equals( v ) {
+    eq( v ) {
         return this[0] === v[0] && this[1] === v[1] && this[2] === v[2]
     }
 
+    /** @param {vec3Like} v1 @param {vec3Like} v2 @returns {boolean} */
+    static eq( v1, v2 ) {
+        return v1[0] === v2[0] && v1[1] === v2[1] && v1[2] === v2[2]
+    }
+
     /** @param {vec3Like} v @returns {boolean} */
-    nequals( v ) {
+    neq( v ) {
         return this[0] !== v[0] || this[1] !== v[1] || this[2] !== v[2]
     }
 
     /** @param {vec3Like} v1 @param {vec3Like} v2 @returns {boolean} */
-    static equals( v1, v2 ) {
-        return v1[0] === v2[0] && v1[1] === v2[1] && v1[2] === v2[2]
+    static neq( v1, v2 ) {
+        return v1[0] !== v2[0] || v1[1] !== v2[1] || v1[2] !== v2[2]
     }
 
-    /** @param {vec3Like} v1 @param {vec3Like} v2 @returns {boolean} */
-    static nequals( v1, v2 ) {
-        return v1[0] !== v2[0] || v1[1] !== v2[1] || v1[2] !== v2[2]
+    /** @returns {boolean} */
+    all() {
+        return !!this[0] && !!this[1] && !!this[2]
+    }
+
+    /** @param {vec3Like} v @returns {boolean} */
+    static all( v ) {
+        return !!v[0] && !!v[1] && !!v[2]
+    }
+
+    /** @returns {boolean} */
+    any() {
+        return !!this[0] || !!this[1] || !!this[2]
+    }
+
+    /** @param {vec3Like} v @returns {boolean} */
+    static any( v ) {
+        return !!v[0] || !!v[1] || !!v[2]
+    }
+
+    /** @param {vec3Like} v @returns {vec3} */
+    greaterThan( v ) {
+        this[0] = +( this[0] > v[0] )
+        this[1] = +( this[1] > v[1] )
+        this[2] = +( this[2] > v[2] )
+        return this
+    }
+
+    /** @param {vec3Like} v1 @param {vec3Like} v2 @returns {vec3} */
+    static greaterThan( v1, v2 ) {
+        const result = new vec3
+        result[0] = +( v1[0] > v2[0] )
+        result[1] = +( v1[1] > v2[1] )
+        result[2] = +( v1[2] > v2[2] )
+        return result
+    }
+
+    /** @param {vec3Like} v @returns {vec3} */
+    greaterThanEqual( v ) {
+        this[0] = +( this[0] >= v[0] )
+        this[1] = +( this[1] >= v[1] )
+        this[2] = +( this[2] >= v[2] )
+        return this
+    }
+
+    /** @param {vec3Like} v1 @param {vec3Like} v2 @returns {vec3} */
+    static greaterThanEqual( v1, v2 ) {
+        const result = new vec3
+        result[0] = +( v1[0] >= v2[0] )
+        result[1] = +( v1[1] >= v2[1] )
+        result[2] = +( v1[2] >= v2[2] )
+        return result
+    }
+
+    /** @param {vec3Like} v @returns {vec3} */
+    lessThan( v ) {
+        this[0] = +( this[0] < v[0] )
+        this[1] = +( this[1] < v[1] )
+        this[2] = +( this[2] < v[2] )
+        return this
+    }
+
+    /** @param {vec3Like} v1 @param {vec3Like} v2 @returns {vec3} */
+    static lessThan( v1, v2 ) {
+        const result = new vec3
+        result[0] = +( v1[0] < v2[0] )
+        result[1] = +( v1[1] < v2[1] )
+        result[2] = +( v1[2] < v2[2] )
+        return result
+    }
+
+    /** @param {vec3Like} v @returns {vec3} */
+    lessThanEqual( v ) {
+        this[0] = +( this[0] <= v[0] )
+        this[1] = +( this[1] <= v[1] )
+        this[2] = +( this[2] <= v[2] )
+        return this
+    }
+
+    /** @param {vec3Like} v1 @param {vec3Like} v2 @returns {vec3} */
+    static lessThanEqual( v1, v2 ) {
+        const result = new vec3
+        result[0] = +( v1[0] <= v2[0] )
+        result[1] = +( v1[1] <= v2[1] )
+        result[2] = +( v1[2] <= v2[2] )
+        return result
+    }
+
+    /** @param {vec3Like} v @returns {vec3} */
+    equal( v ) {
+        this[0] = +( this[0] === v[0] )
+        this[1] = +( this[1] === v[1] )
+        this[2] = +( this[2] === v[2] )
+        return this
+    }
+
+    /** @param {vec3Like} v1 @param {vec3Like} v2 @returns {vec3} */
+    static equal( v1, v2 ) {
+        const result = new vec3
+        result[0] = +( v1[0] === v2[0] )
+        result[1] = +( v1[1] === v2[1] )
+        result[2] = +( v1[2] === v2[2] )
+        return result
+    }
+
+    /** @param {vec3Like} v @returns {vec3} */
+    notEqual( v ) {
+        this[0] = +( this[0] !== v[0] )
+        this[1] = +( this[1] !== v[1] )
+        this[2] = +( this[2] !== v[2] )
+        return this
+    }
+
+    /** @param {vec3Like} v1 @param {vec3Like} v2 @returns {vec3} */
+    static notEqual( v1, v2 ) {
+        const result = new vec3
+        result[0] = +( v1[0] !== v2[0] )
+        result[1] = +( v1[1] !== v2[1] )
+        result[2] = +( v1[2] !== v2[2] )
+        return result
+    }
+
+    /** @returns {vec3} */
+    not() {
+        this[0] = +!this[0]
+        this[1] = +!this[1]
+        this[2] = +!this[2]
+        return this
+    }
+
+    /** @param {vec3Like} v @returns {vec3} */
+    static not( v ) {
+        const result = new vec3
+        result[0] = +!v[0]
+        result[1] = +!v[1]
+        result[2] = +!v[2]
+        return result
     }
 
     // ---------------------------

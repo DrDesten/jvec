@@ -59,6 +59,23 @@ function generate( dimension ) {
         return [`const result = new ${TYPE}`, ...statements, "return result"]
     }
 
+    /** @typedef {[RegExp, string]|[RegExp, string][]} StringReplacer */
+    /** @param {string} string @param {StringReplacer} replacer  */
+    function applyReplacer( string, replacer ) {
+        if ( replacer.length === 0 ) return string
+        if ( !( replacer[0] instanceof Array ) ) return string.replace( replacer[0], replacer[1] )
+        return replacer.reduce( ( str, [regex, replacement] ) => str.replace( regex, replacement ), string )
+    }
+    /** @param {string} name @param {[string[], string[]]} params @param {string[]} statements @param {import("./codegen.js").FunctionOptions} opts @param {StringReplacer} replacer */
+    function fnAutoStatic( name, [params, paramsStatic], statements, opts, replacer ) {
+        const wrappers = opts.type === TYPE ? [bodyThis, bodyResult] : [x => x, x => x]
+        const bodyNonstatic = wrappers[0]( statements )
+        const bodyStatic = wrappers[1]( statements.map( statement => applyReplacer( statement, replacer ) ) )
+        const fnNonstatic = fnDeclaration( name, params, bodyNonstatic, opts )
+        const fnStatic = fnDeclaration( name, paramsStatic, bodyStatic, { ...opts, prefix: "static" } )
+        return [fnNonstatic, fnStatic]
+    }
+
     function title( text, indent = 0 ) {
         return forceIndent( `
             // ${"#".repeat( 47 )}
@@ -222,24 +239,62 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
         return conversions.join( "\n\n" )
     }
 
-    function comparison() {
-        function equals() {
-            const body = `return ${DMAP( i => `this[${i}] === v[${i}]`, " && " )}`
-            return fnDeclaration( "equals", [Param_v], body, { type: "boolean" } )
+    function boolean() {
+        function eq() {
+            const body = [`return ${DMAP( i => `this[${i}] === v[${i}]`, " && " )}`]
+            return fnAutoStatic( "eq", [[Param_v], Params_v1v2], body, { type: "boolean" }, [[/\bthis\b/g, "v1"], [/\bv\b/g, "v2"]] )
         }
-        function nequals() {
-            const body = `return ${DMAP( i => `this[${i}] !== v[${i}]`, " || " )}`
-            return fnDeclaration( "nequals", [Param_v], body, { type: "boolean" } )
+        function neq() {
+            const body = [`return ${DMAP( i => `this[${i}] !== v[${i}]`, " || " )}`]
+            return fnAutoStatic( "neq", [[Param_v], Params_v1v2], body, { type: "boolean" }, [[/\bthis\b/g, "v1"], [/\bv\b/g, "v2"]] )
         }
-        function staticEquals() {
-            const body = `return ${DMAP( i => `v1[${i}] === v2[${i}]`, " && " )}`
-            return fnDeclaration( "equals", Params_v1v2, body, { prefix: "static", type: "boolean" } )
+
+        function all() {
+            const body = [`return ${DMAP( i => `!!this[${i}]`, " && " )}`]
+            return fnAutoStatic( "all", [[], [Param_v]], body, { type: "boolean" }, [/\bthis\b/g, "v"] )
         }
-        function staticNequals() {
-            const body = `return ${DMAP( i => `v1[${i}] !== v2[${i}]`, " || " )}`
-            return fnDeclaration( "nequals", Params_v1v2, body, { prefix: "static", type: "boolean" } )
+        function any() {
+            const body = [`return ${DMAP( i => `!!this[${i}]`, " || " )}`]
+            return fnAutoStatic( "any", [[], [Param_v]], body, { type: "boolean" }, [/\bthis\b/g, "v"] )
         }
-        const functions = [equals(), nequals(), staticEquals(), staticNequals()]
+
+        function greaterThan() {
+            const body = DRANGE.map( i => `this[${i}] = +( this[${i}] > v[${i}] )` )
+            return fnAutoStatic( "greaterThan", [[Param_v], Params_v1v2], body, { type: TYPE }, [["this", "result"], [/\bthis\b/g, "v1"], [/\bv\b/g, "v2"]] )
+        }
+        function greaterThanEqual() {
+            const body = DRANGE.map( i => `this[${i}] = +( this[${i}] >= v[${i}] )` )
+            return fnAutoStatic( "greaterThanEqual", [[Param_v], Params_v1v2], body, { type: TYPE }, [["this", "result"], [/\bthis\b/g, "v1"], [/\bv\b/g, "v2"]] )
+        }
+        function lessThan() {
+            const body = DRANGE.map( i => `this[${i}] = +( this[${i}] < v[${i}] )` )
+            return fnAutoStatic( "lessThan", [[Param_v], Params_v1v2], body, { type: TYPE }, [["this", "result"], [/\bthis\b/g, "v1"], [/\bv\b/g, "v2"]] )
+        }
+        function lessThanEqual() {
+            const body = DRANGE.map( i => `this[${i}] = +( this[${i}] <= v[${i}] )` )
+            return fnAutoStatic( "lessThanEqual", [[Param_v], Params_v1v2], body, { type: TYPE }, [["this", "result"], [/\bthis\b/g, "v1"], [/\bv\b/g, "v2"]] )
+        }
+        function equal() {
+            const body = DRANGE.map( i => `this[${i}] = +( this[${i}] === v[${i}] )` )
+            return fnAutoStatic( "equal", [[Param_v], Params_v1v2], body, { type: TYPE }, [["this", "result"], [/\bthis\b/g, "v1"], [/\bv\b/g, "v2"]] )
+        }
+        function notEqual() {
+            const body = DRANGE.map( i => `this[${i}] = +( this[${i}] !== v[${i}] )` )
+            return fnAutoStatic( "notEqual", [[Param_v], Params_v1v2], body, { type: TYPE }, [["this", "result"], [/\bthis\b/g, "v1"], [/\bv\b/g, "v2"]] )
+        }
+        function not() {
+            const body = DRANGE.map( i => `this[${i}] = +!this[${i}]` )
+            return fnAutoStatic( "not", [[], [Param_v]], body, { type: TYPE }, [["this", "result"], [/\bthis\b/g, "v"]] )
+        }
+
+        const functions = [
+            eq(), neq(),
+            all(), any(),
+            greaterThan(), greaterThanEqual(),
+            lessThan(), lessThanEqual(),
+            equal(), notEqual(),
+            not(),
+        ].flat( 1 )
         return functions.join( "\n\n" )
     }
 
@@ -503,8 +558,8 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
         clone(),
         iterator(),
         conversion(),
-        subtitle( "COMPARISON" ),
-        comparison(),
+        subtitle( "BOOLEAN" ),
+        boolean(),
         subtitle( "ARITHMETIC" ),
         arithmetic(),
         subtitle( "PROPERTIES" ),

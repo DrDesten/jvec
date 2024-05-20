@@ -246,27 +246,152 @@ export class vec2 {
     toFloat64Array() { return new Float64Array( [this[0], this[1]] ) }
 
     // ---------------------------
-    //      COMPARISON
+    //      BOOLEAN
     // ---------------------------
 
     /** @param {vec2Like} v @returns {boolean} */
-    equals( v ) {
+    eq( v ) {
         return this[0] === v[0] && this[1] === v[1]
     }
 
+    /** @param {vec2Like} v1 @param {vec2Like} v2 @returns {boolean} */
+    static eq( v1, v2 ) {
+        return v1[0] === v2[0] && v1[1] === v2[1]
+    }
+
     /** @param {vec2Like} v @returns {boolean} */
-    nequals( v ) {
+    neq( v ) {
         return this[0] !== v[0] || this[1] !== v[1]
     }
 
     /** @param {vec2Like} v1 @param {vec2Like} v2 @returns {boolean} */
-    static equals( v1, v2 ) {
-        return v1[0] === v2[0] && v1[1] === v2[1]
+    static neq( v1, v2 ) {
+        return v1[0] !== v2[0] || v1[1] !== v2[1]
     }
 
-    /** @param {vec2Like} v1 @param {vec2Like} v2 @returns {boolean} */
-    static nequals( v1, v2 ) {
-        return v1[0] !== v2[0] || v1[1] !== v2[1]
+    /** @returns {boolean} */
+    all() {
+        return !!this[0] && !!this[1]
+    }
+
+    /** @param {vec2Like} v @returns {boolean} */
+    static all( v ) {
+        return !!v[0] && !!v[1]
+    }
+
+    /** @returns {boolean} */
+    any() {
+        return !!this[0] || !!this[1]
+    }
+
+    /** @param {vec2Like} v @returns {boolean} */
+    static any( v ) {
+        return !!v[0] || !!v[1]
+    }
+
+    /** @param {vec2Like} v @returns {vec2} */
+    greaterThan( v ) {
+        this[0] = +( this[0] > v[0] )
+        this[1] = +( this[1] > v[1] )
+        return this
+    }
+
+    /** @param {vec2Like} v1 @param {vec2Like} v2 @returns {vec2} */
+    static greaterThan( v1, v2 ) {
+        const result = new vec2
+        result[0] = +( v1[0] > v2[0] )
+        result[1] = +( v1[1] > v2[1] )
+        return result
+    }
+
+    /** @param {vec2Like} v @returns {vec2} */
+    greaterThanEqual( v ) {
+        this[0] = +( this[0] >= v[0] )
+        this[1] = +( this[1] >= v[1] )
+        return this
+    }
+
+    /** @param {vec2Like} v1 @param {vec2Like} v2 @returns {vec2} */
+    static greaterThanEqual( v1, v2 ) {
+        const result = new vec2
+        result[0] = +( v1[0] >= v2[0] )
+        result[1] = +( v1[1] >= v2[1] )
+        return result
+    }
+
+    /** @param {vec2Like} v @returns {vec2} */
+    lessThan( v ) {
+        this[0] = +( this[0] < v[0] )
+        this[1] = +( this[1] < v[1] )
+        return this
+    }
+
+    /** @param {vec2Like} v1 @param {vec2Like} v2 @returns {vec2} */
+    static lessThan( v1, v2 ) {
+        const result = new vec2
+        result[0] = +( v1[0] < v2[0] )
+        result[1] = +( v1[1] < v2[1] )
+        return result
+    }
+
+    /** @param {vec2Like} v @returns {vec2} */
+    lessThanEqual( v ) {
+        this[0] = +( this[0] <= v[0] )
+        this[1] = +( this[1] <= v[1] )
+        return this
+    }
+
+    /** @param {vec2Like} v1 @param {vec2Like} v2 @returns {vec2} */
+    static lessThanEqual( v1, v2 ) {
+        const result = new vec2
+        result[0] = +( v1[0] <= v2[0] )
+        result[1] = +( v1[1] <= v2[1] )
+        return result
+    }
+
+    /** @param {vec2Like} v @returns {vec2} */
+    equal( v ) {
+        this[0] = +( this[0] === v[0] )
+        this[1] = +( this[1] === v[1] )
+        return this
+    }
+
+    /** @param {vec2Like} v1 @param {vec2Like} v2 @returns {vec2} */
+    static equal( v1, v2 ) {
+        const result = new vec2
+        result[0] = +( v1[0] === v2[0] )
+        result[1] = +( v1[1] === v2[1] )
+        return result
+    }
+
+    /** @param {vec2Like} v @returns {vec2} */
+    notEqual( v ) {
+        this[0] = +( this[0] !== v[0] )
+        this[1] = +( this[1] !== v[1] )
+        return this
+    }
+
+    /** @param {vec2Like} v1 @param {vec2Like} v2 @returns {vec2} */
+    static notEqual( v1, v2 ) {
+        const result = new vec2
+        result[0] = +( v1[0] !== v2[0] )
+        result[1] = +( v1[1] !== v2[1] )
+        return result
+    }
+
+    /** @returns {vec2} */
+    not() {
+        this[0] = +!this[0]
+        this[1] = +!this[1]
+        return this
+    }
+
+    /** @param {vec2Like} v @returns {vec2} */
+    static not( v ) {
+        const result = new vec2
+        result[0] = +!v[0]
+        result[1] = +!v[1]
+        return result
     }
 
     // ---------------------------
