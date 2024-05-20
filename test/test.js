@@ -52,7 +52,7 @@ for ( const T of [vec2, vec3, vec4] ) {
         const baseline = results[0]
         for ( const result of results ) {
             console.assert(
-                T.equals( baseline.result, result.result ),
+                T.eq( baseline.result, result.result ),
                 `Constructor Test Failed\nnew ${typename}(${result.argsString}) != new ${typename}(${baseline.argsString})`
             )
         }
