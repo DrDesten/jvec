@@ -76,8 +76,9 @@ function generate( dimension ) {
 
     function constructors() {
         function constructor() {
+            const objectParamType = `number|${TYPELIKE}|{${DMAP( i => `${iMapXYZW[i]}: number` )}}|{${DMAP( i => `${iMapRGBA[i]}: number` )}}`
             const params = [
-                fnParameter( "object", `number|${TYPELIKE}|{${DMAP( i => `${iMapXYZW[i]}: number`, ", " )}}|{${DMAP( i => `${iMapRGBA[i]}: number`, ", " )}}`, { default: "0" } ),
+                fnParameter( "object", objectParamType, { default: "0" } ),
                 ...DRANGE.slice( 1 ).map( i => fnParameter( iMapXYZW[i], "number", { optional: true } ) ),
             ]
             const body = `
