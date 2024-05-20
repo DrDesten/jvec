@@ -77,8 +77,8 @@ function generate( dimension ) {
     function constructors() {
         function constructor() {
             const params = [
-                fnParameter( "object", `number|${TYPELIKE}|{${DMAP( i => `${iMapXYZW[i]}: number`, ", " )}}|{${DMAP( i => `${iMapRGBA[i]}: number`, ", " )}}`, "0" ),
-                ...DRANGE.slice( 1 ).map( i => fnParameter( iMapXYZW[i], "number", undefined, true ) ),
+                fnParameter( "object", `number|${TYPELIKE}|{${DMAP( i => `${iMapXYZW[i]}: number`, ", " )}}|{${DMAP( i => `${iMapRGBA[i]}: number`, ", " )}}`, { default: "0" } ),
+                ...DRANGE.slice( 1 ).map( i => fnParameter( iMapXYZW[i], "number", { optional: true } ) ),
             ]
             const body = `
 if ( typeof object === "number" )
@@ -92,7 +92,7 @@ ${DMAP( i => `/** @type {number} ${iMapXYZW[i]}-coordinate of the vector */\nthi
             return fnDeclaration( "constructor", params, body, { indentFn: setIndent, jsdocOpts: { multiline: true } } )
         }
         function fromArray() {
-            const params = [fnParameter( "array", "ArrayLike<number>" ), fnParameter( "index", "number", "0" ), fnParameter( "stride", "number", "1" )]
+            const params = [fnParameter( "array", "ArrayLike<number>" ), fnParameter( "index", "number", { default: "0" } ), fnParameter( "stride", "number", { default: "1" } )]
             const body = `return new ${TYPE}( ${DMAP( i => `array[${i} * stride + index]` )} )`
             return fnDeclaration( `fromArray`, params, body, { prefix: "static", type: TYPE } )
         }
@@ -119,7 +119,7 @@ ${DMAP( i => `/** @type {number} ${iMapXYZW[i]}-coordinate of the vector */\nthi
             return fnDeclaration( `randomDir`, [], body, { prefix: "static", type: TYPE } )
         }
         function randomSphere() {
-            const body = `return new ${TYPE}( ${DMAP( _ => `randomNorm()` )} ).setLength( Math.random() ** ${1 / dimension} )`
+            const body = `return new ${TYPE}( ${DMAP( _ => `randomNorm()` )} ).setLength( Math.random() ** (1/${dimension}) )`
             return fnDeclaration( `randomSphere`, [], body, { prefix: "static", type: TYPE } )
         }
 
@@ -206,7 +206,7 @@ ${DMAP( i => `                yield this[${i}]`, "\n" )}
         ]
 
         function cssColor() {
-            const params = [fnParameter( "options", "{hex?: boolean}", "{}" )]
+            const params = [fnParameter( "options", "{hex?: boolean}", { default: "{}" } )]
             const body = `
 if ( options.hex ) {
 ${DMAP( i => `    const ${iMapRGBA[i]} = Math.round( Math.min( Math.max( this[${i}] * 255, 0 ), 255 ) ).toString( 16 ).padStart( 2, 0 )`, "\n" )}
@@ -286,13 +286,13 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
         }
 
         function apply() {
-            const params = [fnParameter( "fn", `(value: number, index: number, vector: ${TYPE}) => number` )]
-            const body = bodyThis( DRANGE.map( i => `this[${i}] = fn( this[${i}], ${i}, this )` ) )
+            const params = [fnParameter( "fn", `(value: number, index: number) => number` )]
+            const body = bodyThis( DRANGE.map( i => `this[${i}] = fn( this[${i}], ${i} )` ) )
             return fnDeclaration( "apply", params, body, { type: TYPE } )
         }
         function staticApply() {
-            const params = [Param_v, fnParameter( "fn", `(value: number, index: number, vector: ${TYPELIKE}) => number` )]
-            const body = bodyResult( DRANGE.map( i => `result[${i}] = fn(v[${i}], ${i}, v)` ) )
+            const params = [Param_v, fnParameter( "fn", `(value: number, index: number) => number` )]
+            const body = bodyResult( DRANGE.map( i => `result[${i}] = fn(v[${i}], ${i} )` ) )
             return fnDeclaration( "apply", params, body, { prefix: "static", type: TYPE } )
         }
 
@@ -305,7 +305,7 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
             return fnDeclaration( name, [Param_v], body, { prefix: "static", type: TYPE } )
         }
         const mathFunctions = Object.getOwnPropertyNames( Math ).filter( name => typeof Math[name] === "function" && Math[name].length === 1 )
-        const mathCandidates = mathFunctions.filter( name => !/sin|cos|tan|log|exp|fround|clz32/.test( name ) ) // filter trig/exp/misc
+        const mathCandidates = ["abs", "round", "floor", "ceil"]
         const staticMathCandidates = mathFunctions.filter( name => !/fround|clz32/.test( name ) ) // filter misc
 
         const functions = []
@@ -450,6 +450,10 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
             const params = [Param_v, fnParameter( "min", "number" )]
             const body = bodyResult( DRANGE.map( i => `result[${i}] = Math.min( v[${i}], min )` ) )
             return fnDeclaration( `min`, params, body, { prefix: "static", type: TYPE } )
+        }
+        function vmin() {
+            const body = bodyResult( DRANGE.map( i => `result[${i}] = Math.min( v1[${i}], v2[${i}] )` ) )
+            return fnDeclaration( `vmin`, Params_v1v2, body, { prefix: "static", type: TYPE } )
         }
         function max() {
             const params = [Param_v, fnParameter( "max", "number" )]

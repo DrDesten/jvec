@@ -68,7 +68,7 @@ export class vec2 {
 
     /** @returns {vec2} */
     static randomSphere() {
-        return new vec2( randomNorm(), randomNorm() ).setLength( Math.random() ** 0.5 )
+        return new vec2( randomNorm(), randomNorm() ).setLength( Math.random() ** (1/2) )
     }
 
     // ---------------------------
@@ -513,18 +513,18 @@ export class vec2 {
         return result
     }
 
-    /** @param {(value: number, index: number, vector: vec2) => number} fn @returns {vec2} */
+    /** @param {(value: number, index: number) => number} fn @returns {vec2} */
     apply( fn ) {
-        this[0] = fn( this[0], 0, this )
-        this[1] = fn( this[1], 1, this )
+        this[0] = fn( this[0], 0 )
+        this[1] = fn( this[1], 1 )
         return this
     }
 
-    /** @param {vec2Like} v @param {(value: number, index: number, vector: vec2Like) => number} fn @returns {vec2} */
+    /** @param {vec2Like} v @param {(value: number, index: number) => number} fn @returns {vec2} */
     static apply( v, fn ) {
         const result = new vec2
-        result[0] = fn(v[0], 0, v)
-        result[1] = fn(v[1], 1, v)
+        result[0] = fn(v[0], 0 )
+        result[1] = fn(v[1], 1 )
         return result
     }
 
@@ -536,16 +536,9 @@ export class vec2 {
     }
 
     /** @returns {vec2} */
-    ceil() {
-        this[0] = Math.ceil( this[0] )
-        this[1] = Math.ceil( this[1] )
-        return this
-    }
-
-    /** @returns {vec2} */
-    cbrt() {
-        this[0] = Math.cbrt( this[0] )
-        this[1] = Math.cbrt( this[1] )
+    round() {
+        this[0] = Math.round( this[0] )
+        this[1] = Math.round( this[1] )
         return this
     }
 
@@ -557,30 +550,9 @@ export class vec2 {
     }
 
     /** @returns {vec2} */
-    round() {
-        this[0] = Math.round( this[0] )
-        this[1] = Math.round( this[1] )
-        return this
-    }
-
-    /** @returns {vec2} */
-    sign() {
-        this[0] = Math.sign( this[0] )
-        this[1] = Math.sign( this[1] )
-        return this
-    }
-
-    /** @returns {vec2} */
-    sqrt() {
-        this[0] = Math.sqrt( this[0] )
-        this[1] = Math.sqrt( this[1] )
-        return this
-    }
-
-    /** @returns {vec2} */
-    trunc() {
-        this[0] = Math.trunc( this[0] )
-        this[1] = Math.trunc( this[1] )
+    ceil() {
+        this[0] = Math.ceil( this[0] )
+        this[1] = Math.ceil( this[1] )
         return this
     }
 

@@ -71,7 +71,7 @@ export class vec4 {
 
     /** @returns {vec4} */
     static randomSphere() {
-        return new vec4( randomNorm(), randomNorm(), randomNorm(), randomNorm() ).setLength( Math.random() ** 0.25 )
+        return new vec4( randomNorm(), randomNorm(), randomNorm(), randomNorm() ).setLength( Math.random() ** (1/4) )
     }
 
     // ---------------------------
@@ -2063,22 +2063,22 @@ export class vec4 {
         return result
     }
 
-    /** @param {(value: number, index: number, vector: vec4) => number} fn @returns {vec4} */
+    /** @param {(value: number, index: number) => number} fn @returns {vec4} */
     apply( fn ) {
-        this[0] = fn( this[0], 0, this )
-        this[1] = fn( this[1], 1, this )
-        this[2] = fn( this[2], 2, this )
-        this[3] = fn( this[3], 3, this )
+        this[0] = fn( this[0], 0 )
+        this[1] = fn( this[1], 1 )
+        this[2] = fn( this[2], 2 )
+        this[3] = fn( this[3], 3 )
         return this
     }
 
-    /** @param {vec4Like} v @param {(value: number, index: number, vector: vec4Like) => number} fn @returns {vec4} */
+    /** @param {vec4Like} v @param {(value: number, index: number) => number} fn @returns {vec4} */
     static apply( v, fn ) {
         const result = new vec4
-        result[0] = fn(v[0], 0, v)
-        result[1] = fn(v[1], 1, v)
-        result[2] = fn(v[2], 2, v)
-        result[3] = fn(v[3], 3, v)
+        result[0] = fn(v[0], 0 )
+        result[1] = fn(v[1], 1 )
+        result[2] = fn(v[2], 2 )
+        result[3] = fn(v[3], 3 )
         return result
     }
 
@@ -2092,20 +2092,11 @@ export class vec4 {
     }
 
     /** @returns {vec4} */
-    ceil() {
-        this[0] = Math.ceil( this[0] )
-        this[1] = Math.ceil( this[1] )
-        this[2] = Math.ceil( this[2] )
-        this[3] = Math.ceil( this[3] )
-        return this
-    }
-
-    /** @returns {vec4} */
-    cbrt() {
-        this[0] = Math.cbrt( this[0] )
-        this[1] = Math.cbrt( this[1] )
-        this[2] = Math.cbrt( this[2] )
-        this[3] = Math.cbrt( this[3] )
+    round() {
+        this[0] = Math.round( this[0] )
+        this[1] = Math.round( this[1] )
+        this[2] = Math.round( this[2] )
+        this[3] = Math.round( this[3] )
         return this
     }
 
@@ -2119,38 +2110,11 @@ export class vec4 {
     }
 
     /** @returns {vec4} */
-    round() {
-        this[0] = Math.round( this[0] )
-        this[1] = Math.round( this[1] )
-        this[2] = Math.round( this[2] )
-        this[3] = Math.round( this[3] )
-        return this
-    }
-
-    /** @returns {vec4} */
-    sign() {
-        this[0] = Math.sign( this[0] )
-        this[1] = Math.sign( this[1] )
-        this[2] = Math.sign( this[2] )
-        this[3] = Math.sign( this[3] )
-        return this
-    }
-
-    /** @returns {vec4} */
-    sqrt() {
-        this[0] = Math.sqrt( this[0] )
-        this[1] = Math.sqrt( this[1] )
-        this[2] = Math.sqrt( this[2] )
-        this[3] = Math.sqrt( this[3] )
-        return this
-    }
-
-    /** @returns {vec4} */
-    trunc() {
-        this[0] = Math.trunc( this[0] )
-        this[1] = Math.trunc( this[1] )
-        this[2] = Math.trunc( this[2] )
-        this[3] = Math.trunc( this[3] )
+    ceil() {
+        this[0] = Math.ceil( this[0] )
+        this[1] = Math.ceil( this[1] )
+        this[2] = Math.ceil( this[2] )
+        this[3] = Math.ceil( this[3] )
         return this
     }
 
