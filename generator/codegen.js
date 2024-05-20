@@ -3,7 +3,7 @@ import { JSDoc } from "./docgen.js"
 
 
 /** 
- * @typedef {{default?: string, optional?: boolean, spread?: boolean}} ParameterOptions
+ * @typedef {{default?: string, optional?: boolean, rest?: boolean}} ParameterOptions
  * @typedef {{name: string, type: string, expr?: string, optional: boolean, string: string, jsdoc: JSDocStatement}} Parameter 
  * @typedef {{prefix?: string, type?: string, description?: string, compact?: boolean, indentFn?: (text:string, indent:number) => string, jsdocOpts?: JSDocOptions}} FunctionOptions
  */
@@ -25,11 +25,11 @@ export function setIndent( string, indent = 0 ) {
 
 /** @param {string} name @param {string} type @param {ParameterOptions} [options] @returns {Parameter} */
 export function fnParameter( name, type, options = {} ) {
-    options = { default: "", optional: !!options.default, spread: false, ...options }
-    const { default: expr, optional, spread } = options
+    options = { default: "", optional: !!options.default, rest: false, ...options }
+    const { default: expr, optional, rest } = options
     return {
         name, type, expr, optional,
-        string: ( spread ? "..." : "" ) + name + ( expr ? " = " + expr : "" ),
+        string: ( rest ? "..." : "" ) + name + ( expr ? " = " + expr : "" ),
         jsdoc: ["param", type, name, { optional, default: expr }]
     }
 }

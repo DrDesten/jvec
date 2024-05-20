@@ -2499,23 +2499,23 @@ export class vec4 {
         return d0 * d0 + d1 * d1 + d2 * d2 + d3 * d3
     }
 
-    /** @param {vec4Like} v @param {number} min @returns {vec4} */
-    static min( v, min ) {
+    /** @param {...(number|vec4Like)} values @returns {vec4} */
+    static min( ...values ) {
         const result = new vec4
-        result[0] = Math.min( v[0], min )
-        result[1] = Math.min( v[1], min )
-        result[2] = Math.min( v[2], min )
-        result[3] = Math.min( v[3], min )
+        result[0] = Math.min( ...values.map( x => typeof x === "number" ? x : x[0] ) )
+        result[1] = Math.min( ...values.map( x => typeof x === "number" ? x : x[1] ) )
+        result[2] = Math.min( ...values.map( x => typeof x === "number" ? x : x[2] ) )
+        result[3] = Math.min( ...values.map( x => typeof x === "number" ? x : x[3] ) )
         return result
     }
 
-    /** @param {vec4Like} v @param {number} max @returns {vec4} */
-    static max( v, max ) {
+    /** @param {...(number|vec4Like)} values @returns {vec4} */
+    static max( ...values ) {
         const result = new vec4
-        result[0] = Math.max( v[0], max )
-        result[1] = Math.max( v[1], max )
-        result[2] = Math.max( v[2], max )
-        result[3] = Math.max( v[3], max )
+        result[0] = Math.max( ...values.map( x => typeof x === "number" ? x : x[0] ) )
+        result[1] = Math.max( ...values.map( x => typeof x === "number" ? x : x[1] ) )
+        result[2] = Math.max( ...values.map( x => typeof x === "number" ? x : x[2] ) )
+        result[3] = Math.max( ...values.map( x => typeof x === "number" ? x : x[3] ) )
         return result
     }
 

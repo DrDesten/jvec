@@ -1372,21 +1372,21 @@ export class vec3 {
         return d0 * d0 + d1 * d1 + d2 * d2
     }
 
-    /** @param {vec3Like} v @param {number} min @returns {vec3} */
-    static min( v, min ) {
+    /** @param {...(number|vec3Like)} values @returns {vec3} */
+    static min( ...values ) {
         const result = new vec3
-        result[0] = Math.min( v[0], min )
-        result[1] = Math.min( v[1], min )
-        result[2] = Math.min( v[2], min )
+        result[0] = Math.min( ...values.map( x => typeof x === "number" ? x : x[0] ) )
+        result[1] = Math.min( ...values.map( x => typeof x === "number" ? x : x[1] ) )
+        result[2] = Math.min( ...values.map( x => typeof x === "number" ? x : x[2] ) )
         return result
     }
 
-    /** @param {vec3Like} v @param {number} max @returns {vec3} */
-    static max( v, max ) {
+    /** @param {...(number|vec3Like)} values @returns {vec3} */
+    static max( ...values ) {
         const result = new vec3
-        result[0] = Math.max( v[0], max )
-        result[1] = Math.max( v[1], max )
-        result[2] = Math.max( v[2], max )
+        result[0] = Math.max( ...values.map( x => typeof x === "number" ? x : x[0] ) )
+        result[1] = Math.max( ...values.map( x => typeof x === "number" ? x : x[1] ) )
+        result[2] = Math.max( ...values.map( x => typeof x === "number" ? x : x[2] ) )
         return result
     }
 

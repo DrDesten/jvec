@@ -448,18 +448,14 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
         }
 
         function min() {
-            const params = [Param_v, fnParameter( "min", "number" )]
-            const body = bodyResult( DRANGE.map( i => `result[${i}] = Math.min( v[${i}], min )` ) )
-            return fnDeclaration( `min`, params, body, { prefix: "static", type: TYPE } )
-        }
-        function vmin() {
-            const body = bodyResult( DRANGE.map( i => `result[${i}] = Math.min( v1[${i}], v2[${i}] )` ) )
-            return fnDeclaration( `vmin`, Params_v1v2, body, { prefix: "static", type: TYPE } )
+            const param = fnParameter( "values", `...(${TYPELIKE_OR_NUM})`, { rest: true } )
+            const body = bodyResult( DRANGE.map( i => `result[${i}] = Math.min( ...values.map( x => typeof x === "number" ? x : x[${i}] ) )` ) )
+            return fnDeclaration( `min`, [param], body, { prefix: "static", type: TYPE } )
         }
         function max() {
-            const params = [Param_v, fnParameter( "max", "number" )]
-            const body = bodyResult( DRANGE.map( i => `result[${i}] = Math.max( v[${i}], max )` ) )
-            return fnDeclaration( `max`, params, body, { prefix: "static", type: TYPE } )
+            const param = fnParameter( "values", `...(${TYPELIKE_OR_NUM})`, { rest: true } )
+            const body = bodyResult( DRANGE.map( i => `result[${i}] = Math.max( ...values.map( x => typeof x === "number" ? x : x[${i}] ) )` ) )
+            return fnDeclaration( `max`, [param], body, { prefix: "static", type: TYPE } )
         }
         function clamp() {
             const params = [Param_v, fnParameter( "min", "number" ), fnParameter( "max", "number" )]

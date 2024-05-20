@@ -1,6 +1,35 @@
 import util from "util"
 import { vec2, vec3, vec4 } from "../bin/vec.js"
 
+/** @param {...(any[]|any)[]} tests  */
+function defineTests( ...tests ) {
+    const constructed = {
+        vec2: tests.map( test => test.map( args => args instanceof Array ? new vec2( ...args ) : args ) ),
+        vec3: tests.map( test => test.map( args => args instanceof Array ? new vec3( ...args ) : args ) ),
+        vec4: tests.map( test => test.map( args => args instanceof Array ? new vec4( ...args ) : args ) ),
+
+        test( mapFn ) {
+            /** @param {any[][]} tests */
+            function test( tests ) {
+                for ( const test of tests ) {
+                    const baseline = test[0]
+                    const cases = test.slice( 1 ).map( mapFn )
+                    for ( const case_ of cases ) {
+                        console.assert(
+                            vec2.equals( baseline, case_ ),
+                            `Test Failed\n${baseline} != ${case_}`
+                        )
+                    }
+                }
+            }
+            test( this.vec2 )
+            test( this.vec3 )
+            test( this.vec4 )
+        }
+    }
+    return constructed
+}
+
 const constructorTests = [
     [[0, 0, 0, 0], [], [[]], [{}]],
     [[1, 1, 1, 1], [1]],
@@ -37,7 +66,12 @@ console.assert(
     `Spread Test Failed: [${spreadTest}]`
 )
 
+const minmaxTest = [
+    []
+]
+
 const colorTests = [
     [[], "#000000"],
     [[1], "#ffffff"],
 ]
+

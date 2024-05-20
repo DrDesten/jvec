@@ -869,19 +869,19 @@ export class vec2 {
         return d0 * d0 + d1 * d1
     }
 
-    /** @param {vec2Like} v @param {number} min @returns {vec2} */
-    static min( v, min ) {
+    /** @param {...(number|vec2Like)} values @returns {vec2} */
+    static min( ...values ) {
         const result = new vec2
-        result[0] = Math.min( v[0], min )
-        result[1] = Math.min( v[1], min )
+        result[0] = Math.min( ...values.map( x => typeof x === "number" ? x : x[0] ) )
+        result[1] = Math.min( ...values.map( x => typeof x === "number" ? x : x[1] ) )
         return result
     }
 
-    /** @param {vec2Like} v @param {number} max @returns {vec2} */
-    static max( v, max ) {
+    /** @param {...(number|vec2Like)} values @returns {vec2} */
+    static max( ...values ) {
         const result = new vec2
-        result[0] = Math.max( v[0], max )
-        result[1] = Math.max( v[1], max )
+        result[0] = Math.max( ...values.map( x => typeof x === "number" ? x : x[0] ) )
+        result[1] = Math.max( ...values.map( x => typeof x === "number" ? x : x[1] ) )
         return result
     }
 
