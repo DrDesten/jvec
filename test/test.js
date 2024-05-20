@@ -1,6 +1,10 @@
 import util from "util"
 import { vec2, vec3, vec4 } from "../bin/vec.js"
 
+console.info( "vec2:", Object.getOwnPropertyNames( vec2.prototype ).length, "member functions and getters/setters" )
+console.info( "vec3:", Object.getOwnPropertyNames( vec3.prototype ).length, "member functions and getters/setters" )
+console.info( "vec4:", Object.getOwnPropertyNames( vec4.prototype ).length, "member functions and getters/setters" )
+
 /** @param {...(any[]|any)[]} tests  */
 function defineTests( ...tests ) {
     const constructed = {
@@ -16,7 +20,7 @@ function defineTests( ...tests ) {
                     const cases = test.slice( 1 ).map( mapFn )
                     for ( const case_ of cases ) {
                         console.assert(
-                            vec2.equals( baseline, case_ ),
+                            vec2.eq( baseline, case_ ),
                             `Test Failed\n${baseline} != ${case_}`
                         )
                     }
