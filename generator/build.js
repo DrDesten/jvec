@@ -16,21 +16,29 @@ const MAX_DIMENSION = 4
 const OUTPUT_DIR = "../bin"
 
 for ( let dim = MIN_DIMENSION; dim <= MAX_DIMENSION; dim++ ) {
-    const file = generate( dim )
+    const file = generateVector( dim )
     writeFileSync( join( __dirname, OUTPUT_DIR, `vec${dim}.js` ), file, { encoding: "utf8" } )
+}
+for ( let dim = MIN_DIMENSION; dim <= MAX_DIMENSION; dim++ ) {
+    const file = generateMatrix( dim )
+    writeFileSync( join( __dirname, OUTPUT_DIR, `mat${dim}.js` ), file, { encoding: "utf8" } )
 }
 
 const vec = Range( MIN_DIMENSION, MAX_DIMENSION + 1 )
     .map( dim => `export { vec${dim} } from "./vec${dim}.js"` )
     .join( "\n" )
+const mat = Range( MIN_DIMENSION, MAX_DIMENSION + 1 )
+    .map( dim => `export { mat${dim} } from "./mat${dim}.js"` )
+    .join( "\n" )
 writeFileSync( join( __dirname, OUTPUT_DIR, `vec.js` ), vec, { encoding: "utf8" } )
+writeFileSync( join( __dirname, OUTPUT_DIR, `mat.js` ), mat, { encoding: "utf8" } )
 
 // ------------------------------
 // generate()
 // ------------------------------
 
 /** @param {number} dimension vector dimension */
-function generate( dimension ) {
+function generateVector( dimension ) {
 
     const TYPE = `vec${dimension}`
     const TYPELIKE = `vec${dimension}Like`
@@ -568,6 +576,44 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
         vectorOperations(),
         subtitle( "VECTOR UTILS" ),
         utilityFunctions(),
+        `}`
+    ]
+    return segments.join( "\n\n" )
+}
+
+/** @param {number} dimension matrix dimension */
+function generateMatrix( dimension ) {
+
+    const TYPE = `mat${dimension}`
+    const TYPELIKE = `mat${dimension}Like`
+    const TYPELIKE_OR_NUM = `number|${TYPELIKE}`
+    const IFNUM = ( isnum, notnum, varname = "x" ) => `typeof ${varname} === "number" ? ${isnum} : ${notnum}`
+
+    const DRANGE = Range( dimension )
+    /** @param {(component: number) => any} callback @param {string} [join] */
+    const DMAP = function ( callback, join = ", " ) {
+        return DRANGE.map( callback ).join( join )
+    }
+
+
+    const segments = [
+        [
+            ...Range( MIN_DIMENSION, MAX_DIMENSION + 1 )
+                .map( i => `import { vec${i} } from "./vec${i}.js"\n/** @typedef {import("./vec${i}.js").vec${i}Like} vec${i}Like */` )
+        ].join( "\n" ),
+        title( TYPE ),
+        JSDoc( [
+            ["typedef", `ArrayLike<number>`, TYPELIKE],
+        ] ),
+        `export class ${TYPE} {`,
+        `    static get NaN() { return new ${TYPE}( ${DMAP( () => "NaN" )} ) }`,
+        subtitle( "CONSTRUCTORS" ),
+        constructors(),
+        subtitle( "FIELDS" ),
+        fields(),
+        clone(),
+        iterator(),
+        conversion(),
         `}`
     ]
     return segments.join( "\n\n" )
