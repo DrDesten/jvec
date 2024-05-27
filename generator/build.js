@@ -586,15 +586,26 @@ function generateMatrix( dimension ) {
 
     const TYPE = `mat${dimension}`
     const TYPELIKE = `mat${dimension}Like`
-    const TYPELIKE_OR_NUM = `number|${TYPELIKE}`
-    const IFNUM = ( isnum, notnum, varname = "x" ) => `typeof ${varname} === "number" ? ${isnum} : ${notnum}`
 
-    const DRANGE = Range( dimension )
-    /** @param {(component: number) => any} callback @param {string} [join] */
-    const DMAP = function ( callback, join = ", " ) {
-        return DRANGE.map( callback ).join( join )
+    function title( text, indent = 0 ) {
+        return forceIndent( `
+            // ${"#".repeat( 47 )}
+            //      ${text}
+            // ${"#".repeat( 47 )}
+        `, indent )
+    }
+    function subtitle( text, indent = 4 ) {
+        return forceIndent( `
+            // ${"-".repeat( 27 )}
+            //      ${text}
+            // ${"-".repeat( 27 )}
+        `, indent )
     }
 
+    function constructors() {
+        const params = [fnParameter( "object", TYPELIKE, { optional: true } )]
+
+    }
 
     const segments = [
         [
@@ -606,7 +617,6 @@ function generateMatrix( dimension ) {
             ["typedef", `ArrayLike<number>`, TYPELIKE],
         ] ),
         `export class ${TYPE} {`,
-        `    static get NaN() { return new ${TYPE}( ${DMAP( () => "NaN" )} ) }`,
         subtitle( "CONSTRUCTORS" ),
         constructors(),
         subtitle( "FIELDS" ),
