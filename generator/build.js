@@ -16,21 +16,29 @@ const MAX_DIMENSION = 4
 const OUTPUT_DIR = "../bin"
 
 for ( let dim = MIN_DIMENSION; dim <= MAX_DIMENSION; dim++ ) {
-    const file = generate( dim )
+    const file = generateVector( dim )
     writeFileSync( join( __dirname, OUTPUT_DIR, `vec${dim}.js` ), file, { encoding: "utf8" } )
+}
+for ( let dim = MIN_DIMENSION; dim <= MAX_DIMENSION; dim++ ) {
+    const file = generateMatrix( dim )
+    writeFileSync( join( __dirname, OUTPUT_DIR, `mat${dim}.js` ), file, { encoding: "utf8" } )
 }
 
 const vec = Range( MIN_DIMENSION, MAX_DIMENSION + 1 )
     .map( dim => `export { vec${dim} } from "./vec${dim}.js"` )
     .join( "\n" )
+const mat = Range( MIN_DIMENSION, MAX_DIMENSION + 1 )
+    .map( dim => `export { mat${dim} } from "./mat${dim}.js"` )
+    .join( "\n" )
 writeFileSync( join( __dirname, OUTPUT_DIR, `vec.js` ), vec, { encoding: "utf8" } )
+writeFileSync( join( __dirname, OUTPUT_DIR, `mat.js` ), mat, { encoding: "utf8" } )
 
 // ------------------------------
 // generate()
 // ------------------------------
 
 /** @param {number} dimension vector dimension */
-function generate( dimension ) {
+function generateVector( dimension ) {
 
     const TYPE = `vec${dimension}`
     const TYPELIKE = `vec${dimension}Like`
@@ -568,6 +576,101 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
         vectorOperations(),
         subtitle( "VECTOR UTILS" ),
         utilityFunctions(),
+        `}`
+    ]
+    return segments.join( "\n\n" )
+}
+
+/** @param {number} dimension matrix dimension */
+function generateMatrix( dimension ) {
+
+    const VEC2 = `vec2`
+    const VEC2LIKE = `vec2Like`
+    const VEC3 = `vec3`
+    const VEC3LIKE = `vec3Like`
+    const VEC4 = `vec4`
+    const VEC4LIKE = `vec4Like`
+
+    const VEC = [VEC2, VEC3, VEC4]
+    const VECLIKE = [VEC2LIKE, VEC3LIKE, VEC4LIKE]
+    const VECANY = VEC.join("|")
+    const VECANYLIKE = VECLIKE.join("|")
+    const VECSOME = VEC.slice(0, dimension - 1).join("|")
+    const VECSOMELIKE = VECLIKE.slice(0, dimension - 1).join("|")
+
+    const TYPE = `mat${dimension}`
+    const TYPELIKE = `mat${dimension}Like`
+
+    const CRANGE = Array.from({length: dimension**2}, (_, i) => ({ i: i, x: i%dimension, y: ~~(i/dimension) }))
+    const CMAP = CRANGE.map.bind(CRANGE)
+    const CJOIN = (/** @type {(v:{i:number,x:number,y:number},i:number)=>any} */ fn, join = ", " ) => CMAP( fn ).join( join )
+
+    /** @param {(v:{i:number,x:number,y:number},i:number)=>any} fn */ 
+    function array( fn ) {
+        return `[\n${CRANGE.map((v,i) => (v.x === 0 ? "    " : "") + fn(v,i) + ", " + (v.x === dimension - 1 ? "\n" : "") ).join("")}]`
+    }
+
+    function title( text, indent = 0 ) {
+        return forceIndent( `
+            // ${"#".repeat( 47 )}
+            //      ${text}
+            // ${"#".repeat( 47 )}
+        `, indent )
+    }
+    function subtitle( text, indent = 4 ) {
+        return forceIndent( `
+            // ${"-".repeat( 27 )}
+            //      ${text}
+            // ${"-".repeat( 27 )}
+        `, indent )
+    }
+
+    function constructors() {
+        function constructor() {
+            const params = [fnParameter( "array", TYPELIKE, { optional: true } )]
+            const body = `
+                ${CJOIN(({i,x,y}) => `/** @type {number} */\nthis[i] = +( array?.[i] ?? ${+(x===y)} )`, "\n")}
+            `
+            return fnDeclaration("constructor", params, body, {})
+        }
+
+        function scale() {
+            const params = [fnParameter("v", VECSOMELIKE)]
+            const body = `
+return new ${TYPE}( ${array(({x,y}) => x === y ? `v[${x}] ?? 1` : `0`)} )
+            `
+            return fnDeclaration("scale", params, body, { prefix: "static", type: TYPE, indentFn: setIndent })
+        }
+        function translate() {
+            const params = [fnParameter("v", VECLIKE.slice(0, dimension - 2).join("|"))]
+            const body = `
+return new ${TYPE}( ${
+    array( ({ i, x, y }) => ( y === dimension - 1 && x < dimension - 1 ? `v[${x}] ?? ` : "" ) + `${+(x===y)}` )
+} )
+            `
+            return fnDeclaration("translate", params, body, { prefix: "static", type: TYPE, indentFn: setIndent })
+        }
+
+        const functions = [
+            constructor(),
+            scale(),
+        ]
+        if (dimension >= 3) functions.push( translate() )
+        return functions.join("\n\n")
+    }
+
+    const segments = [
+        [
+            ...Range( MIN_DIMENSION, MAX_DIMENSION + 1 )
+                .map( i => `import { vec${i} } from "./vec${i}.js"\n/** @typedef {import("./vec${i}.js").vec${i}Like} vec${i}Like */` )
+        ].join( "\n" ),
+        title( TYPE ),
+        JSDoc( [
+            ["typedef", `ArrayLike<number>`, TYPELIKE],
+        ] ),
+        `export class ${TYPE} {`,
+        subtitle( "CONSTRUCTORS" ),
+        constructors(),
         `}`
     ]
     return segments.join( "\n\n" )
