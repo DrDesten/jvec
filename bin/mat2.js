@@ -131,7 +131,7 @@ export class mat2 {
         const m10 = this[1]
         const m01 = this[2]
         const m11 = this[3]
-        const det = 1 / (m00 * m11 - m10 * m01)
+        const det = 1 / ( m00 * m11 - m10 * m01 )
         this[0] = m11 * det
         this[1] = -m01 * det
         this[2] = -m10 * det

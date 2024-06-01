@@ -688,35 +688,119 @@ ${CJOIN( ( _, i ) => `                yield this[${i}]`, "\n" )}
             return fnDeclaration( "mmul", params, body, { type: TYPE } )
         }
         function inverse2() {
-            let body = [
-                defcomps( "m" ),
-                `const det = 1 / (${id( 0, 0, "m" )} * ${id( 1, 1, "m" )} - ${id( 1, 0, "m" )} * ${id( 0, 1, "m" )})`,
-                `this[0] = ${id( 1, 1, "m" )} * det`,
-                `this[1] = -${id( 0, 1, "m" )} * det`,
-                `this[2] = -${id( 1, 0, "m" )} * det`,
-                `this[3] = ${id( 0, 0, "m" )} * det`,
-                `return this`,
-            ]
+            let body = `
+                ${defcomps( "m" )}
+                const det = 1 / ( m00 * m11 - m10 * m01 )
+                this[0] = m11 * det
+                this[1] = -m01 * det
+                this[2] = -m10 * det
+                this[3] = m00 * det
+                return this
+            `
             return fnDeclaration( "inverse", [], body, { type: TYPE } )
         }
         function inverse3() {
-            let body = [
-                defcomps( "m" ),
-                `const x = ${id( 1, 1, "m" )} * ${id( 2, 2, "m" )} - ${id( 1, 2, "m" )} * ${id( 2, 1, "m" )}`,
-                `const y = ${id( 2, 1, "m" )} * ${id( 0, 2, "m" )} - ${id( 0, 1, "m" )} * ${id( 2, 2, "m" )}`,
-                `const z = ${id( 0, 1, "m" )} * ${id( 2, 2, "m" )} - ${id( 1, 2, "m" )} * ${id( 2, 1, "m" )}`,
-            ]
+            let body = `
+                ${defcomps( "m" )}
+                const x = m11 * m22 - m12 * m21
+                const y = m21 * m02 - m01 * m22
+                const z = m01 * m12 - m02 * m11
+                const det = 1 / ( m00 * x + m10 * y + m20 * z )
+                this[0] = det * x
+                this[1] = det * ( m20 * m12 - m10 * m22 )
+                this[2] = det * ( m10 * m21 - m20 * m11 )
+                this[3] = det * y
+                this[4] = det * ( m00 * m22 - m20 * m02 )
+                this[5] = det * ( m01 * m20 - m00 * m21 )
+                this[6] = det * z
+                this[7] = det * ( m02 * m10 - m00 * m12 )
+                this[8] = det * ( m00 * m11 - m01 * m10 )
+                return this
+            `
             return fnDeclaration( "inverse", [], body, { type: TYPE } )
         }
         function inverse4() {
-            let body = [
-                defcomps( "m" ),
-                `const det = 1 / (${id( 0, 0, "m" )} * ${id( 1, 1, "m" )} - ${id( 1, 0, "m" )} * ${id( 0, 1, "m" )})`,
-                `this[0] = ${id( 1, 1, "m" )} * det`,
-                `this[1] = -${id( 0, 1, "m" )} * det`,
-                `this[2] = -${id( 1, 0, "m" )} * det`,
-                `this[3] = ${id( 0, 0, "m" )} * det`,
-            ]
+            let body = `
+                ${defcomps( "m" )}             
+                const tmp00 = m22 * m33
+                const tmp01 = m32 * m23
+                const tmp02 = m12 * m33
+                const tmp03 = m32 * m13
+                const tmp04 = m12 * m23
+                const tmp05 = m22 * m13
+                const tmp06 = m02 * m33
+                const tmp07 = m32 * m03
+                const tmp08 = m02 * m23
+                const tmp09 = m22 * m03
+                const tmp10 = m02 * m13
+                const tmp11 = m12 * m03
+                const tmp12 = m20 * m31
+                const tmp13 = m30 * m21
+                const tmp14 = m10 * m31
+                const tmp15 = m30 * m11
+                const tmp16 = m10 * m21
+                const tmp17 = m20 * m11
+                const tmp18 = m00 * m31
+                const tmp19 = m30 * m01
+                const tmp20 = m00 * m21
+                const tmp21 = m20 * m01
+                const tmp22 = m00 * m11
+                const tmp23 = m10 * m01
+
+                const t00 = ( tmp00 * m11 + tmp03 * m21 + tmp04 * m31 )
+                    - ( tmp01 * m11 + tmp02 * m21 + tmp05 * m31 )
+                const t01 = ( tmp01 * m01 + tmp06 * m21 + tmp09 * m31 )
+                    - ( tmp00 * m01 + tmp07 * m21 + tmp08 * m31 )
+                const t02 = ( tmp02 * m01 + tmp07 * m11 + tmp10 * m31 )
+                    - ( tmp03 * m01 + tmp06 * m11 + tmp11 * m31 )
+                const t03 = ( tmp05 * m01 + tmp08 * m11 + tmp11 * m21 )
+                    - ( tmp04 * m01 + tmp09 * m11 + tmp10 * m21 )
+                const t10 = ( tmp01 * m10 + tmp02 * m20 + tmp05 * m30 )
+                    - ( tmp00 * m10 + tmp03 * m20 + tmp04 * m30 )
+                const t11 = ( tmp00 * m00 + tmp07 * m20 + tmp08 * m30 )
+                    - ( tmp01 * m00 + tmp06 * m20 + tmp09 * m30 )
+                const t12 = ( tmp03 * m00 + tmp06 * m10 + tmp11 * m30 )
+                    - ( tmp02 * m00 + tmp07 * m10 + tmp10 * m30 )
+                const t13 = ( tmp04 * m00 + tmp09 * m10 + tmp10 * m20 )
+                    - ( tmp05 * m00 + tmp08 * m10 + tmp11 * m20 )
+                const t20 = ( tmp12 * m13 + tmp15 * m23 + tmp16 * m33 )
+                    - ( tmp13 * m13 + tmp14 * m23 + tmp17 * m33 )
+                const t21 = ( tmp13 * m03 + tmp18 * m23 + tmp21 * m33 )
+                    - ( tmp12 * m03 + tmp19 * m23 + tmp20 * m33 )
+                const t22 = ( tmp14 * m03 + tmp19 * m13 + tmp22 * m33 )
+                    - ( tmp15 * m03 + tmp18 * m13 + tmp23 * m33 )
+                const t23 = ( tmp17 * m03 + tmp20 * m13 + tmp23 * m23 )
+                    - ( tmp16 * m03 + tmp21 * m13 + tmp22 * m23 )
+                const t30 = ( tmp14 * m22 + tmp17 * m32 + tmp13 * m12 )
+                    - ( tmp16 * m32 + tmp12 * m12 + tmp15 * m22 )
+                const t31 = ( tmp20 * m32 + tmp12 * m02 + tmp19 * m22 )
+                    - ( tmp18 * m22 + tmp21 * m32 + tmp13 * m02 )
+                const t32 = ( tmp18 * m12 + tmp23 * m32 + tmp15 * m02 )
+                    - ( tmp22 * m32 + tmp14 * m02 + tmp19 * m12 )
+                const t33 = ( tmp22 * m22 + tmp16 * m02 + tmp21 * m12 )
+                    - ( tmp20 * m12 + tmp23 * m22 + tmp17 * m02 )
+
+                const d = 1.0 / ( m00 * t00 + m10 * t01 + m20 * t02 + m30 * t03 )
+
+                this[0] = t00 * d
+                this[1] = t01 * d
+                this[2] = t02 * d
+                this[3] = t03 * d
+                this[4] = t10 * d
+                this[5] = t11 * d
+                this[6] = t12 * d
+                this[7] = t13 * d
+                this[8] = t20 * d
+                this[9] = t21 * d
+                this[10] = t22 * d
+                this[11] = t23 * d
+                this[12] = t30 * d
+                this[13] = t31 * d
+                this[14] = t32 * d
+                this[15] = t33 * d
+
+                return this
+            `
             return fnDeclaration( "inverse", [], body, { type: TYPE } )
         }
 
