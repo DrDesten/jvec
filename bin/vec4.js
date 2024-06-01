@@ -1929,6 +1929,42 @@ export class vec4 {
         return target
     }
 
+    /** @returns {vec4} */
+    isinf() {
+        this[0] = +( this[0] === -Infinity || this[0] === Infinity )
+        this[1] = +( this[1] === -Infinity || this[1] === Infinity )
+        this[2] = +( this[2] === -Infinity || this[2] === Infinity )
+        this[3] = +( this[3] === -Infinity || this[3] === Infinity )
+        return this
+    }
+
+    /** @param {vec4Like} v @param {vec4} [target=new vec4] @returns {vec4} */
+    static isinf( v, target = new vec4 ) {
+        target[0] = +( v[0] === -Infinity || v[0] === Infinity )
+        target[1] = +( v[1] === -Infinity || v[1] === Infinity )
+        target[2] = +( v[2] === -Infinity || v[2] === Infinity )
+        target[3] = +( v[3] === -Infinity || v[3] === Infinity )
+        return target
+    }
+
+    /** @returns {vec4} */
+    isnan() {
+        this[0] = +( this[0] !== this[0] )
+        this[1] = +( this[1] !== this[1] )
+        this[2] = +( this[2] !== this[2] )
+        this[3] = +( this[3] !== this[3] )
+        return this
+    }
+
+    /** @param {vec4Like} v @param {vec4} [target=new vec4] @returns {vec4} */
+    static isnan( v, target = new vec4 ) {
+        target[0] = +( v[0] !== v[0] )
+        target[1] = +( v[1] !== v[1] )
+        target[2] = +( v[2] !== v[2] )
+        target[3] = +( v[3] !== v[3] )
+        return target
+    }
+
     // ---------------------------
     //      ARITHMETIC
     // ---------------------------

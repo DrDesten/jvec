@@ -832,6 +832,38 @@ export class vec3 {
         return target
     }
 
+    /** @returns {vec3} */
+    isinf() {
+        this[0] = +( this[0] === -Infinity || this[0] === Infinity )
+        this[1] = +( this[1] === -Infinity || this[1] === Infinity )
+        this[2] = +( this[2] === -Infinity || this[2] === Infinity )
+        return this
+    }
+
+    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
+    static isinf( v, target = new vec3 ) {
+        target[0] = +( v[0] === -Infinity || v[0] === Infinity )
+        target[1] = +( v[1] === -Infinity || v[1] === Infinity )
+        target[2] = +( v[2] === -Infinity || v[2] === Infinity )
+        return target
+    }
+
+    /** @returns {vec3} */
+    isnan() {
+        this[0] = +( this[0] !== this[0] )
+        this[1] = +( this[1] !== this[1] )
+        this[2] = +( this[2] !== this[2] )
+        return this
+    }
+
+    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
+    static isnan( v, target = new vec3 ) {
+        target[0] = +( v[0] !== v[0] )
+        target[1] = +( v[1] !== v[1] )
+        target[2] = +( v[2] !== v[2] )
+        return target
+    }
+
     // ---------------------------
     //      ARITHMETIC
     // ---------------------------

@@ -399,6 +399,34 @@ export class vec2 {
         return target
     }
 
+    /** @returns {vec2} */
+    isinf() {
+        this[0] = +( this[0] === -Infinity || this[0] === Infinity )
+        this[1] = +( this[1] === -Infinity || this[1] === Infinity )
+        return this
+    }
+
+    /** @param {vec2Like} v @param {vec2} [target=new vec2] @returns {vec2} */
+    static isinf( v, target = new vec2 ) {
+        target[0] = +( v[0] === -Infinity || v[0] === Infinity )
+        target[1] = +( v[1] === -Infinity || v[1] === Infinity )
+        return target
+    }
+
+    /** @returns {vec2} */
+    isnan() {
+        this[0] = +( this[0] !== this[0] )
+        this[1] = +( this[1] !== this[1] )
+        return this
+    }
+
+    /** @param {vec2Like} v @param {vec2} [target=new vec2] @returns {vec2} */
+    static isnan( v, target = new vec2 ) {
+        target[0] = +( v[0] !== v[0] )
+        target[1] = +( v[1] !== v[1] )
+        return target
+    }
+
     // ---------------------------
     //      ARITHMETIC
     // ---------------------------

@@ -26,3 +26,11 @@ import { mat2, mat3, mat4 } from "../bin/mat.js"
     }
 
 }
+
+{// mat4
+    console.assert( mat4.eq( new mat4, new mat4 ) )
+    console.assert( mat4.eq( mat4.translate( [1, -2, 3] ), mat4.translate( [-1, 2, -3] ).inverse() ) )
+
+    console.log( mat4.translate( [1, 2, 3] ).toArray() )
+    console.log( mat4.translate( [1, 2, 3] ).inverse().toArray() )
+}
