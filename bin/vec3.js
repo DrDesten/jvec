@@ -833,43 +833,41 @@ export class vec3 {
         return typeof x === "number" ? this.sadd( x ) : this.vadd( x )
     }
 
+    /** @param {vec3Like} v @param {number|vec3Like} x @param {vec3} [target=new vec3] @returns {vec3} */
+    static add( v, x, target = new vec3 ) {
+        return typeof x === "number" ? vec3.sadd( v, x, target ) : vec3.vadd( v, x, target )
+    }
+
     /** @param {number} s @returns {vec3} */
     sadd( s ) {
-        this[0] += s
-        this[1] += s
-        this[2] += s
+        this[0] = this[0] + s
+        this[1] = this[1] + s
+        this[2] = this[2] + s
         return this
+    }
+
+    /** @param {vec3Like} v @param {number} s @param {vec3} [target=new vec3] @returns {vec3} */
+    static sadd( v, s, target = new vec3 ) {
+        target[0] = v[0] + s
+        target[1] = v[1] + s
+        target[2] = v[2] + s
+        return target
     }
 
     /** @param {vec3Like} v @returns {vec3} */
     vadd( v ) {
-        this[0] += v[0]
-        this[1] += v[1]
-        this[2] += v[2]
+        this[0] = this[0] + v[0]
+        this[1] = this[1] + v[1]
+        this[2] = this[2] + v[2]
         return this
     }
 
-    /** @param {vec3Like} v @param {number|vec3Like} x @returns {vec3} */
-    static add( v, x ) {
-        return typeof x === "number" ? vec3.sadd( v, x ) : vec3.vadd( v, x )
-    }
-
-    /** @param {vec3Like} v @param {number} s @returns {vec3} */
-    static sadd( v, s ) {
-        const result = new vec3
-        result[0] = v[0] + s
-        result[1] = v[1] + s
-        result[2] = v[2] + s
-        return result
-    }
-
-    /** @param {vec3Like} v1 @param {vec3Like} v2 @returns {vec3} */
-    static vadd( v1, v2 ) {
-        const result = new vec3
-        result[0] = v1[0] + v2[0]
-        result[1] = v1[1] + v2[1]
-        result[2] = v1[2] + v2[2]
-        return result
+    /** @param {vec3Like} v1 @param {vec3Like} v2 @param {vec3} [target=new vec3] @returns {vec3} */
+    static vadd( v1, v2, target = new vec3 ) {
+        target[0] = v1[0] + v2[0]
+        target[1] = v1[1] + v2[1]
+        target[2] = v1[2] + v2[2]
+        return target
     }
 
     /** @param {number|vec3Like} x @returns {vec3} */
@@ -877,43 +875,41 @@ export class vec3 {
         return typeof x === "number" ? this.ssub( x ) : this.vsub( x )
     }
 
+    /** @param {vec3Like} v @param {number|vec3Like} x @param {vec3} [target=new vec3] @returns {vec3} */
+    static sub( v, x, target = new vec3 ) {
+        return typeof x === "number" ? vec3.ssub( v, x, target ) : vec3.vsub( v, x, target )
+    }
+
     /** @param {number} s @returns {vec3} */
     ssub( s ) {
-        this[0] -= s
-        this[1] -= s
-        this[2] -= s
+        this[0] = this[0] - s
+        this[1] = this[1] - s
+        this[2] = this[2] - s
         return this
+    }
+
+    /** @param {vec3Like} v @param {number} s @param {vec3} [target=new vec3] @returns {vec3} */
+    static ssub( v, s, target = new vec3 ) {
+        target[0] = v[0] - s
+        target[1] = v[1] - s
+        target[2] = v[2] - s
+        return target
     }
 
     /** @param {vec3Like} v @returns {vec3} */
     vsub( v ) {
-        this[0] -= v[0]
-        this[1] -= v[1]
-        this[2] -= v[2]
+        this[0] = this[0] - v[0]
+        this[1] = this[1] - v[1]
+        this[2] = this[2] - v[2]
         return this
     }
 
-    /** @param {vec3Like} v @param {number|vec3Like} x @returns {vec3} */
-    static sub( v, x ) {
-        return typeof x === "number" ? vec3.ssub( v, x ) : vec3.vsub( v, x )
-    }
-
-    /** @param {vec3Like} v @param {number} s @returns {vec3} */
-    static ssub( v, s ) {
-        const result = new vec3
-        result[0] = v[0] - s
-        result[1] = v[1] - s
-        result[2] = v[2] - s
-        return result
-    }
-
-    /** @param {vec3Like} v1 @param {vec3Like} v2 @returns {vec3} */
-    static vsub( v1, v2 ) {
-        const result = new vec3
-        result[0] = v1[0] - v2[0]
-        result[1] = v1[1] - v2[1]
-        result[2] = v1[2] - v2[2]
-        return result
+    /** @param {vec3Like} v1 @param {vec3Like} v2 @param {vec3} [target=new vec3] @returns {vec3} */
+    static vsub( v1, v2, target = new vec3 ) {
+        target[0] = v1[0] - v2[0]
+        target[1] = v1[1] - v2[1]
+        target[2] = v1[2] - v2[2]
+        return target
     }
 
     /** @param {number|vec3Like} x @returns {vec3} */
@@ -921,43 +917,41 @@ export class vec3 {
         return typeof x === "number" ? this.smul( x ) : this.vmul( x )
     }
 
+    /** @param {vec3Like} v @param {number|vec3Like} x @param {vec3} [target=new vec3] @returns {vec3} */
+    static mul( v, x, target = new vec3 ) {
+        return typeof x === "number" ? vec3.smul( v, x, target ) : vec3.vmul( v, x, target )
+    }
+
     /** @param {number} s @returns {vec3} */
     smul( s ) {
-        this[0] *= s
-        this[1] *= s
-        this[2] *= s
+        this[0] = this[0] * s
+        this[1] = this[1] * s
+        this[2] = this[2] * s
         return this
+    }
+
+    /** @param {vec3Like} v @param {number} s @param {vec3} [target=new vec3] @returns {vec3} */
+    static smul( v, s, target = new vec3 ) {
+        target[0] = v[0] * s
+        target[1] = v[1] * s
+        target[2] = v[2] * s
+        return target
     }
 
     /** @param {vec3Like} v @returns {vec3} */
     vmul( v ) {
-        this[0] *= v[0]
-        this[1] *= v[1]
-        this[2] *= v[2]
+        this[0] = this[0] * v[0]
+        this[1] = this[1] * v[1]
+        this[2] = this[2] * v[2]
         return this
     }
 
-    /** @param {vec3Like} v @param {number|vec3Like} x @returns {vec3} */
-    static mul( v, x ) {
-        return typeof x === "number" ? vec3.smul( v, x ) : vec3.vmul( v, x )
-    }
-
-    /** @param {vec3Like} v @param {number} s @returns {vec3} */
-    static smul( v, s ) {
-        const result = new vec3
-        result[0] = v[0] * s
-        result[1] = v[1] * s
-        result[2] = v[2] * s
-        return result
-    }
-
-    /** @param {vec3Like} v1 @param {vec3Like} v2 @returns {vec3} */
-    static vmul( v1, v2 ) {
-        const result = new vec3
-        result[0] = v1[0] * v2[0]
-        result[1] = v1[1] * v2[1]
-        result[2] = v1[2] * v2[2]
-        return result
+    /** @param {vec3Like} v1 @param {vec3Like} v2 @param {vec3} [target=new vec3] @returns {vec3} */
+    static vmul( v1, v2, target = new vec3 ) {
+        target[0] = v1[0] * v2[0]
+        target[1] = v1[1] * v2[1]
+        target[2] = v1[2] * v2[2]
+        return target
     }
 
     /** @param {number|vec3Like} x @returns {vec3} */
@@ -965,43 +959,41 @@ export class vec3 {
         return typeof x === "number" ? this.sdiv( x ) : this.vdiv( x )
     }
 
+    /** @param {vec3Like} v @param {number|vec3Like} x @param {vec3} [target=new vec3] @returns {vec3} */
+    static div( v, x, target = new vec3 ) {
+        return typeof x === "number" ? vec3.sdiv( v, x, target ) : vec3.vdiv( v, x, target )
+    }
+
     /** @param {number} s @returns {vec3} */
     sdiv( s ) {
-        this[0] /= s
-        this[1] /= s
-        this[2] /= s
+        this[0] = this[0] / s
+        this[1] = this[1] / s
+        this[2] = this[2] / s
         return this
+    }
+
+    /** @param {vec3Like} v @param {number} s @param {vec3} [target=new vec3] @returns {vec3} */
+    static sdiv( v, s, target = new vec3 ) {
+        target[0] = v[0] / s
+        target[1] = v[1] / s
+        target[2] = v[2] / s
+        return target
     }
 
     /** @param {vec3Like} v @returns {vec3} */
     vdiv( v ) {
-        this[0] /= v[0]
-        this[1] /= v[1]
-        this[2] /= v[2]
+        this[0] = this[0] / v[0]
+        this[1] = this[1] / v[1]
+        this[2] = this[2] / v[2]
         return this
     }
 
-    /** @param {vec3Like} v @param {number|vec3Like} x @returns {vec3} */
-    static div( v, x ) {
-        return typeof x === "number" ? vec3.sdiv( v, x ) : vec3.vdiv( v, x )
-    }
-
-    /** @param {vec3Like} v @param {number} s @returns {vec3} */
-    static sdiv( v, s ) {
-        const result = new vec3
-        result[0] = v[0] / s
-        result[1] = v[1] / s
-        result[2] = v[2] / s
-        return result
-    }
-
-    /** @param {vec3Like} v1 @param {vec3Like} v2 @returns {vec3} */
-    static vdiv( v1, v2 ) {
-        const result = new vec3
-        result[0] = v1[0] / v2[0]
-        result[1] = v1[1] / v2[1]
-        result[2] = v1[2] / v2[2]
-        return result
+    /** @param {vec3Like} v1 @param {vec3Like} v2 @param {vec3} [target=new vec3] @returns {vec3} */
+    static vdiv( v1, v2, target = new vec3 ) {
+        target[0] = v1[0] / v2[0]
+        target[1] = v1[1] / v2[1]
+        target[2] = v1[2] / v2[2]
+        return target
     }
 
     /** @param {number|vec3Like} x @returns {vec3} */
@@ -1009,43 +1001,41 @@ export class vec3 {
         return typeof x === "number" ? this.srem( x ) : this.vrem( x )
     }
 
+    /** @param {vec3Like} v @param {number|vec3Like} x @param {vec3} [target=new vec3] @returns {vec3} */
+    static rem( v, x, target = new vec3 ) {
+        return typeof x === "number" ? vec3.srem( v, x, target ) : vec3.vrem( v, x, target )
+    }
+
     /** @param {number} s @returns {vec3} */
     srem( s ) {
-        this[0] %= s
-        this[1] %= s
-        this[2] %= s
+        this[0] = this[0] % s
+        this[1] = this[1] % s
+        this[2] = this[2] % s
         return this
+    }
+
+    /** @param {vec3Like} v @param {number} s @param {vec3} [target=new vec3] @returns {vec3} */
+    static srem( v, s, target = new vec3 ) {
+        target[0] = v[0] % s
+        target[1] = v[1] % s
+        target[2] = v[2] % s
+        return target
     }
 
     /** @param {vec3Like} v @returns {vec3} */
     vrem( v ) {
-        this[0] %= v[0]
-        this[1] %= v[1]
-        this[2] %= v[2]
+        this[0] = this[0] % v[0]
+        this[1] = this[1] % v[1]
+        this[2] = this[2] % v[2]
         return this
     }
 
-    /** @param {vec3Like} v @param {number|vec3Like} x @returns {vec3} */
-    static rem( v, x ) {
-        return typeof x === "number" ? vec3.srem( v, x ) : vec3.vrem( v, x )
-    }
-
-    /** @param {vec3Like} v @param {number} s @returns {vec3} */
-    static srem( v, s ) {
-        const result = new vec3
-        result[0] = v[0] % s
-        result[1] = v[1] % s
-        result[2] = v[2] % s
-        return result
-    }
-
-    /** @param {vec3Like} v1 @param {vec3Like} v2 @returns {vec3} */
-    static vrem( v1, v2 ) {
-        const result = new vec3
-        result[0] = v1[0] % v2[0]
-        result[1] = v1[1] % v2[1]
-        result[2] = v1[2] % v2[2]
-        return result
+    /** @param {vec3Like} v1 @param {vec3Like} v2 @param {vec3} [target=new vec3] @returns {vec3} */
+    static vrem( v1, v2, target = new vec3 ) {
+        target[0] = v1[0] % v2[0]
+        target[1] = v1[1] % v2[1]
+        target[2] = v1[2] % v2[2]
+        return target
     }
 
     /** @param {number|vec3Like} x @returns {vec3} */
@@ -1053,43 +1043,41 @@ export class vec3 {
         return typeof x === "number" ? this.spow( x ) : this.vpow( x )
     }
 
+    /** @param {vec3Like} v @param {number|vec3Like} x @param {vec3} [target=new vec3] @returns {vec3} */
+    static pow( v, x, target = new vec3 ) {
+        return typeof x === "number" ? vec3.spow( v, x, target ) : vec3.vpow( v, x, target )
+    }
+
     /** @param {number} s @returns {vec3} */
     spow( s ) {
-        this[0] **= s
-        this[1] **= s
-        this[2] **= s
+        this[0] = this[0] ** s
+        this[1] = this[1] ** s
+        this[2] = this[2] ** s
         return this
+    }
+
+    /** @param {vec3Like} v @param {number} s @param {vec3} [target=new vec3] @returns {vec3} */
+    static spow( v, s, target = new vec3 ) {
+        target[0] = v[0] ** s
+        target[1] = v[1] ** s
+        target[2] = v[2] ** s
+        return target
     }
 
     /** @param {vec3Like} v @returns {vec3} */
     vpow( v ) {
-        this[0] **= v[0]
-        this[1] **= v[1]
-        this[2] **= v[2]
+        this[0] = this[0] ** v[0]
+        this[1] = this[1] ** v[1]
+        this[2] = this[2] ** v[2]
         return this
     }
 
-    /** @param {vec3Like} v @param {number|vec3Like} x @returns {vec3} */
-    static pow( v, x ) {
-        return typeof x === "number" ? vec3.spow( v, x ) : vec3.vpow( v, x )
-    }
-
-    /** @param {vec3Like} v @param {number} s @returns {vec3} */
-    static spow( v, s ) {
-        const result = new vec3
-        result[0] = v[0] ** s
-        result[1] = v[1] ** s
-        result[2] = v[2] ** s
-        return result
-    }
-
-    /** @param {vec3Like} v1 @param {vec3Like} v2 @returns {vec3} */
-    static vpow( v1, v2 ) {
-        const result = new vec3
-        result[0] = v1[0] ** v2[0]
-        result[1] = v1[1] ** v2[1]
-        result[2] = v1[2] ** v2[2]
-        return result
+    /** @param {vec3Like} v1 @param {vec3Like} v2 @param {vec3} [target=new vec3] @returns {vec3} */
+    static vpow( v1, v2, target = new vec3 ) {
+        target[0] = v1[0] ** v2[0]
+        target[1] = v1[1] ** v2[1]
+        target[2] = v1[2] ** v2[2]
+        return target
     }
 
     /** @param {(value: number, index: number) => number} fn @returns {vec3} */

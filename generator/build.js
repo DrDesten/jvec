@@ -59,6 +59,7 @@ function generateVector( dimension ) {
     const Param_v1 = new Fn.Param( "v1", TYPELIKE )
     const Param_v2 = new Fn.Param( "v2", TYPELIKE )
     const Params_v1v2 = [Param_v1, Param_v2]
+    const Param_target = new Fn.Param( "target", TYPE, { expr: `new ${TYPE}` } )
 
     function bodyThis( statements ) {
         return [...statements, "return this"]
@@ -304,37 +305,19 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
             ["pow", "**"],
         ]
 
-        /** @param {string} operation  */
-        function general( operation, name ) {
-            const body = `return ${IFNUM( `this.s${name}( x )`, `this.v${name}( x )` )}`
-            return new Fn( name, Param_x, body, { type: TYPE } )
+        function general( name ) {
+            return [
+                new Fn( name, [Param_x], `return ${IFNUM( `this.s${name}( x )`, `this.v${name}( x )` )}`, { type: TYPE } ),
+                new Fn( name, [Param_v, Param_x, Param_target], `return ${IFNUM( `${TYPE}.s${name}( v, x, target )`, `${TYPE}.v${name}( v, x, target )` )}`, { prefix: "static", type: TYPE } ),
+            ]
         }
-        /** @param {string} operation  */
-        function scalar( operation, name ) {
-            const body = bodyThis( DRANGE.map( i => `this[${i}] ${operation}= s` ) )
-            return new Fn( `s${name}`, Param_s, body, { type: TYPE } )
+        function scalar( name, operation ) {
+            const body = DRANGE.map( i => `this[${i}] = this[${i}] ${operation} s` )
+            return Fn.autoStatic( `s${name}`, [Param_s, [Param_v, Param_s]], body, { type: TYPE }, ["this", "target"], [/\bthis\b/g, "v"] )
         }
-        /** @param {string} operation  */
-        function vector( operation, name ) {
-            const body = bodyThis( DRANGE.map( i => `this[${i}] ${operation}= v[${i}]` ) )
-            return new Fn( `v${name}`, Param_v, body, { type: TYPE } )
-        }
-
-
-        /** @param {string} operation  */
-        function staticGeneral( operation, name ) {
-            const body = `return ${IFNUM( `${TYPE}.s${name}( v, x )`, `${TYPE}.v${name}( v, x )` )}`
-            return new Fn( name, [Param_v, Param_x], body, { prefix: "static", type: TYPE } )
-        }
-        /** @param {string} operation  */
-        function staticScalar( operation, name ) {
-            const body = bodyResult( DRANGE.map( i => `result[${i}] = v[${i}] ${operation} s` ) )
-            return new Fn( `s${name}`, [Param_v, Param_s], body, { prefix: "static", type: TYPE } )
-        }
-        /** @param {string} operation  */
-        function staticVector( operation, name ) {
-            const body = bodyResult( DRANGE.map( i => `result[${i}] = v1[${i}] ${operation} v2[${i}]` ) )
-            return new Fn( `v${name}`, Params_v1v2, body, { prefix: "static", type: TYPE } )
+        function vector( name, operation ) {
+            const body = DRANGE.map( i => `this[${i}] = this[${i}] ${operation} v[${i}]` )
+            return Fn.autoStatic( `v${name}`, [Param_v, Params_v1v2], body, { type: TYPE }, ["this", "target"], [/\bthis\b/g, "v1"], [/\bv\b/g, "v2"] )
         }
 
         function apply() {
@@ -360,13 +343,11 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
         const mathCandidates = ["abs", "round", "floor", "ceil"]
         const staticMathCandidates = mathFunctions.filter( name => !/fround|clz32/.test( name ) ) // filter misc
 
-        const functions = []
-        functions.push(
-            ...operations.flatMap( ( [name, op] ) => [
-                general( op, name ), scalar( op, name ), vector( op, name ),
-                staticGeneral( op, name ), staticScalar( op, name ), staticVector( op, name ),
-            ] )
-        )
+        const functions = operations.map( ( [name, op] ) => [
+            general( name, op ),
+            scalar( name, op ),
+            vector( name, op ),
+        ] ).flat( 2 )
         functions.push(
             apply(), staticApply(),
             ...mathCandidates.map( name => builtinMath( name ) ),
