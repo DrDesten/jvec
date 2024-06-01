@@ -186,6 +186,20 @@ ${DMAP( i => `/** @type {number} ${iMapXYZW[i]}-coordinate of the vector */\nthi
         return getset.flat().join( "\n" )
     }
 
+    function set() {
+        const params = [
+            new Fn.Param( "x", TYPELIKE_OR_NUM ),
+            ...DRANGE.slice( 1 ).map( i => new Fn.Param( iMapXYZW[i], "number", { optional: true } ) )
+        ]
+        const body = [
+            `typeof x === "number"`,
+            `    ? ( ${DMAP( i => `this[${i}] = ${iMapXYZW[i]}` )} )`,
+            `    : ( ${DMAP( i => `this[${i}] = x[${i}]` )} )`,
+            `return this`
+        ]
+        return new Fn( "set", params, body, { type: TYPE, indentFn: setIndent } )
+    }
+
     function clone() {
         return new Fn( "clone", [], `return new ${TYPE}( this )`, { type: TYPE } )
     }
@@ -201,8 +215,8 @@ ${DMAP( i => `                yield this[${i}]`, "\n" )}
         const arrayExpr = `[${DMAP( i => `this[${i}]` )}]`
         const conversions = [
             [
-                new Fn( "toString", [], `return  \`(${DMAP( i => `\${this[${i}]}` )})\``, { type: "string", compact: true } ),
-                new Fn( "toArray", [], `return  ${arrayExpr}`, { type: "number[]", compact: true } ),
+                new Fn( "toString", [], `return \`(${DMAP( i => `\${this[${i}]}` )})\``, { type: "string", compact: true } ),
+                new Fn( "toArray", [], `return ${arrayExpr}`, { type: "number[]", compact: true } ),
                 new Fn( "toInt8Array", [], `return new Int8Array( ${arrayExpr} )`, { type: "Int8Array", compact: true } ),
                 new Fn( "toUint8Array", [], `return new Uint8Array( ${arrayExpr} )`, { type: "Uint8Array", compact: true } ),
                 new Fn( "toUint8ClampedArray", [], `return new Uint8ClampedArray( ${arrayExpr} )`, { type: "Uint8ClampedArray", compact: true } ),
@@ -478,6 +492,7 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
         constructors(),
         subtitle( "FIELDS" ),
         fields(),
+        set(),
         clone(),
         iterator(),
         subtitle( "CONVERSION" ),

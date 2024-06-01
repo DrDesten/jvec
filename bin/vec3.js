@@ -615,6 +615,14 @@ export class vec3 {
     /** @returns {vec4} */
     get bbbb() { return new vec4( this[2], this[2], this[2], this[2] ) }
 
+    /** @param {number|vec3Like} x @param {number} [y] @param {number} [z] @returns {vec3} */
+    set( x, y, z ) {
+        typeof x === "number"
+            ? ( this[0] = x, this[1] = y, this[2] = z )
+            : ( this[0] = x[0], this[1] = x[1], this[2] = x[2] )
+        return this
+    }
+
     /** @returns {vec3} */
     clone() {
         return new vec3( this )
@@ -631,9 +639,9 @@ export class vec3 {
     // ---------------------------
 
     /** @returns {string} */
-    toString() { return  `(${this[0]}, ${this[1]}, ${this[2]})` }
+    toString() { return `(${this[0]}, ${this[1]}, ${this[2]})` }
     /** @returns {number[]} */
-    toArray() { return  [this[0], this[1], this[2]] }
+    toArray() { return [this[0], this[1], this[2]] }
     /** @returns {Int8Array} */
     toInt8Array() { return new Int8Array( [this[0], this[1], this[2]] ) }
     /** @returns {Uint8Array} */

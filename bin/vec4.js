@@ -1695,6 +1695,14 @@ export class vec4 {
     /** @returns {vec4} */
     get aaaa() { return new vec4( this[3], this[3], this[3], this[3] ) }
 
+    /** @param {number|vec4Like} x @param {number} [y] @param {number} [z] @param {number} [w] @returns {vec4} */
+    set( x, y, z, w ) {
+        typeof x === "number"
+            ? ( this[0] = x, this[1] = y, this[2] = z, this[3] = w )
+            : ( this[0] = x[0], this[1] = x[1], this[2] = x[2], this[3] = x[3] )
+        return this
+    }
+
     /** @returns {vec4} */
     clone() {
         return new vec4( this )
@@ -1712,9 +1720,9 @@ export class vec4 {
     // ---------------------------
 
     /** @returns {string} */
-    toString() { return  `(${this[0]}, ${this[1]}, ${this[2]}, ${this[3]})` }
+    toString() { return `(${this[0]}, ${this[1]}, ${this[2]}, ${this[3]})` }
     /** @returns {number[]} */
-    toArray() { return  [this[0], this[1], this[2], this[3]] }
+    toArray() { return [this[0], this[1], this[2], this[3]] }
     /** @returns {Int8Array} */
     toInt8Array() { return new Int8Array( [this[0], this[1], this[2], this[3]] ) }
     /** @returns {Uint8Array} */

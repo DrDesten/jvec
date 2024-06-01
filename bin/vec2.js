@@ -212,6 +212,14 @@ export class vec2 {
     /** @returns {vec4} */
     get gggg() { return new vec4( this[1], this[1], this[1], this[1] ) }
 
+    /** @param {number|vec2Like} x @param {number} [y] @returns {vec2} */
+    set( x, y ) {
+        typeof x === "number"
+            ? ( this[0] = x, this[1] = y )
+            : ( this[0] = x[0], this[1] = x[1] )
+        return this
+    }
+
     /** @returns {vec2} */
     clone() {
         return new vec2( this )
@@ -227,9 +235,9 @@ export class vec2 {
     // ---------------------------
 
     /** @returns {string} */
-    toString() { return  `(${this[0]}, ${this[1]})` }
+    toString() { return `(${this[0]}, ${this[1]})` }
     /** @returns {number[]} */
-    toArray() { return  [this[0], this[1]] }
+    toArray() { return [this[0], this[1]] }
     /** @returns {Int8Array} */
     toInt8Array() { return new Int8Array( [this[0], this[1]] ) }
     /** @returns {Uint8Array} */
