@@ -484,7 +484,7 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
         ].join( "\n" ),
         title( TYPE ),
         JSDoc( [
-            ["typedef", `ArrayLike<number>`, `${TYPE}Like`],
+            ["typedef", `${TYPE}|ArrayLike<number>`, `${TYPE}Like`],
         ] ),
         `export class ${TYPE} {`,
         `    static get NaN() { return new ${TYPE}( ${DMAP( () => "NaN" )} ) }`,

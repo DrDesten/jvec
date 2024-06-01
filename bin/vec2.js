@@ -8,7 +8,7 @@ import { vec4 } from "./vec4.js"
 //      vec2
 // ###############################################
 
-/** @typedef {ArrayLike<number>} vec2Like */
+/** @typedef {vec2|ArrayLike<number>} vec2Like */
 
 export class vec2 {
 
