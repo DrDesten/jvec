@@ -176,11 +176,9 @@ export class mat3 {
         const m02 = this[6]
         const m12 = this[7]
         const m22 = this[8]
-        const det = 1 / (m00 * m11 - m10 * m01)
-        this[0] = m11 * det
-        this[1] = -m01 * det
-        this[2] = -m10 * det
-        this[3] = m00 * det
+        const x = m11 * m22 - m12 * m21
+        const y = m21 * m02 - m01 * m22
+        const z = m01 * m22 - m12 * m21
     }
 
 }

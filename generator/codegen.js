@@ -88,11 +88,11 @@ export class Fn {
     static Param = FnParam
     /** @type {FnOpts} */
     static DefaultOpts = { prefix: '', type: '', description: '', compact: false, indentFn: forceIndent, jsdocOpts: {} }
-    /** @param {string} name @param {FnParam[]} params @param {string|string[]} body @param {FnOpts} [opts] */
+    /** @param {string} name @param {FnParam|FnParam[]} params @param {string|string[]} body @param {FnOpts} [opts] */
     constructor( name, params, body, opts = {} ) {
         this.name = name
-        this.params = params
-        this.body = typeof body === "string" ? [body] : body
+        this.params = params instanceof Array ? params : [params]
+        this.body = body instanceof Array ? body : [body]
 
         this.opts = { ...Fn.DefaultOpts, ...opts }
     }
@@ -115,10 +115,10 @@ export class Fn {
     string() {
         const { name, params, body, opts: { prefix, compact, indentFn } } = this
         const fnParams = params.map( p => p.string() ).join( ", " )
-        const fnBody = formatBody( body, compact )
+        const fnBody = body.map( stmt => stmt.split( "\n" ).map( l => l.trimEnd() ).join( "\n" ) ).join( compact ? "; " : "\n" )
         const fnHead = `${prefix ? `${prefix} ` : ""}${name}(${fnParams ? ` ${fnParams} ` : ""})`
         const fnDecl = compact ? `${fnHead} { ${fnBody} }` : `${fnHead} {\n${indentFn( fnBody, 4 )}\n}`
-        return setIndent( fnDecl, 4 )
+        return fnDecl
     }
     /** @returns {string} */
     jsdoc() {
@@ -126,11 +126,17 @@ export class Fn {
         return JSDoc( [].concat(
             description ? [description] : [],
             params.map( p => p.jsdoc() ),
-            type ? ["returns", type] : [],
+            type ? [["returns", type]] : [],
         ), jsdocOpts )
     }
     /** @returns {string} */
     decl() {
-        return this.jsdoc() + "\n" + this.string()
+        const fnDecl = this.jsdoc() + "\n" + this.string()
+        return setIndent( fnDecl, 4 )
+    }
+
+    /** @returns {string} */
+    toString() {
+        return this.decl()
     }
 }
