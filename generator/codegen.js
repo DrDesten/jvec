@@ -153,6 +153,8 @@ export class Fn {
 
         const fnNonstatic = new Fn( name, paramsNonstatic, bodyNonstatic, opts )
         const fnStatic = new Fn( name, paramsStatic, bodyStatic, { ...opts, prefix: "static" } )
+
+        fnNonstatic.replace( /([a-zA-Z_$][a-zA-Z_$0-9]*(?:\[\d+\]))\s*=\s*\1\s*([+\-*/%]|\*\*)(?=\s*[a-zA-Z_$][a-zA-Z_$0-9]*)/, "$1 $2=" )
         variableReplacers.forEach( ( [regex, replacement] ) => fnStatic.replace( regex, replacement ) )
 
         return [fnNonstatic, fnStatic]

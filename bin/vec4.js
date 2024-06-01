@@ -1937,10 +1937,10 @@ export class vec4 {
 
     /** @param {number} s @returns {vec4} */
     sadd( s ) {
-        this[0] = this[0] + s
-        this[1] = this[1] + s
-        this[2] = this[2] + s
-        this[3] = this[3] + s
+        this[0] += s
+        this[1] += s
+        this[2] += s
+        this[3] += s
         return this
     }
 
@@ -1955,10 +1955,10 @@ export class vec4 {
 
     /** @param {vec4Like} v @returns {vec4} */
     vadd( v ) {
-        this[0] = this[0] + v[0]
-        this[1] = this[1] + v[1]
-        this[2] = this[2] + v[2]
-        this[3] = this[3] + v[3]
+        this[0] += v[0]
+        this[1] += v[1]
+        this[2] += v[2]
+        this[3] += v[3]
         return this
     }
 
@@ -1983,10 +1983,10 @@ export class vec4 {
 
     /** @param {number} s @returns {vec4} */
     ssub( s ) {
-        this[0] = this[0] - s
-        this[1] = this[1] - s
-        this[2] = this[2] - s
-        this[3] = this[3] - s
+        this[0] -= s
+        this[1] -= s
+        this[2] -= s
+        this[3] -= s
         return this
     }
 
@@ -2001,10 +2001,10 @@ export class vec4 {
 
     /** @param {vec4Like} v @returns {vec4} */
     vsub( v ) {
-        this[0] = this[0] - v[0]
-        this[1] = this[1] - v[1]
-        this[2] = this[2] - v[2]
-        this[3] = this[3] - v[3]
+        this[0] -= v[0]
+        this[1] -= v[1]
+        this[2] -= v[2]
+        this[3] -= v[3]
         return this
     }
 
@@ -2029,10 +2029,10 @@ export class vec4 {
 
     /** @param {number} s @returns {vec4} */
     smul( s ) {
-        this[0] = this[0] * s
-        this[1] = this[1] * s
-        this[2] = this[2] * s
-        this[3] = this[3] * s
+        this[0] *= s
+        this[1] *= s
+        this[2] *= s
+        this[3] *= s
         return this
     }
 
@@ -2047,10 +2047,10 @@ export class vec4 {
 
     /** @param {vec4Like} v @returns {vec4} */
     vmul( v ) {
-        this[0] = this[0] * v[0]
-        this[1] = this[1] * v[1]
-        this[2] = this[2] * v[2]
-        this[3] = this[3] * v[3]
+        this[0] *= v[0]
+        this[1] *= v[1]
+        this[2] *= v[2]
+        this[3] *= v[3]
         return this
     }
 
@@ -2075,10 +2075,10 @@ export class vec4 {
 
     /** @param {number} s @returns {vec4} */
     sdiv( s ) {
-        this[0] = this[0] / s
-        this[1] = this[1] / s
-        this[2] = this[2] / s
-        this[3] = this[3] / s
+        this[0] /= s
+        this[1] /= s
+        this[2] /= s
+        this[3] /= s
         return this
     }
 
@@ -2093,10 +2093,10 @@ export class vec4 {
 
     /** @param {vec4Like} v @returns {vec4} */
     vdiv( v ) {
-        this[0] = this[0] / v[0]
-        this[1] = this[1] / v[1]
-        this[2] = this[2] / v[2]
-        this[3] = this[3] / v[3]
+        this[0] /= v[0]
+        this[1] /= v[1]
+        this[2] /= v[2]
+        this[3] /= v[3]
         return this
     }
 
@@ -2121,10 +2121,10 @@ export class vec4 {
 
     /** @param {number} s @returns {vec4} */
     srem( s ) {
-        this[0] = this[0] % s
-        this[1] = this[1] % s
-        this[2] = this[2] % s
-        this[3] = this[3] % s
+        this[0] %= s
+        this[1] %= s
+        this[2] %= s
+        this[3] %= s
         return this
     }
 
@@ -2139,10 +2139,10 @@ export class vec4 {
 
     /** @param {vec4Like} v @returns {vec4} */
     vrem( v ) {
-        this[0] = this[0] % v[0]
-        this[1] = this[1] % v[1]
-        this[2] = this[2] % v[2]
-        this[3] = this[3] % v[3]
+        this[0] %= v[0]
+        this[1] %= v[1]
+        this[2] %= v[2]
+        this[3] %= v[3]
         return this
     }
 
@@ -2167,10 +2167,10 @@ export class vec4 {
 
     /** @param {number} s @returns {vec4} */
     spow( s ) {
-        this[0] = this[0] ** s
-        this[1] = this[1] ** s
-        this[2] = this[2] ** s
-        this[3] = this[3] ** s
+        this[0] **= s
+        this[1] **= s
+        this[2] **= s
+        this[3] **= s
         return this
     }
 
@@ -2185,10 +2185,10 @@ export class vec4 {
 
     /** @param {vec4Like} v @returns {vec4} */
     vpow( v ) {
-        this[0] = this[0] ** v[0]
-        this[1] = this[1] ** v[1]
-        this[2] = this[2] ** v[2]
-        this[3] = this[3] ** v[3]
+        this[0] **= v[0]
+        this[1] **= v[1]
+        this[2] **= v[2]
+        this[3] **= v[3]
         return this
     }
 
@@ -2547,10 +2547,10 @@ export class vec4 {
     /** @returns {vec4} */
     normalize() {
         const factor = 1 / Math.sqrt( this[0] * this[0] + this[1] * this[1] + this[2] * this[2] + this[3] * this[3] )
-        this[0] = this[0] * factor
-        this[1] = this[1] * factor
-        this[2] = this[2] * factor
-        this[3] = this[3] * factor
+        this[0] *= factor
+        this[1] *= factor
+        this[2] *= factor
+        this[3] *= factor
         return this
     }
 
@@ -2567,10 +2567,10 @@ export class vec4 {
     /** @param {number} s @returns {vec4} */
     setLength( s ) {
         const factor = s / Math.sqrt( this[0] * this[0] + this[1] * this[1] + this[2] * this[2] + this[3] * this[3] )
-        this[0] = this[0] * factor
-        this[1] = this[1] * factor
-        this[2] = this[2] * factor
-        this[3] = this[3] * factor
+        this[0] *= factor
+        this[1] *= factor
+        this[2] *= factor
+        this[3] *= factor
         return this
     }
 

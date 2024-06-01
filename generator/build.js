@@ -67,26 +67,6 @@ function generateVector( dimension ) {
     function bodyTarget( statements ) {
         return [...statements, "return target"]
     }
-    function bodyResult( statements ) {
-        return [`const result = new ${TYPE}`, ...statements, "return result"]
-    }
-
-    /** @typedef {[RegExp, string]|[RegExp, string][]} StringReplacer */
-    /** @param {string} string @param {StringReplacer} replacer  */
-    function applyReplacer( string, replacer ) {
-        if ( replacer.length === 0 ) return string
-        if ( !( replacer[0] instanceof Array ) ) return string.replace( replacer[0], replacer[1] )
-        return replacer.reduce( ( str, [regex, replacement] ) => str.replace( regex, replacement ), string )
-    }
-    /** @param {string} name @param {[FnParam|FnParam[],FnParam|FnParam[]]} params @param {string[]} statements @param {import("./codegen.js").FnOpts} opts @param {StringReplacer} replacer */
-    function fnAutoStatic( name, [params, paramsStatic], statements, opts, replacer ) {
-        const wrappers = opts.type === TYPE ? [bodyThis, bodyResult] : [x => x, x => x]
-        const bodyNonstatic = wrappers[0]( statements )
-        const bodyStatic = wrappers[1]( statements.map( statement => applyReplacer( statement, replacer ) ) )
-        const fnNonstatic = new Fn( name, params, bodyNonstatic, opts )
-        const fnStatic = new Fn( name, paramsStatic, bodyStatic, { ...opts, prefix: "static" } )
-        return [fnNonstatic, fnStatic]
-    }
 
     function title( text, indent = 0 ) {
         return forceIndent( `

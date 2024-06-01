@@ -840,9 +840,9 @@ export class vec3 {
 
     /** @param {number} s @returns {vec3} */
     sadd( s ) {
-        this[0] = this[0] + s
-        this[1] = this[1] + s
-        this[2] = this[2] + s
+        this[0] += s
+        this[1] += s
+        this[2] += s
         return this
     }
 
@@ -856,9 +856,9 @@ export class vec3 {
 
     /** @param {vec3Like} v @returns {vec3} */
     vadd( v ) {
-        this[0] = this[0] + v[0]
-        this[1] = this[1] + v[1]
-        this[2] = this[2] + v[2]
+        this[0] += v[0]
+        this[1] += v[1]
+        this[2] += v[2]
         return this
     }
 
@@ -882,9 +882,9 @@ export class vec3 {
 
     /** @param {number} s @returns {vec3} */
     ssub( s ) {
-        this[0] = this[0] - s
-        this[1] = this[1] - s
-        this[2] = this[2] - s
+        this[0] -= s
+        this[1] -= s
+        this[2] -= s
         return this
     }
 
@@ -898,9 +898,9 @@ export class vec3 {
 
     /** @param {vec3Like} v @returns {vec3} */
     vsub( v ) {
-        this[0] = this[0] - v[0]
-        this[1] = this[1] - v[1]
-        this[2] = this[2] - v[2]
+        this[0] -= v[0]
+        this[1] -= v[1]
+        this[2] -= v[2]
         return this
     }
 
@@ -924,9 +924,9 @@ export class vec3 {
 
     /** @param {number} s @returns {vec3} */
     smul( s ) {
-        this[0] = this[0] * s
-        this[1] = this[1] * s
-        this[2] = this[2] * s
+        this[0] *= s
+        this[1] *= s
+        this[2] *= s
         return this
     }
 
@@ -940,9 +940,9 @@ export class vec3 {
 
     /** @param {vec3Like} v @returns {vec3} */
     vmul( v ) {
-        this[0] = this[0] * v[0]
-        this[1] = this[1] * v[1]
-        this[2] = this[2] * v[2]
+        this[0] *= v[0]
+        this[1] *= v[1]
+        this[2] *= v[2]
         return this
     }
 
@@ -966,9 +966,9 @@ export class vec3 {
 
     /** @param {number} s @returns {vec3} */
     sdiv( s ) {
-        this[0] = this[0] / s
-        this[1] = this[1] / s
-        this[2] = this[2] / s
+        this[0] /= s
+        this[1] /= s
+        this[2] /= s
         return this
     }
 
@@ -982,9 +982,9 @@ export class vec3 {
 
     /** @param {vec3Like} v @returns {vec3} */
     vdiv( v ) {
-        this[0] = this[0] / v[0]
-        this[1] = this[1] / v[1]
-        this[2] = this[2] / v[2]
+        this[0] /= v[0]
+        this[1] /= v[1]
+        this[2] /= v[2]
         return this
     }
 
@@ -1008,9 +1008,9 @@ export class vec3 {
 
     /** @param {number} s @returns {vec3} */
     srem( s ) {
-        this[0] = this[0] % s
-        this[1] = this[1] % s
-        this[2] = this[2] % s
+        this[0] %= s
+        this[1] %= s
+        this[2] %= s
         return this
     }
 
@@ -1024,9 +1024,9 @@ export class vec3 {
 
     /** @param {vec3Like} v @returns {vec3} */
     vrem( v ) {
-        this[0] = this[0] % v[0]
-        this[1] = this[1] % v[1]
-        this[2] = this[2] % v[2]
+        this[0] %= v[0]
+        this[1] %= v[1]
+        this[2] %= v[2]
         return this
     }
 
@@ -1050,9 +1050,9 @@ export class vec3 {
 
     /** @param {number} s @returns {vec3} */
     spow( s ) {
-        this[0] = this[0] ** s
-        this[1] = this[1] ** s
-        this[2] = this[2] ** s
+        this[0] **= s
+        this[1] **= s
+        this[2] **= s
         return this
     }
 
@@ -1066,9 +1066,9 @@ export class vec3 {
 
     /** @param {vec3Like} v @returns {vec3} */
     vpow( v ) {
-        this[0] = this[0] ** v[0]
-        this[1] = this[1] ** v[1]
-        this[2] = this[2] ** v[2]
+        this[0] **= v[0]
+        this[1] **= v[1]
+        this[2] **= v[2]
         return this
     }
 
@@ -1391,9 +1391,9 @@ export class vec3 {
     /** @returns {vec3} */
     normalize() {
         const factor = 1 / Math.sqrt( this[0] * this[0] + this[1] * this[1] + this[2] * this[2] )
-        this[0] = this[0] * factor
-        this[1] = this[1] * factor
-        this[2] = this[2] * factor
+        this[0] *= factor
+        this[1] *= factor
+        this[2] *= factor
         return this
     }
 
@@ -1409,9 +1409,9 @@ export class vec3 {
     /** @param {number} s @returns {vec3} */
     setLength( s ) {
         const factor = s / Math.sqrt( this[0] * this[0] + this[1] * this[1] + this[2] * this[2] )
-        this[0] = this[0] * factor
-        this[1] = this[1] * factor
-        this[2] = this[2] * factor
+        this[0] *= factor
+        this[1] *= factor
+        this[2] *= factor
         return this
     }
 

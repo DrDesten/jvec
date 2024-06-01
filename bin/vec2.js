@@ -407,8 +407,8 @@ export class vec2 {
 
     /** @param {number} s @returns {vec2} */
     sadd( s ) {
-        this[0] = this[0] + s
-        this[1] = this[1] + s
+        this[0] += s
+        this[1] += s
         return this
     }
 
@@ -421,8 +421,8 @@ export class vec2 {
 
     /** @param {vec2Like} v @returns {vec2} */
     vadd( v ) {
-        this[0] = this[0] + v[0]
-        this[1] = this[1] + v[1]
+        this[0] += v[0]
+        this[1] += v[1]
         return this
     }
 
@@ -445,8 +445,8 @@ export class vec2 {
 
     /** @param {number} s @returns {vec2} */
     ssub( s ) {
-        this[0] = this[0] - s
-        this[1] = this[1] - s
+        this[0] -= s
+        this[1] -= s
         return this
     }
 
@@ -459,8 +459,8 @@ export class vec2 {
 
     /** @param {vec2Like} v @returns {vec2} */
     vsub( v ) {
-        this[0] = this[0] - v[0]
-        this[1] = this[1] - v[1]
+        this[0] -= v[0]
+        this[1] -= v[1]
         return this
     }
 
@@ -483,8 +483,8 @@ export class vec2 {
 
     /** @param {number} s @returns {vec2} */
     smul( s ) {
-        this[0] = this[0] * s
-        this[1] = this[1] * s
+        this[0] *= s
+        this[1] *= s
         return this
     }
 
@@ -497,8 +497,8 @@ export class vec2 {
 
     /** @param {vec2Like} v @returns {vec2} */
     vmul( v ) {
-        this[0] = this[0] * v[0]
-        this[1] = this[1] * v[1]
+        this[0] *= v[0]
+        this[1] *= v[1]
         return this
     }
 
@@ -521,8 +521,8 @@ export class vec2 {
 
     /** @param {number} s @returns {vec2} */
     sdiv( s ) {
-        this[0] = this[0] / s
-        this[1] = this[1] / s
+        this[0] /= s
+        this[1] /= s
         return this
     }
 
@@ -535,8 +535,8 @@ export class vec2 {
 
     /** @param {vec2Like} v @returns {vec2} */
     vdiv( v ) {
-        this[0] = this[0] / v[0]
-        this[1] = this[1] / v[1]
+        this[0] /= v[0]
+        this[1] /= v[1]
         return this
     }
 
@@ -559,8 +559,8 @@ export class vec2 {
 
     /** @param {number} s @returns {vec2} */
     srem( s ) {
-        this[0] = this[0] % s
-        this[1] = this[1] % s
+        this[0] %= s
+        this[1] %= s
         return this
     }
 
@@ -573,8 +573,8 @@ export class vec2 {
 
     /** @param {vec2Like} v @returns {vec2} */
     vrem( v ) {
-        this[0] = this[0] % v[0]
-        this[1] = this[1] % v[1]
+        this[0] %= v[0]
+        this[1] %= v[1]
         return this
     }
 
@@ -597,8 +597,8 @@ export class vec2 {
 
     /** @param {number} s @returns {vec2} */
     spow( s ) {
-        this[0] = this[0] ** s
-        this[1] = this[1] ** s
+        this[0] **= s
+        this[1] **= s
         return this
     }
 
@@ -611,8 +611,8 @@ export class vec2 {
 
     /** @param {vec2Like} v @returns {vec2} */
     vpow( v ) {
-        this[0] = this[0] ** v[0]
-        this[1] = this[1] ** v[1]
+        this[0] **= v[0]
+        this[1] **= v[1]
         return this
     }
 
@@ -899,8 +899,8 @@ export class vec2 {
     /** @returns {vec2} */
     normalize() {
         const factor = 1 / Math.sqrt( this[0] * this[0] + this[1] * this[1] )
-        this[0] = this[0] * factor
-        this[1] = this[1] * factor
+        this[0] *= factor
+        this[1] *= factor
         return this
     }
 
@@ -915,8 +915,8 @@ export class vec2 {
     /** @param {number} s @returns {vec2} */
     setLength( s ) {
         const factor = s / Math.sqrt( this[0] * this[0] + this[1] * this[1] )
-        this[0] = this[0] * factor
-        this[1] = this[1] * factor
+        this[0] *= factor
+        this[1] *= factor
         return this
     }
 
