@@ -441,26 +441,32 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
 
         function min() {
             const param = new Fn.Param( "values", `...(${TYPELIKE_OR_NUM})`, { rest: true } )
-            const body = bodyResult( DRANGE.map( i => `result[${i}] = Math.min( ...values.map( x => typeof x === "number" ? x : x[${i}] ) )` ) )
+            const body = bodyTarget( [
+                `const target = new ${TYPE}`,
+                ...DRANGE.map( i => `target[${i}] = Math.min( ...values.map( x => typeof x === "number" ? x : x[${i}] ) )` )
+            ] )
             return new Fn( `min`, param, body, { prefix: "static", type: TYPE } )
         }
         function max() {
             const param = new Fn.Param( "values", `...(${TYPELIKE_OR_NUM})`, { rest: true } )
-            const body = bodyResult( DRANGE.map( i => `result[${i}] = Math.max( ...values.map( x => typeof x === "number" ? x : x[${i}] ) )` ) )
+            const body = bodyTarget( [
+                `const target = new ${TYPE}`,
+                ...DRANGE.map( i => `target[${i}] = Math.max( ...values.map( x => typeof x === "number" ? x : x[${i}] ) )` )
+            ] )
             return new Fn( `max`, param, body, { prefix: "static", type: TYPE } )
         }
         function clamp() {
-            const params = [Param_v, new Fn.Param( "min", "number" ), new Fn.Param( "max", "number" )]
-            const body = bodyResult( DRANGE.map( i => `result[${i}] = Math.min( Math.max( v[${i}], min ), max  )` ) )
+            const params = [Param_v, new Fn.Param( "min", "number" ), new Fn.Param( "max", "number" ), Param_target]
+            const body = bodyTarget( DRANGE.map( i => `target[${i}] = Math.min( Math.max( v[${i}], min ), max  )` ) )
             return new Fn( `clamp`, params, body, { prefix: "static", type: TYPE } )
         }
         function saturate() {
-            const body = bodyResult( DRANGE.map( i => `result[${i}] = Math.min( Math.max( v[${i}], 0 ), 1 )` ) )
-            return new Fn( `saturate`, Param_v, body, { prefix: "static", type: TYPE } )
+            const body = bodyTarget( DRANGE.map( i => `target[${i}] = Math.min( Math.max( v[${i}], 0 ), 1 )` ) )
+            return new Fn( `saturate`, [Param_v, Param_target], body, { prefix: "static", type: TYPE } )
         }
         function mix() {
-            const params = [Param_v1, Param_v2, new Fn.Param( "t", "number" )]
-            const body = bodyResult( DRANGE.map( i => `result[${i}] = v1[${i}] * ( 1 - t ) + v2[${i}] * t` ) )
+            const params = [Param_v1, Param_v2, new Fn.Param( "t", "number" ), Param_target]
+            const body = bodyTarget( DRANGE.map( i => `target[${i}] = v1[${i}] * ( 1 - t ) + v2[${i}] * t` ) )
             return new Fn( `mix`, params, body, { prefix: "static", type: TYPE } )
         }
 

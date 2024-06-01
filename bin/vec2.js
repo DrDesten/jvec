@@ -958,42 +958,39 @@ export class vec2 {
 
     /** @param {...(number|vec2Like)} values @returns {vec2} */
     static min( ...values ) {
-        const result = new vec2
-        result[0] = Math.min( ...values.map( x => typeof x === "number" ? x : x[0] ) )
-        result[1] = Math.min( ...values.map( x => typeof x === "number" ? x : x[1] ) )
-        return result
+        const target = new vec2
+        target[0] = Math.min( ...values.map( x => typeof x === "number" ? x : x[0] ) )
+        target[1] = Math.min( ...values.map( x => typeof x === "number" ? x : x[1] ) )
+        return target
     }
 
     /** @param {...(number|vec2Like)} values @returns {vec2} */
     static max( ...values ) {
-        const result = new vec2
-        result[0] = Math.max( ...values.map( x => typeof x === "number" ? x : x[0] ) )
-        result[1] = Math.max( ...values.map( x => typeof x === "number" ? x : x[1] ) )
-        return result
+        const target = new vec2
+        target[0] = Math.max( ...values.map( x => typeof x === "number" ? x : x[0] ) )
+        target[1] = Math.max( ...values.map( x => typeof x === "number" ? x : x[1] ) )
+        return target
     }
 
-    /** @param {vec2Like} v @param {number} min @param {number} max @returns {vec2} */
-    static clamp( v, min, max ) {
-        const result = new vec2
-        result[0] = Math.min( Math.max( v[0], min ), max  )
-        result[1] = Math.min( Math.max( v[1], min ), max  )
-        return result
+    /** @param {vec2Like} v @param {number} min @param {number} max @param {vec2} [target=new vec2] @returns {vec2} */
+    static clamp( v, min, max, target = new vec2 ) {
+        target[0] = Math.min( Math.max( v[0], min ), max  )
+        target[1] = Math.min( Math.max( v[1], min ), max  )
+        return target
     }
 
-    /** @param {vec2Like} v @returns {vec2} */
-    static saturate( v ) {
-        const result = new vec2
-        result[0] = Math.min( Math.max( v[0], 0 ), 1 )
-        result[1] = Math.min( Math.max( v[1], 0 ), 1 )
-        return result
+    /** @param {vec2Like} v @param {vec2} [target=new vec2] @returns {vec2} */
+    static saturate( v, target = new vec2 ) {
+        target[0] = Math.min( Math.max( v[0], 0 ), 1 )
+        target[1] = Math.min( Math.max( v[1], 0 ), 1 )
+        return target
     }
 
-    /** @param {vec2Like} v1 @param {vec2Like} v2 @param {number} t @returns {vec2} */
-    static mix( v1, v2, t ) {
-        const result = new vec2
-        result[0] = v1[0] * ( 1 - t ) + v2[0] * t
-        result[1] = v1[1] * ( 1 - t ) + v2[1] * t
-        return result
+    /** @param {vec2Like} v1 @param {vec2Like} v2 @param {number} t @param {vec2} [target=new vec2] @returns {vec2} */
+    static mix( v1, v2, t, target = new vec2 ) {
+        target[0] = v1[0] * ( 1 - t ) + v2[0] * t
+        target[1] = v1[1] * ( 1 - t ) + v2[1] * t
+        return target
     }
 
 }

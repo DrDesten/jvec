@@ -2618,52 +2618,49 @@ export class vec4 {
 
     /** @param {...(number|vec4Like)} values @returns {vec4} */
     static min( ...values ) {
-        const result = new vec4
-        result[0] = Math.min( ...values.map( x => typeof x === "number" ? x : x[0] ) )
-        result[1] = Math.min( ...values.map( x => typeof x === "number" ? x : x[1] ) )
-        result[2] = Math.min( ...values.map( x => typeof x === "number" ? x : x[2] ) )
-        result[3] = Math.min( ...values.map( x => typeof x === "number" ? x : x[3] ) )
-        return result
+        const target = new vec4
+        target[0] = Math.min( ...values.map( x => typeof x === "number" ? x : x[0] ) )
+        target[1] = Math.min( ...values.map( x => typeof x === "number" ? x : x[1] ) )
+        target[2] = Math.min( ...values.map( x => typeof x === "number" ? x : x[2] ) )
+        target[3] = Math.min( ...values.map( x => typeof x === "number" ? x : x[3] ) )
+        return target
     }
 
     /** @param {...(number|vec4Like)} values @returns {vec4} */
     static max( ...values ) {
-        const result = new vec4
-        result[0] = Math.max( ...values.map( x => typeof x === "number" ? x : x[0] ) )
-        result[1] = Math.max( ...values.map( x => typeof x === "number" ? x : x[1] ) )
-        result[2] = Math.max( ...values.map( x => typeof x === "number" ? x : x[2] ) )
-        result[3] = Math.max( ...values.map( x => typeof x === "number" ? x : x[3] ) )
-        return result
+        const target = new vec4
+        target[0] = Math.max( ...values.map( x => typeof x === "number" ? x : x[0] ) )
+        target[1] = Math.max( ...values.map( x => typeof x === "number" ? x : x[1] ) )
+        target[2] = Math.max( ...values.map( x => typeof x === "number" ? x : x[2] ) )
+        target[3] = Math.max( ...values.map( x => typeof x === "number" ? x : x[3] ) )
+        return target
     }
 
-    /** @param {vec4Like} v @param {number} min @param {number} max @returns {vec4} */
-    static clamp( v, min, max ) {
-        const result = new vec4
-        result[0] = Math.min( Math.max( v[0], min ), max  )
-        result[1] = Math.min( Math.max( v[1], min ), max  )
-        result[2] = Math.min( Math.max( v[2], min ), max  )
-        result[3] = Math.min( Math.max( v[3], min ), max  )
-        return result
+    /** @param {vec4Like} v @param {number} min @param {number} max @param {vec4} [target=new vec4] @returns {vec4} */
+    static clamp( v, min, max, target = new vec4 ) {
+        target[0] = Math.min( Math.max( v[0], min ), max  )
+        target[1] = Math.min( Math.max( v[1], min ), max  )
+        target[2] = Math.min( Math.max( v[2], min ), max  )
+        target[3] = Math.min( Math.max( v[3], min ), max  )
+        return target
     }
 
-    /** @param {vec4Like} v @returns {vec4} */
-    static saturate( v ) {
-        const result = new vec4
-        result[0] = Math.min( Math.max( v[0], 0 ), 1 )
-        result[1] = Math.min( Math.max( v[1], 0 ), 1 )
-        result[2] = Math.min( Math.max( v[2], 0 ), 1 )
-        result[3] = Math.min( Math.max( v[3], 0 ), 1 )
-        return result
+    /** @param {vec4Like} v @param {vec4} [target=new vec4] @returns {vec4} */
+    static saturate( v, target = new vec4 ) {
+        target[0] = Math.min( Math.max( v[0], 0 ), 1 )
+        target[1] = Math.min( Math.max( v[1], 0 ), 1 )
+        target[2] = Math.min( Math.max( v[2], 0 ), 1 )
+        target[3] = Math.min( Math.max( v[3], 0 ), 1 )
+        return target
     }
 
-    /** @param {vec4Like} v1 @param {vec4Like} v2 @param {number} t @returns {vec4} */
-    static mix( v1, v2, t ) {
-        const result = new vec4
-        result[0] = v1[0] * ( 1 - t ) + v2[0] * t
-        result[1] = v1[1] * ( 1 - t ) + v2[1] * t
-        result[2] = v1[2] * ( 1 - t ) + v2[2] * t
-        result[3] = v1[3] * ( 1 - t ) + v2[3] * t
-        return result
+    /** @param {vec4Like} v1 @param {vec4Like} v2 @param {number} t @param {vec4} [target=new vec4] @returns {vec4} */
+    static mix( v1, v2, t, target = new vec4 ) {
+        target[0] = v1[0] * ( 1 - t ) + v2[0] * t
+        target[1] = v1[1] * ( 1 - t ) + v2[1] * t
+        target[2] = v1[2] * ( 1 - t ) + v2[2] * t
+        target[3] = v1[3] * ( 1 - t ) + v2[3] * t
+        return target
     }
 
 }
