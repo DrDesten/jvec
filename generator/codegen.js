@@ -103,8 +103,7 @@ export class Fn {
 
     /** @param {RegExp} regex @param {string} replacer */
     replace( regex, replacer ) {
-        const { body } = this
-        this.body = body.map( statement => statement.replace( regex, replacer ) )
+        this.body = this.body.map( statement => statement.replace( regex, replacer ) )
     }
     /** @param {string} current @param {string} replacement */
     replaceVariable( current, replacement ) {
@@ -138,5 +137,24 @@ export class Fn {
     /** @returns {string} */
     toString() {
         return this.decl()
+    }
+
+    // Statics
+
+    /** @param {string} name @param {[FnParam|FnParam[],FnParam|FnParam[]]} params @param {string|string[]} body @param {FnOpts} [opts] @param {...[RegExp|string,string]} variableReplacers */
+    static autoStatic( name, [paramsNonstatic, paramsStatic], body, opts, ...variableReplacers ) {
+        body = body instanceof Array ? body : [body]
+        paramsStatic = paramsStatic instanceof Array ? [...paramsStatic] : [paramsStatic]
+
+        const returns = body.some( stmt => /\breturn\b/.test( stmt ) )
+        const bodyNonstatic = returns ? body : [...body, "return this"]
+        const bodyStatic = returns ? body : [...body, "return target"]
+        returns || paramsStatic.push( new FnParam( "target", opts.type, { expr: `new ${opts.type}` } ) )
+
+        const fnNonstatic = new Fn( name, paramsNonstatic, bodyNonstatic, opts )
+        const fnStatic = new Fn( name, paramsStatic, bodyStatic, { ...opts, prefix: "static" } )
+        variableReplacers.forEach( ( [regex, replacement] ) => fnStatic.replace( regex, replacement ) )
+
+        return [fnNonstatic, fnStatic]
     }
 }

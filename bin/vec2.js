@@ -300,12 +300,11 @@ export class vec2 {
         return this
     }
 
-    /** @param {vec2Like} v1 @param {vec2Like} v2 @returns {vec2} */
-    static greaterThan( v1, v2 ) {
-        const result = new vec2
-        result[0] = +( v1[0] > v2[0] )
-        result[1] = +( v1[1] > v2[1] )
-        return result
+    /** @param {vec2Like} v1 @param {vec2Like} v2 @param {vec2} [target=new vec2] @returns {vec2} */
+    static greaterThan( v1, v2, target = new vec2 ) {
+        target[0] = +( v1[0] > v2[0] )
+        target[1] = +( v1[1] > v2[1] )
+        return target
     }
 
     /** @param {vec2Like} v @returns {vec2} */
@@ -315,12 +314,11 @@ export class vec2 {
         return this
     }
 
-    /** @param {vec2Like} v1 @param {vec2Like} v2 @returns {vec2} */
-    static greaterThanEqual( v1, v2 ) {
-        const result = new vec2
-        result[0] = +( v1[0] >= v2[0] )
-        result[1] = +( v1[1] >= v2[1] )
-        return result
+    /** @param {vec2Like} v1 @param {vec2Like} v2 @param {vec2} [target=new vec2] @returns {vec2} */
+    static greaterThanEqual( v1, v2, target = new vec2 ) {
+        target[0] = +( v1[0] >= v2[0] )
+        target[1] = +( v1[1] >= v2[1] )
+        return target
     }
 
     /** @param {vec2Like} v @returns {vec2} */
@@ -330,12 +328,11 @@ export class vec2 {
         return this
     }
 
-    /** @param {vec2Like} v1 @param {vec2Like} v2 @returns {vec2} */
-    static lessThan( v1, v2 ) {
-        const result = new vec2
-        result[0] = +( v1[0] < v2[0] )
-        result[1] = +( v1[1] < v2[1] )
-        return result
+    /** @param {vec2Like} v1 @param {vec2Like} v2 @param {vec2} [target=new vec2] @returns {vec2} */
+    static lessThan( v1, v2, target = new vec2 ) {
+        target[0] = +( v1[0] < v2[0] )
+        target[1] = +( v1[1] < v2[1] )
+        return target
     }
 
     /** @param {vec2Like} v @returns {vec2} */
@@ -345,12 +342,11 @@ export class vec2 {
         return this
     }
 
-    /** @param {vec2Like} v1 @param {vec2Like} v2 @returns {vec2} */
-    static lessThanEqual( v1, v2 ) {
-        const result = new vec2
-        result[0] = +( v1[0] <= v2[0] )
-        result[1] = +( v1[1] <= v2[1] )
-        return result
+    /** @param {vec2Like} v1 @param {vec2Like} v2 @param {vec2} [target=new vec2] @returns {vec2} */
+    static lessThanEqual( v1, v2, target = new vec2 ) {
+        target[0] = +( v1[0] <= v2[0] )
+        target[1] = +( v1[1] <= v2[1] )
+        return target
     }
 
     /** @param {vec2Like} v @returns {vec2} */
@@ -360,12 +356,11 @@ export class vec2 {
         return this
     }
 
-    /** @param {vec2Like} v1 @param {vec2Like} v2 @returns {vec2} */
-    static equal( v1, v2 ) {
-        const result = new vec2
-        result[0] = +( v1[0] === v2[0] )
-        result[1] = +( v1[1] === v2[1] )
-        return result
+    /** @param {vec2Like} v1 @param {vec2Like} v2 @param {vec2} [target=new vec2] @returns {vec2} */
+    static equal( v1, v2, target = new vec2 ) {
+        target[0] = +( v1[0] === v2[0] )
+        target[1] = +( v1[1] === v2[1] )
+        return target
     }
 
     /** @param {vec2Like} v @returns {vec2} */
@@ -375,12 +370,11 @@ export class vec2 {
         return this
     }
 
-    /** @param {vec2Like} v1 @param {vec2Like} v2 @returns {vec2} */
-    static notEqual( v1, v2 ) {
-        const result = new vec2
-        result[0] = +( v1[0] !== v2[0] )
-        result[1] = +( v1[1] !== v2[1] )
-        return result
+    /** @param {vec2Like} v1 @param {vec2Like} v2 @param {vec2} [target=new vec2] @returns {vec2} */
+    static notEqual( v1, v2, target = new vec2 ) {
+        target[0] = +( v1[0] !== v2[0] )
+        target[1] = +( v1[1] !== v2[1] )
+        return target
     }
 
     /** @returns {vec2} */
@@ -390,12 +384,11 @@ export class vec2 {
         return this
     }
 
-    /** @param {vec2Like} v @returns {vec2} */
-    static not( v ) {
-        const result = new vec2
-        result[0] = +!v[0]
-        result[1] = +!v[1]
-        return result
+    /** @param {vec2Like} v @param {vec2} [target=new vec2] @returns {vec2} */
+    static not( v, target = new vec2 ) {
+        target[0] = +!v[0]
+        target[1] = +!v[1]
+        return target
     }
 
     // ---------------------------
@@ -961,8 +954,8 @@ export class vec2 {
         return this
     }
 
-    /** @param {number} s @param {vec2Like} v @returns {vec2} */
-    static setLength( s, v ) {
+    /** @param {vec2Like} v @param {number} s @returns {vec2} */
+    static setLength( v, s ) {
         const result = new vec2
         const factor = s / Math.sqrt( v[0] * v[0] + v[1] * v[1] )
         result[0] = v[0] * factor

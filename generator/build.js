@@ -74,7 +74,7 @@ function generateVector( dimension ) {
         if ( !( replacer[0] instanceof Array ) ) return string.replace( replacer[0], replacer[1] )
         return replacer.reduce( ( str, [regex, replacement] ) => str.replace( regex, replacement ), string )
     }
-    /** @param {string} name @param {[string[], string[]]} params @param {string[]} statements @param {import("./codegen.js").FnOpts} opts @param {StringReplacer} replacer */
+    /** @param {string} name @param {[FnParam|FnParam[],FnParam|FnParam[]]} params @param {string[]} statements @param {import("./codegen.js").FnOpts} opts @param {StringReplacer} replacer */
     function fnAutoStatic( name, [params, paramsStatic], statements, opts, replacer ) {
         const wrappers = opts.type === TYPE ? [bodyThis, bodyResult] : [x => x, x => x]
         const bodyNonstatic = wrappers[0]( statements )
@@ -250,57 +250,45 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
     function boolean() {
         function eq() {
             const body = [`return ${DMAP( i => `this[${i}] === v[${i}]`, " && " )}`]
-            return fnAutoStatic( "eq", [Param_v, Params_v1v2], body, { type: "boolean" }, [[/\bthis\b/g, "v1"], [/\bv\b/g, "v2"]] )
+            return Fn.autoStatic( "eq", [Param_v, Params_v1v2], body, { type: "boolean" }, [/\bthis\b/g, "v1"], [/\bv\b/g, "v2"] )
         }
         function neq() {
             const body = [`return ${DMAP( i => `this[${i}] !== v[${i}]`, " || " )}`]
-            return fnAutoStatic( "neq", [Param_v, Params_v1v2], body, { type: "boolean" }, [[/\bthis\b/g, "v1"], [/\bv\b/g, "v2"]] )
+            return Fn.autoStatic( "neq", [Param_v, Params_v1v2], body, { type: "boolean" }, [/\bthis\b/g, "v1"], [/\bv\b/g, "v2"] )
         }
 
         function all() {
             const body = [`return ${DMAP( i => `!!this[${i}]`, " && " )}`]
-            return fnAutoStatic( "all", [[], Param_v], body, { type: "boolean" }, [/\bthis\b/g, "v"] )
+            return Fn.autoStatic( "all", [[], Param_v], body, { type: "boolean" }, [/\bthis\b/g, "v"] )
         }
         function any() {
             const body = [`return ${DMAP( i => `!!this[${i}]`, " || " )}`]
-            return fnAutoStatic( "any", [[], Param_v], body, { type: "boolean" }, [/\bthis\b/g, "v"] )
+            return Fn.autoStatic( "any", [[], Param_v], body, { type: "boolean" }, [/\bthis\b/g, "v"] )
         }
 
-        function greaterThan() {
-            const body = DRANGE.map( i => `this[${i}] = +( this[${i}] > v[${i}] )` )
-            return fnAutoStatic( "greaterThan", [Param_v, Params_v1v2], body, { type: TYPE }, [["this", "result"], [/\bthis\b/g, "v1"], [/\bv\b/g, "v2"]] )
+        const operations = [
+            ["greaterThan", ">"],
+            ["greaterThanEqual", ">="],
+            ["lessThan", "<"],
+            ["lessThanEqual", "<="],
+            ["equal", "==="],
+            ["notEqual", "!=="]
+        ]
+
+        function operation( name, op ) {
+            const body = DRANGE.map( i => `this[${i}] = +( this[${i}] ${op} v[${i}] )` )
+            return Fn.autoStatic( name, [Param_v, Params_v1v2], body, { type: TYPE }, ["this", "target"], [/\bthis\b/g, "v1"], [/\bv\b/g, "v2"] )
         }
-        function greaterThanEqual() {
-            const body = DRANGE.map( i => `this[${i}] = +( this[${i}] >= v[${i}] )` )
-            return fnAutoStatic( "greaterThanEqual", [Param_v, Params_v1v2], body, { type: TYPE }, [["this", "result"], [/\bthis\b/g, "v1"], [/\bv\b/g, "v2"]] )
-        }
-        function lessThan() {
-            const body = DRANGE.map( i => `this[${i}] = +( this[${i}] < v[${i}] )` )
-            return fnAutoStatic( "lessThan", [Param_v, Params_v1v2], body, { type: TYPE }, [["this", "result"], [/\bthis\b/g, "v1"], [/\bv\b/g, "v2"]] )
-        }
-        function lessThanEqual() {
-            const body = DRANGE.map( i => `this[${i}] = +( this[${i}] <= v[${i}] )` )
-            return fnAutoStatic( "lessThanEqual", [Param_v, Params_v1v2], body, { type: TYPE }, [["this", "result"], [/\bthis\b/g, "v1"], [/\bv\b/g, "v2"]] )
-        }
-        function equal() {
-            const body = DRANGE.map( i => `this[${i}] = +( this[${i}] === v[${i}] )` )
-            return fnAutoStatic( "equal", [Param_v, Params_v1v2], body, { type: TYPE }, [["this", "result"], [/\bthis\b/g, "v1"], [/\bv\b/g, "v2"]] )
-        }
-        function notEqual() {
-            const body = DRANGE.map( i => `this[${i}] = +( this[${i}] !== v[${i}] )` )
-            return fnAutoStatic( "notEqual", [Param_v, Params_v1v2], body, { type: TYPE }, [["this", "result"], [/\bthis\b/g, "v1"], [/\bv\b/g, "v2"]] )
-        }
+
         function not() {
             const body = DRANGE.map( i => `this[${i}] = +!this[${i}]` )
-            return fnAutoStatic( "not", [[], Param_v], body, { type: TYPE }, [["this", "result"], [/\bthis\b/g, "v"]] )
+            return Fn.autoStatic( "not", [[], Param_v], body, { type: TYPE }, ["this", "target"], [/\bthis\b/g, "v"] )
         }
 
         const functions = [
             eq(), neq(),
             all(), any(),
-            greaterThan(), greaterThanEqual(),
-            lessThan(), lessThanEqual(),
-            equal(), notEqual(),
+            ...operations.flatMap( ( [name, op] ) => operation( name, op ) ),
             not(),
         ].flat( 1 )
         return functions.join( "\n\n" )
@@ -446,7 +434,7 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
                 `const factor = s / Math.sqrt( ${DMAP( i => `v[${i}] * v[${i}]`, " + " )} )`,
                 ...DRANGE.map( i => `result[${i}] = v[${i}] * factor` )
             ] )
-            return new Fn( `setLength`, [Param_s, Param_v], body, { prefix: "static", type: TYPE } )
+            return new Fn( `setLength`, [Param_v, Param_s], body, { prefix: "static", type: TYPE } )
         }
 
         function dot() {

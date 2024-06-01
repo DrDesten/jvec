@@ -720,13 +720,12 @@ export class vec3 {
         return this
     }
 
-    /** @param {vec3Like} v1 @param {vec3Like} v2 @returns {vec3} */
-    static greaterThan( v1, v2 ) {
-        const result = new vec3
-        result[0] = +( v1[0] > v2[0] )
-        result[1] = +( v1[1] > v2[1] )
-        result[2] = +( v1[2] > v2[2] )
-        return result
+    /** @param {vec3Like} v1 @param {vec3Like} v2 @param {vec3} [target=new vec3] @returns {vec3} */
+    static greaterThan( v1, v2, target = new vec3 ) {
+        target[0] = +( v1[0] > v2[0] )
+        target[1] = +( v1[1] > v2[1] )
+        target[2] = +( v1[2] > v2[2] )
+        return target
     }
 
     /** @param {vec3Like} v @returns {vec3} */
@@ -737,13 +736,12 @@ export class vec3 {
         return this
     }
 
-    /** @param {vec3Like} v1 @param {vec3Like} v2 @returns {vec3} */
-    static greaterThanEqual( v1, v2 ) {
-        const result = new vec3
-        result[0] = +( v1[0] >= v2[0] )
-        result[1] = +( v1[1] >= v2[1] )
-        result[2] = +( v1[2] >= v2[2] )
-        return result
+    /** @param {vec3Like} v1 @param {vec3Like} v2 @param {vec3} [target=new vec3] @returns {vec3} */
+    static greaterThanEqual( v1, v2, target = new vec3 ) {
+        target[0] = +( v1[0] >= v2[0] )
+        target[1] = +( v1[1] >= v2[1] )
+        target[2] = +( v1[2] >= v2[2] )
+        return target
     }
 
     /** @param {vec3Like} v @returns {vec3} */
@@ -754,13 +752,12 @@ export class vec3 {
         return this
     }
 
-    /** @param {vec3Like} v1 @param {vec3Like} v2 @returns {vec3} */
-    static lessThan( v1, v2 ) {
-        const result = new vec3
-        result[0] = +( v1[0] < v2[0] )
-        result[1] = +( v1[1] < v2[1] )
-        result[2] = +( v1[2] < v2[2] )
-        return result
+    /** @param {vec3Like} v1 @param {vec3Like} v2 @param {vec3} [target=new vec3] @returns {vec3} */
+    static lessThan( v1, v2, target = new vec3 ) {
+        target[0] = +( v1[0] < v2[0] )
+        target[1] = +( v1[1] < v2[1] )
+        target[2] = +( v1[2] < v2[2] )
+        return target
     }
 
     /** @param {vec3Like} v @returns {vec3} */
@@ -771,13 +768,12 @@ export class vec3 {
         return this
     }
 
-    /** @param {vec3Like} v1 @param {vec3Like} v2 @returns {vec3} */
-    static lessThanEqual( v1, v2 ) {
-        const result = new vec3
-        result[0] = +( v1[0] <= v2[0] )
-        result[1] = +( v1[1] <= v2[1] )
-        result[2] = +( v1[2] <= v2[2] )
-        return result
+    /** @param {vec3Like} v1 @param {vec3Like} v2 @param {vec3} [target=new vec3] @returns {vec3} */
+    static lessThanEqual( v1, v2, target = new vec3 ) {
+        target[0] = +( v1[0] <= v2[0] )
+        target[1] = +( v1[1] <= v2[1] )
+        target[2] = +( v1[2] <= v2[2] )
+        return target
     }
 
     /** @param {vec3Like} v @returns {vec3} */
@@ -788,13 +784,12 @@ export class vec3 {
         return this
     }
 
-    /** @param {vec3Like} v1 @param {vec3Like} v2 @returns {vec3} */
-    static equal( v1, v2 ) {
-        const result = new vec3
-        result[0] = +( v1[0] === v2[0] )
-        result[1] = +( v1[1] === v2[1] )
-        result[2] = +( v1[2] === v2[2] )
-        return result
+    /** @param {vec3Like} v1 @param {vec3Like} v2 @param {vec3} [target=new vec3] @returns {vec3} */
+    static equal( v1, v2, target = new vec3 ) {
+        target[0] = +( v1[0] === v2[0] )
+        target[1] = +( v1[1] === v2[1] )
+        target[2] = +( v1[2] === v2[2] )
+        return target
     }
 
     /** @param {vec3Like} v @returns {vec3} */
@@ -805,13 +800,12 @@ export class vec3 {
         return this
     }
 
-    /** @param {vec3Like} v1 @param {vec3Like} v2 @returns {vec3} */
-    static notEqual( v1, v2 ) {
-        const result = new vec3
-        result[0] = +( v1[0] !== v2[0] )
-        result[1] = +( v1[1] !== v2[1] )
-        result[2] = +( v1[2] !== v2[2] )
-        return result
+    /** @param {vec3Like} v1 @param {vec3Like} v2 @param {vec3} [target=new vec3] @returns {vec3} */
+    static notEqual( v1, v2, target = new vec3 ) {
+        target[0] = +( v1[0] !== v2[0] )
+        target[1] = +( v1[1] !== v2[1] )
+        target[2] = +( v1[2] !== v2[2] )
+        return target
     }
 
     /** @returns {vec3} */
@@ -822,13 +816,12 @@ export class vec3 {
         return this
     }
 
-    /** @param {vec3Like} v @returns {vec3} */
-    static not( v ) {
-        const result = new vec3
-        result[0] = +!v[0]
-        result[1] = +!v[1]
-        result[2] = +!v[2]
-        return result
+    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
+    static not( v, target = new vec3 ) {
+        target[0] = +!v[0]
+        target[1] = +!v[1]
+        target[2] = +!v[2]
+        return target
     }
 
     // ---------------------------
@@ -1455,8 +1448,8 @@ export class vec3 {
         return this
     }
 
-    /** @param {number} s @param {vec3Like} v @returns {vec3} */
-    static setLength( s, v ) {
+    /** @param {vec3Like} v @param {number} s @returns {vec3} */
+    static setLength( v, s ) {
         const result = new vec3
         const factor = s / Math.sqrt( v[0] * v[0] + v[1] * v[1] + v[2] * v[2] )
         result[0] = v[0] * factor
