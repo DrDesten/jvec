@@ -367,52 +367,28 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
 
     function vectorOperations() {
         function pointTo() {
-            const body = bodyThis( DRANGE.map( i => `this[${i}] = v[${i}] - this[${i}]` ) )
-            return new Fn( `pointTo`, Param_v, body, { type: TYPE } )
-        }
-        function staticPointTo() {
             const params = [new Fn.Param( "from", TYPELIKE ), new Fn.Param( "to", TYPELIKE )]
-            const body = bodyResult( DRANGE.map( i => `result[${i}] = to[${i}] - from[${i}]` ) )
-            return new Fn( `pointTo`, params, body, { prefix: "static", type: TYPE } )
+            const body = DRANGE.map( i => `this[${i}] = v[${i}] - this[${i}]` )
+            return Fn.autoStatic( `pointTo`, [Param_v, params], body, { type: TYPE }, ["this", "target"], [/\bthis\b/g, "from"], [/\bv\b/g, "to"] )
         }
-
         function normalize() {
-            const body = bodyThis( [
+            const body = [
                 `const factor = 1 / Math.sqrt( ${DMAP( i => `this[${i}] * this[${i}]`, " + " )} )`,
-                ...DRANGE.map( i => `this[${i}] *= factor` )
-            ] )
-            return new Fn( `normalize`, [], body, { type: TYPE } )
+                ...DRANGE.map( i => `this[${i}] = this[${i}] * factor` )
+            ]
+            return Fn.autoStatic( `normalize`, [[], Param_v], body, { type: TYPE }, [/\bthis\b(?=.*=)/, "target"], [/\bthis\b/g, "v"] )
         }
-        function staticNormalize() {
-            const body = bodyResult( [
-                `const factor = 1 / Math.sqrt( ${DMAP( i => `v[${i}] * v[${i}]`, " + " )} )`,
-                ...DRANGE.map( i => `result[${i}] = v[${i}] * factor` )
-            ] )
-            return new Fn( `normalize`, Param_v, body, { prefix: "static", type: TYPE } )
-        }
-
         function setLength() {
-            const body = bodyThis( [
+            const body = [
                 `const factor = s / Math.sqrt( ${DMAP( i => `this[${i}] * this[${i}]`, " + " )} )`,
-                ...DRANGE.map( i => `this[${i}] *= factor` )
-            ] )
-            return new Fn( `setLength`, Param_s, body, { type: TYPE } )
-        }
-        function staticSetLength() {
-            const body = bodyResult( [
-                `const factor = s / Math.sqrt( ${DMAP( i => `v[${i}] * v[${i}]`, " + " )} )`,
-                ...DRANGE.map( i => `result[${i}] = v[${i}] * factor` )
-            ] )
-            return new Fn( `setLength`, [Param_v, Param_s], body, { prefix: "static", type: TYPE } )
+                ...DRANGE.map( i => `this[${i}] = this[${i}] * factor` )
+            ]
+            return Fn.autoStatic( `setLength`, [Param_s, [Param_v, Param_s]], body, { type: TYPE }, [/\bthis\b(?=.*=)/, "target"], [/\bthis\b/g, "v"] )
         }
 
         function dot() {
             const body = `return ${DMAP( i => `this[${i}] * v[${i}]`, " + " )}`
-            return new Fn( `dot`, Param_v, body, { type: "number" } )
-        }
-        function staticDot() {
-            const body = `return ${DMAP( i => `v1[${i}] * v2[${i}]`, " + " )}`
-            return new Fn( `dot`, Params_v1v2, body, { prefix: "static", type: "number" } )
+            return Fn.autoStatic( `dot`, [Param_v, Params_v1v2], body, { type: "number" }, [/\bthis\b/g, "v1"], [/\bv\b/g, "v2"] )
         }
         function cross3() {
             const body = `
@@ -438,14 +414,10 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
         }
 
         const functions = [
-            pointTo(),
-            staticPointTo(),
-            normalize(),
-            staticNormalize(),
-            setLength(),
-            staticSetLength(),
-            dot(),
-            staticDot(),
+            ...pointTo(),
+            ...normalize(),
+            ...setLength(),
+            ...dot(),
         ]
         if ( dimension === 3 ) functions.push( cross3(), staticCross3(), )
         return functions.join( "\n\n" )

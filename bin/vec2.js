@@ -889,46 +889,43 @@ export class vec2 {
         return this
     }
 
-    /** @param {vec2Like} from @param {vec2Like} to @returns {vec2} */
-    static pointTo( from, to ) {
-        const result = new vec2
-        result[0] = to[0] - from[0]
-        result[1] = to[1] - from[1]
-        return result
+    /** @param {vec2Like} from @param {vec2Like} to @param {vec2} [target=new vec2] @returns {vec2} */
+    static pointTo( from, to, target = new vec2 ) {
+        target[0] = to[0] - from[0]
+        target[1] = to[1] - from[1]
+        return target
     }
 
     /** @returns {vec2} */
     normalize() {
         const factor = 1 / Math.sqrt( this[0] * this[0] + this[1] * this[1] )
-        this[0] *= factor
-        this[1] *= factor
+        this[0] = this[0] * factor
+        this[1] = this[1] * factor
         return this
     }
 
-    /** @param {vec2Like} v @returns {vec2} */
-    static normalize( v ) {
-        const result = new vec2
+    /** @param {vec2Like} v @param {vec2} [target=new vec2] @returns {vec2} */
+    static normalize( v, target = new vec2 ) {
         const factor = 1 / Math.sqrt( v[0] * v[0] + v[1] * v[1] )
-        result[0] = v[0] * factor
-        result[1] = v[1] * factor
-        return result
+        target[0] = v[0] * factor
+        target[1] = v[1] * factor
+        return target
     }
 
     /** @param {number} s @returns {vec2} */
     setLength( s ) {
         const factor = s / Math.sqrt( this[0] * this[0] + this[1] * this[1] )
-        this[0] *= factor
-        this[1] *= factor
+        this[0] = this[0] * factor
+        this[1] = this[1] * factor
         return this
     }
 
-    /** @param {vec2Like} v @param {number} s @returns {vec2} */
-    static setLength( v, s ) {
-        const result = new vec2
+    /** @param {vec2Like} v @param {number} s @param {vec2} [target=new vec2] @returns {vec2} */
+    static setLength( v, s, target = new vec2 ) {
         const factor = s / Math.sqrt( v[0] * v[0] + v[1] * v[1] )
-        result[0] = v[0] * factor
-        result[1] = v[1] * factor
-        return result
+        target[0] = v[0] * factor
+        target[1] = v[1] * factor
+        return target
     }
 
     /** @param {vec2Like} v @returns {number} */

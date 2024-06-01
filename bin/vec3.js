@@ -1380,51 +1380,48 @@ export class vec3 {
         return this
     }
 
-    /** @param {vec3Like} from @param {vec3Like} to @returns {vec3} */
-    static pointTo( from, to ) {
-        const result = new vec3
-        result[0] = to[0] - from[0]
-        result[1] = to[1] - from[1]
-        result[2] = to[2] - from[2]
-        return result
+    /** @param {vec3Like} from @param {vec3Like} to @param {vec3} [target=new vec3] @returns {vec3} */
+    static pointTo( from, to, target = new vec3 ) {
+        target[0] = to[0] - from[0]
+        target[1] = to[1] - from[1]
+        target[2] = to[2] - from[2]
+        return target
     }
 
     /** @returns {vec3} */
     normalize() {
         const factor = 1 / Math.sqrt( this[0] * this[0] + this[1] * this[1] + this[2] * this[2] )
-        this[0] *= factor
-        this[1] *= factor
-        this[2] *= factor
+        this[0] = this[0] * factor
+        this[1] = this[1] * factor
+        this[2] = this[2] * factor
         return this
     }
 
-    /** @param {vec3Like} v @returns {vec3} */
-    static normalize( v ) {
-        const result = new vec3
+    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
+    static normalize( v, target = new vec3 ) {
         const factor = 1 / Math.sqrt( v[0] * v[0] + v[1] * v[1] + v[2] * v[2] )
-        result[0] = v[0] * factor
-        result[1] = v[1] * factor
-        result[2] = v[2] * factor
-        return result
+        target[0] = v[0] * factor
+        target[1] = v[1] * factor
+        target[2] = v[2] * factor
+        return target
     }
 
     /** @param {number} s @returns {vec3} */
     setLength( s ) {
         const factor = s / Math.sqrt( this[0] * this[0] + this[1] * this[1] + this[2] * this[2] )
-        this[0] *= factor
-        this[1] *= factor
-        this[2] *= factor
+        this[0] = this[0] * factor
+        this[1] = this[1] * factor
+        this[2] = this[2] * factor
         return this
     }
 
-    /** @param {vec3Like} v @param {number} s @returns {vec3} */
-    static setLength( v, s ) {
-        const result = new vec3
+    /** @param {vec3Like} v @param {number} s @param {vec3} [target=new vec3] @returns {vec3} */
+    static setLength( v, s, target = new vec3 ) {
         const factor = s / Math.sqrt( v[0] * v[0] + v[1] * v[1] + v[2] * v[2] )
-        result[0] = v[0] * factor
-        result[1] = v[1] * factor
-        result[2] = v[2] * factor
-        return result
+        target[0] = v[0] * factor
+        target[1] = v[1] * factor
+        target[2] = v[2] * factor
+        return target
     }
 
     /** @param {vec3Like} v @returns {number} */
