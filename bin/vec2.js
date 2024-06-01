@@ -222,6 +222,10 @@ export class vec2 {
         yield this[1]
     }
 
+    // ---------------------------
+    //      CONVERSION
+    // ---------------------------
+
     /** @returns {string} */
     toString() { return  `(${this[0]}, ${this[1]})` }
     /** @returns {number[]} */

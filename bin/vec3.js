@@ -626,6 +626,10 @@ export class vec3 {
         yield this[2]
     }
 
+    // ---------------------------
+    //      CONVERSION
+    // ---------------------------
+
     /** @returns {string} */
     toString() { return  `(${this[0]}, ${this[1]}, ${this[2]})` }
     /** @returns {number[]} */

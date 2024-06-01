@@ -1707,6 +1707,10 @@ export class vec4 {
         yield this[3]
     }
 
+    // ---------------------------
+    //      CONVERSION
+    // ---------------------------
+
     /** @returns {string} */
     toString() { return  `(${this[0]}, ${this[1]}, ${this[2]}, ${this[3]})` }
     /** @returns {number[]} */

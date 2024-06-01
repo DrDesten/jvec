@@ -55,3 +55,82 @@ export function fnDeclaration( name, params, body, opts = {} ) {
     const fnDecl = opts.compact ? `${fnHead} { ${fnBody} }` : `${fnHead} {\n${fnBody}\n}`
     return setIndent( `${fnJsdoc}\n${fnDecl}`, 4 )
 }
+
+/**
+ * @typedef {{expr?: string, optional?: boolean, rest?: boolean}} FnParamOpts
+ * @typedef {{prefix?: string, type?: string, description?: string, compact?: boolean, indentFn?: (text:string, indent:number) => string, jsdocOpts?: JSDocOptions}} FnOpts
+ */
+
+class FnParam {
+    /** @type {FnParamOpts} */
+    static DefaultOpts = { expr: undefined, optional: false, rest: false }
+    /** @param {string} name @param {string} type @param {FnParamOpts} [opts] */
+    constructor( name, type, opts = {} ) {
+        this.name = name
+        this.type = type
+
+        opts.optional ||= !!opts.expr
+        this.opts = { ...FnParam.DefaultOpts, ...opts }
+    }
+    /** @returns {string} */
+    string() {
+        const { expr, rest } = this.opts
+        return ( rest ? "..." : "" ) + this.name + ( expr ? " = " + expr : "" )
+    }
+    /** @returns {JSDocStatement} */
+    jsdoc() {
+        const { type, name, opts: { optional, expr } } = this
+        return ["param", type, name, { optional: optional, default: expr }]
+    }
+}
+
+export class Fn {
+    static Param = FnParam
+    /** @type {FnOpts} */
+    static DefaultOpts = { prefix: '', type: '', description: '', compact: false, indentFn: forceIndent, jsdocOpts: {} }
+    /** @param {string} name @param {FnParam[]} params @param {string|string[]} body @param {FnOpts} [opts] */
+    constructor( name, params, body, opts = {} ) {
+        this.name = name
+        this.params = params
+        this.body = typeof body === "string" ? [body] : body
+
+        this.opts = { ...Fn.DefaultOpts, ...opts }
+    }
+    /** @returns {Fn} */
+    clone() {
+        return structuredClone( this )
+    }
+
+    /** @param {RegExp} regex @param {string} replacer */
+    replace( regex, replacer ) {
+        const { body } = this
+        this.body = body.map( statement => statement.replace( regex, replacer ) )
+    }
+    /** @param {string} current @param {string} replacement */
+    replaceVariable( current, replacement ) {
+        this.replace( new RegExp( `\\b${current}\\b`, "g" ), replacement )
+    }
+
+    /** @returns {string} */
+    string() {
+        const { name, params, body, opts: { prefix, compact, indentFn } } = this
+        const fnParams = params.map( p => p.string() ).join( ", " )
+        const fnBody = formatBody( body, compact )
+        const fnHead = `${prefix ? `${prefix} ` : ""}${name}(${fnParams ? ` ${fnParams} ` : ""})`
+        const fnDecl = compact ? `${fnHead} { ${fnBody} }` : `${fnHead} {\n${indentFn( fnBody, 4 )}\n}`
+        return setIndent( fnDecl, 4 )
+    }
+    /** @returns {string} */
+    jsdoc() {
+        const { params, opts: { type, description, jsdocOpts } } = this
+        return JSDoc( [].concat(
+            description ? [description] : [],
+            params.map( p => p.jsdoc() ),
+            type ? ["returns", type] : [],
+        ), jsdocOpts )
+    }
+    /** @returns {string} */
+    decl() {
+        return this.jsdoc() + "\n" + this.string()
+    }
+}
