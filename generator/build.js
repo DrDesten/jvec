@@ -356,22 +356,13 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
     function properties() {
         function length() {
             const body = `return Math.sqrt( ${DMAP( i => `this[${i}] * this[${i}]`, " + " )} )`
-            return new Fn( `length`, [], body, { type: "number" } )
-        }
-        function staticLength() {
-            const body = `return Math.sqrt( ${DMAP( i => `v[${i}] * v[${i}]`, " + " )} )`
-            return new Fn( `length`, Param_v, body, { prefix: "static", type: "number" } )
+            return Fn.autoStatic( `length`, [[], Param_v], body, { type: "number" }, [/\bthis\b/g, "v"] )
         }
         function lengthSq() {
             const body = `return ${DMAP( i => `this[${i}] * this[${i}]`, " + " )}`
-            return new Fn( `lengthSq`, [], body, { type: "number" } )
+            return Fn.autoStatic( `lengthSq`, [[], Param_v], body, { type: "number" }, [/\bthis\b/g, "v"] )
         }
-        function staticLengthSq() {
-            const body = `return ${DMAP( i => `v[${i}] * v[${i}]`, " + " )}`
-            return new Fn( `lengthSq`, Param_v, body, { prefix: "static", type: "number" } )
-        }
-
-        return [length(), staticLength(), lengthSq(), staticLengthSq()].join( "\n\n" )
+        return [...length(), ...lengthSq()].join( "\n\n" )
     }
 
     function vectorOperations() {
