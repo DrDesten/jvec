@@ -1088,13 +1088,12 @@ export class vec3 {
         return this
     }
 
-    /** @param {vec3Like} v @param {(value: number, index: number) => number} fn @returns {vec3} */
-    static apply( v, fn ) {
-        const result = new vec3
-        result[0] = fn(v[0], 0 )
-        result[1] = fn(v[1], 1 )
-        result[2] = fn(v[2], 2 )
-        return result
+    /** @param {vec3Like} v @param {(value: number, index: number) => number} fn @param {vec3} [target=new vec3] @returns {vec3} */
+    static apply( v, fn, target = new vec3 ) {
+        target[0] = fn( v[0], 0 )
+        target[1] = fn( v[1], 1 )
+        target[2] = fn( v[2], 2 )
+        return target
     }
 
     /** @returns {vec3} */
@@ -1102,6 +1101,14 @@ export class vec3 {
         this[0] = Math.abs( this[0] )
         this[1] = Math.abs( this[1] )
         this[2] = Math.abs( this[2] )
+        return this
+    }
+
+    /** @returns {vec3} */
+    trunc() {
+        this[0] = Math.trunc( this[0] )
+        this[1] = Math.trunc( this[1] )
+        this[2] = Math.trunc( this[2] )
         return this
     }
 
@@ -1129,238 +1136,212 @@ export class vec3 {
         return this
     }
 
-    /** @param {vec3Like} v @returns {vec3} */
-    static abs( v ) {
-        const result = new vec3
-        result[0] = Math.abs( v[0] )
-        result[1] = Math.abs( v[1] )
-        result[2] = Math.abs( v[2] )
-        return result
+    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
+    static abs( v, target = new vec3 ) {
+        target[0] = Math.abs( v[0] )
+        target[1] = Math.abs( v[1] )
+        target[2] = Math.abs( v[2] )
+        return target
     }
 
-    /** @param {vec3Like} v @returns {vec3} */
-    static acos( v ) {
-        const result = new vec3
-        result[0] = Math.acos( v[0] )
-        result[1] = Math.acos( v[1] )
-        result[2] = Math.acos( v[2] )
-        return result
+    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
+    static acos( v, target = new vec3 ) {
+        target[0] = Math.acos( v[0] )
+        target[1] = Math.acos( v[1] )
+        target[2] = Math.acos( v[2] )
+        return target
     }
 
-    /** @param {vec3Like} v @returns {vec3} */
-    static acosh( v ) {
-        const result = new vec3
-        result[0] = Math.acosh( v[0] )
-        result[1] = Math.acosh( v[1] )
-        result[2] = Math.acosh( v[2] )
-        return result
+    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
+    static acosh( v, target = new vec3 ) {
+        target[0] = Math.acosh( v[0] )
+        target[1] = Math.acosh( v[1] )
+        target[2] = Math.acosh( v[2] )
+        return target
     }
 
-    /** @param {vec3Like} v @returns {vec3} */
-    static asin( v ) {
-        const result = new vec3
-        result[0] = Math.asin( v[0] )
-        result[1] = Math.asin( v[1] )
-        result[2] = Math.asin( v[2] )
-        return result
+    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
+    static asin( v, target = new vec3 ) {
+        target[0] = Math.asin( v[0] )
+        target[1] = Math.asin( v[1] )
+        target[2] = Math.asin( v[2] )
+        return target
     }
 
-    /** @param {vec3Like} v @returns {vec3} */
-    static asinh( v ) {
-        const result = new vec3
-        result[0] = Math.asinh( v[0] )
-        result[1] = Math.asinh( v[1] )
-        result[2] = Math.asinh( v[2] )
-        return result
+    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
+    static asinh( v, target = new vec3 ) {
+        target[0] = Math.asinh( v[0] )
+        target[1] = Math.asinh( v[1] )
+        target[2] = Math.asinh( v[2] )
+        return target
     }
 
-    /** @param {vec3Like} v @returns {vec3} */
-    static atan( v ) {
-        const result = new vec3
-        result[0] = Math.atan( v[0] )
-        result[1] = Math.atan( v[1] )
-        result[2] = Math.atan( v[2] )
-        return result
+    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
+    static atan( v, target = new vec3 ) {
+        target[0] = Math.atan( v[0] )
+        target[1] = Math.atan( v[1] )
+        target[2] = Math.atan( v[2] )
+        return target
     }
 
-    /** @param {vec3Like} v @returns {vec3} */
-    static atanh( v ) {
-        const result = new vec3
-        result[0] = Math.atanh( v[0] )
-        result[1] = Math.atanh( v[1] )
-        result[2] = Math.atanh( v[2] )
-        return result
+    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
+    static atanh( v, target = new vec3 ) {
+        target[0] = Math.atanh( v[0] )
+        target[1] = Math.atanh( v[1] )
+        target[2] = Math.atanh( v[2] )
+        return target
     }
 
-    /** @param {vec3Like} v @returns {vec3} */
-    static ceil( v ) {
-        const result = new vec3
-        result[0] = Math.ceil( v[0] )
-        result[1] = Math.ceil( v[1] )
-        result[2] = Math.ceil( v[2] )
-        return result
+    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
+    static ceil( v, target = new vec3 ) {
+        target[0] = Math.ceil( v[0] )
+        target[1] = Math.ceil( v[1] )
+        target[2] = Math.ceil( v[2] )
+        return target
     }
 
-    /** @param {vec3Like} v @returns {vec3} */
-    static cbrt( v ) {
-        const result = new vec3
-        result[0] = Math.cbrt( v[0] )
-        result[1] = Math.cbrt( v[1] )
-        result[2] = Math.cbrt( v[2] )
-        return result
+    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
+    static cbrt( v, target = new vec3 ) {
+        target[0] = Math.cbrt( v[0] )
+        target[1] = Math.cbrt( v[1] )
+        target[2] = Math.cbrt( v[2] )
+        return target
     }
 
-    /** @param {vec3Like} v @returns {vec3} */
-    static expm1( v ) {
-        const result = new vec3
-        result[0] = Math.expm1( v[0] )
-        result[1] = Math.expm1( v[1] )
-        result[2] = Math.expm1( v[2] )
-        return result
+    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
+    static expm1( v, target = new vec3 ) {
+        target[0] = Math.expm1( v[0] )
+        target[1] = Math.expm1( v[1] )
+        target[2] = Math.expm1( v[2] )
+        return target
     }
 
-    /** @param {vec3Like} v @returns {vec3} */
-    static cos( v ) {
-        const result = new vec3
-        result[0] = Math.cos( v[0] )
-        result[1] = Math.cos( v[1] )
-        result[2] = Math.cos( v[2] )
-        return result
+    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
+    static cos( v, target = new vec3 ) {
+        target[0] = Math.cos( v[0] )
+        target[1] = Math.cos( v[1] )
+        target[2] = Math.cos( v[2] )
+        return target
     }
 
-    /** @param {vec3Like} v @returns {vec3} */
-    static cosh( v ) {
-        const result = new vec3
-        result[0] = Math.cosh( v[0] )
-        result[1] = Math.cosh( v[1] )
-        result[2] = Math.cosh( v[2] )
-        return result
+    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
+    static cosh( v, target = new vec3 ) {
+        target[0] = Math.cosh( v[0] )
+        target[1] = Math.cosh( v[1] )
+        target[2] = Math.cosh( v[2] )
+        return target
     }
 
-    /** @param {vec3Like} v @returns {vec3} */
-    static exp( v ) {
-        const result = new vec3
-        result[0] = Math.exp( v[0] )
-        result[1] = Math.exp( v[1] )
-        result[2] = Math.exp( v[2] )
-        return result
+    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
+    static exp( v, target = new vec3 ) {
+        target[0] = Math.exp( v[0] )
+        target[1] = Math.exp( v[1] )
+        target[2] = Math.exp( v[2] )
+        return target
     }
 
-    /** @param {vec3Like} v @returns {vec3} */
-    static floor( v ) {
-        const result = new vec3
-        result[0] = Math.floor( v[0] )
-        result[1] = Math.floor( v[1] )
-        result[2] = Math.floor( v[2] )
-        return result
+    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
+    static floor( v, target = new vec3 ) {
+        target[0] = Math.floor( v[0] )
+        target[1] = Math.floor( v[1] )
+        target[2] = Math.floor( v[2] )
+        return target
     }
 
-    /** @param {vec3Like} v @returns {vec3} */
-    static log( v ) {
-        const result = new vec3
-        result[0] = Math.log( v[0] )
-        result[1] = Math.log( v[1] )
-        result[2] = Math.log( v[2] )
-        return result
+    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
+    static log( v, target = new vec3 ) {
+        target[0] = Math.log( v[0] )
+        target[1] = Math.log( v[1] )
+        target[2] = Math.log( v[2] )
+        return target
     }
 
-    /** @param {vec3Like} v @returns {vec3} */
-    static log1p( v ) {
-        const result = new vec3
-        result[0] = Math.log1p( v[0] )
-        result[1] = Math.log1p( v[1] )
-        result[2] = Math.log1p( v[2] )
-        return result
+    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
+    static log1p( v, target = new vec3 ) {
+        target[0] = Math.log1p( v[0] )
+        target[1] = Math.log1p( v[1] )
+        target[2] = Math.log1p( v[2] )
+        return target
     }
 
-    /** @param {vec3Like} v @returns {vec3} */
-    static log2( v ) {
-        const result = new vec3
-        result[0] = Math.log2( v[0] )
-        result[1] = Math.log2( v[1] )
-        result[2] = Math.log2( v[2] )
-        return result
+    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
+    static log2( v, target = new vec3 ) {
+        target[0] = Math.log2( v[0] )
+        target[1] = Math.log2( v[1] )
+        target[2] = Math.log2( v[2] )
+        return target
     }
 
-    /** @param {vec3Like} v @returns {vec3} */
-    static log10( v ) {
-        const result = new vec3
-        result[0] = Math.log10( v[0] )
-        result[1] = Math.log10( v[1] )
-        result[2] = Math.log10( v[2] )
-        return result
+    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
+    static log10( v, target = new vec3 ) {
+        target[0] = Math.log10( v[0] )
+        target[1] = Math.log10( v[1] )
+        target[2] = Math.log10( v[2] )
+        return target
     }
 
-    /** @param {vec3Like} v @returns {vec3} */
-    static round( v ) {
-        const result = new vec3
-        result[0] = Math.round( v[0] )
-        result[1] = Math.round( v[1] )
-        result[2] = Math.round( v[2] )
-        return result
+    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
+    static round( v, target = new vec3 ) {
+        target[0] = Math.round( v[0] )
+        target[1] = Math.round( v[1] )
+        target[2] = Math.round( v[2] )
+        return target
     }
 
-    /** @param {vec3Like} v @returns {vec3} */
-    static sign( v ) {
-        const result = new vec3
-        result[0] = Math.sign( v[0] )
-        result[1] = Math.sign( v[1] )
-        result[2] = Math.sign( v[2] )
-        return result
+    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
+    static sign( v, target = new vec3 ) {
+        target[0] = Math.sign( v[0] )
+        target[1] = Math.sign( v[1] )
+        target[2] = Math.sign( v[2] )
+        return target
     }
 
-    /** @param {vec3Like} v @returns {vec3} */
-    static sin( v ) {
-        const result = new vec3
-        result[0] = Math.sin( v[0] )
-        result[1] = Math.sin( v[1] )
-        result[2] = Math.sin( v[2] )
-        return result
+    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
+    static sin( v, target = new vec3 ) {
+        target[0] = Math.sin( v[0] )
+        target[1] = Math.sin( v[1] )
+        target[2] = Math.sin( v[2] )
+        return target
     }
 
-    /** @param {vec3Like} v @returns {vec3} */
-    static sinh( v ) {
-        const result = new vec3
-        result[0] = Math.sinh( v[0] )
-        result[1] = Math.sinh( v[1] )
-        result[2] = Math.sinh( v[2] )
-        return result
+    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
+    static sinh( v, target = new vec3 ) {
+        target[0] = Math.sinh( v[0] )
+        target[1] = Math.sinh( v[1] )
+        target[2] = Math.sinh( v[2] )
+        return target
     }
 
-    /** @param {vec3Like} v @returns {vec3} */
-    static sqrt( v ) {
-        const result = new vec3
-        result[0] = Math.sqrt( v[0] )
-        result[1] = Math.sqrt( v[1] )
-        result[2] = Math.sqrt( v[2] )
-        return result
+    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
+    static sqrt( v, target = new vec3 ) {
+        target[0] = Math.sqrt( v[0] )
+        target[1] = Math.sqrt( v[1] )
+        target[2] = Math.sqrt( v[2] )
+        return target
     }
 
-    /** @param {vec3Like} v @returns {vec3} */
-    static tan( v ) {
-        const result = new vec3
-        result[0] = Math.tan( v[0] )
-        result[1] = Math.tan( v[1] )
-        result[2] = Math.tan( v[2] )
-        return result
+    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
+    static tan( v, target = new vec3 ) {
+        target[0] = Math.tan( v[0] )
+        target[1] = Math.tan( v[1] )
+        target[2] = Math.tan( v[2] )
+        return target
     }
 
-    /** @param {vec3Like} v @returns {vec3} */
-    static tanh( v ) {
-        const result = new vec3
-        result[0] = Math.tanh( v[0] )
-        result[1] = Math.tanh( v[1] )
-        result[2] = Math.tanh( v[2] )
-        return result
+    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
+    static tanh( v, target = new vec3 ) {
+        target[0] = Math.tanh( v[0] )
+        target[1] = Math.tanh( v[1] )
+        target[2] = Math.tanh( v[2] )
+        return target
     }
 
-    /** @param {vec3Like} v @returns {vec3} */
-    static trunc( v ) {
-        const result = new vec3
-        result[0] = Math.trunc( v[0] )
-        result[1] = Math.trunc( v[1] )
-        result[2] = Math.trunc( v[2] )
-        return result
+    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
+    static trunc( v, target = new vec3 ) {
+        target[0] = Math.trunc( v[0] )
+        target[1] = Math.trunc( v[1] )
+        target[2] = Math.trunc( v[2] )
+        return target
     }
 
     // ---------------------------

@@ -64,6 +64,9 @@ function generateVector( dimension ) {
     function bodyThis( statements ) {
         return [...statements, "return this"]
     }
+    function bodyTarget( statements ) {
+        return [...statements, "return target"]
+    }
     function bodyResult( statements ) {
         return [`const result = new ${TYPE}`, ...statements, "return result"]
     }
@@ -321,26 +324,20 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
         }
 
         function apply() {
-            const params = new Fn.Param( "fn", `(value: number, index: number) => number` )
-            const body = bodyThis( DRANGE.map( i => `this[${i}] = fn( this[${i}], ${i} )` ) )
-            return new Fn( "apply", params, body, { type: TYPE } )
+            const param = new Fn.Param( "fn", `(value: number, index: number) => number` )
+            const body = DRANGE.map( i => `this[${i}] = fn( this[${i}], ${i} )` )
+            return Fn.autoStatic( "apply", [param, [Param_v, param]], body, { type: TYPE }, ["this", "target"], [/\bthis\b/, "v"] )
         }
-        function staticApply() {
-            const params = [Param_v, new Fn.Param( "fn", `(value: number, index: number) => number` )]
-            const body = bodyResult( DRANGE.map( i => `result[${i}] = fn(v[${i}], ${i} )` ) )
-            return new Fn( "apply", params, body, { prefix: "static", type: TYPE } )
-        }
-
         function builtinMath( name ) {
             const body = bodyThis( DRANGE.map( i => `this[${i}] = Math.${name}( this[${i}] )` ) )
             return new Fn( name, [], body, { type: TYPE } )
         }
         function staticBuiltinMath( name ) {
-            const body = bodyResult( DRANGE.map( i => `result[${i}] = Math.${name}( v[${i}] )` ) )
-            return new Fn( name, Param_v, body, { prefix: "static", type: TYPE } )
+            const body = bodyTarget( DRANGE.map( i => `target[${i}] = Math.${name}( v[${i}] )` ) )
+            return new Fn( name, [Param_v, Param_target], body, { prefix: "static", type: TYPE } )
         }
         const mathFunctions = Object.getOwnPropertyNames( Math ).filter( name => typeof Math[name] === "function" && Math[name].length === 1 )
-        const mathCandidates = ["abs", "round", "floor", "ceil"]
+        const mathCandidates = ["abs", "trunc", "round", "floor", "ceil"]
         const staticMathCandidates = mathFunctions.filter( name => !/fround|clz32/.test( name ) ) // filter misc
 
         const functions = operations.map( ( [name, op] ) => [
@@ -349,7 +346,7 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
             vector( name, op ),
         ] ).flat( 2 )
         functions.push(
-            apply(), staticApply(),
+            ...apply(),
             ...mathCandidates.map( name => builtinMath( name ) ),
             ...staticMathCandidates.map( name => staticBuiltinMath( name ) )
         )
