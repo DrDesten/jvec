@@ -40,9 +40,15 @@ writeFileSync( join( __dirname, OUTPUT_DIR, `mat.js` ), mat, { encoding: "utf8" 
 /** @param {number} dimension vector dimension */
 function generateVector( dimension ) {
 
+    const MATTYPE = `mat${dimension}`
+    const MATTYPELIKE = `${MATTYPE}Like`
+    const MATTYPELIKE_OR_NUM = `number|${MATTYPELIKE}`
+
     const TYPE = `vec${dimension}`
     const TYPELIKE = `${TYPE}Like`
     const TYPELIKE_OR_NUM = `number|${TYPELIKE}`
+
+
     const IFNUM = ( isnum, notnum, varname = "x" ) => `typeof ${varname} === "number" ? ${isnum} : ${notnum}`
     const iMapXYZW = "xyzw"
     const iMapRGBA = "rgba"
@@ -60,6 +66,8 @@ function generateVector( dimension ) {
     const Param_v2 = new Fn.Param( "v2", TYPELIKE )
     const Params_v1v2 = [Param_v1, Param_v2]
     const Param_target = new Fn.Param( "target", TYPE, { expr: `new ${TYPE}` } )
+
+    const Param_m = new Fn.Param( "m", MATTYPELIKE )
 
     function bodyThis( statements ) {
         return [...statements, "return this"]
@@ -327,6 +335,14 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
             return Fn.autoStatic( `v${name}`, [Param_v, Params_v1v2], body, { type: TYPE }, ["this", "target"], [/\bthis\b/g, "v1"], [/\bv\b/g, "v2"] )
         }
 
+        function mmul() {
+            const body = [].concat(
+                DRANGE.map( i => `const c${i} = this[${i}]` ),
+                DRANGE.map( i => `this[${i}] = ${DMAP( c => `c${c} * m[${i + c * dimension}]`, " + " )}` ),
+            )
+            return Fn.autoStatic( `mmul`, [Param_m, [Param_v, Param_m]], body, { type: TYPE }, [/\bthis\b(?=.*=)/, "target"], [/\bthis\b/g, "v"] )
+        }
+
         function apply() {
             const param = new Fn.Param( "fn", `(value: number, index: number) => number` )
             const body = DRANGE.map( i => `this[${i}] = fn( this[${i}], ${i} )` )
@@ -350,6 +366,7 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
             vector( name, op ),
         ] ).flat( 2 )
         functions.push(
+            ...mmul(),
             ...apply(),
             ...mathCandidates.map( name => builtinMath( name ) ),
             ...staticMathCandidates.map( name => staticBuiltinMath( name ) )
@@ -490,7 +507,9 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
         [
             `import { randomNorm } from "./vechelper.js"`,
             ...Range( MIN_DIMENSION, MAX_DIMENSION + 1 ).filter( i => i !== dimension )
-                .map( i => `import { vec${i} } from "./vec${i}.js"\n/** @typedef {import("./vec${i}.js").vec${i}Like} vec${i}Like */` )
+                .map( i => `import { vec${i} } from "./vec${i}.js"\n/** @typedef {import("./vec${i}.js").vec${i}Like} vec${i}Like */` ),
+            ...Range( MIN_DIMENSION, MAX_DIMENSION + 1 )
+                .map( i => `import { mat${i} } from "./mat${i}.js"\n/** @typedef {import("./mat${i}.js").mat${i}Like} mat${i}Like */` )
         ].join( "\n" ),
         title( TYPE ),
         JSDoc( [

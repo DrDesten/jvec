@@ -3,6 +3,12 @@ import { vec2 } from "./vec2.js"
 /** @typedef {import("./vec2.js").vec2Like} vec2Like */
 import { vec3 } from "./vec3.js"
 /** @typedef {import("./vec3.js").vec3Like} vec3Like */
+import { mat2 } from "./mat2.js"
+/** @typedef {import("./mat2.js").mat2Like} mat2Like */
+import { mat3 } from "./mat3.js"
+/** @typedef {import("./mat3.js").mat3Like} mat3Like */
+import { mat4 } from "./mat4.js"
+/** @typedef {import("./mat4.js").mat4Like} mat4Like */
 
 // ###############################################
 //      vec4
@@ -2242,6 +2248,32 @@ export class vec4 {
         target[1] = v1[1] ** v2[1]
         target[2] = v1[2] ** v2[2]
         target[3] = v1[3] ** v2[3]
+        return target
+    }
+
+    /** @param {mat4Like} m @returns {vec4} */
+    mmul( m ) {
+        const c0 = this[0]
+        const c1 = this[1]
+        const c2 = this[2]
+        const c3 = this[3]
+        this[0] = c0 * m[0] + c1 * m[4] + c2 * m[8] + c3 * m[12]
+        this[1] = c0 * m[1] + c1 * m[5] + c2 * m[9] + c3 * m[13]
+        this[2] = c0 * m[2] + c1 * m[6] + c2 * m[10] + c3 * m[14]
+        this[3] = c0 * m[3] + c1 * m[7] + c2 * m[11] + c3 * m[15]
+        return this
+    }
+
+    /** @param {vec4Like} v @param {mat4Like} m @param {vec4} [target=new vec4] @returns {vec4} */
+    static mmul( v, m, target = new vec4 ) {
+        const c0 = v[0]
+        const c1 = v[1]
+        const c2 = v[2]
+        const c3 = v[3]
+        target[0] = c0 * m[0] + c1 * m[4] + c2 * m[8] + c3 * m[12]
+        target[1] = c0 * m[1] + c1 * m[5] + c2 * m[9] + c3 * m[13]
+        target[2] = c0 * m[2] + c1 * m[6] + c2 * m[10] + c3 * m[14]
+        target[3] = c0 * m[3] + c1 * m[7] + c2 * m[11] + c3 * m[15]
         return target
     }
 
