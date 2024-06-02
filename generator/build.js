@@ -627,13 +627,31 @@ function generateMatrix( dimension ) {
             return new Fn( "constructor", param, body, {} )
         }
         function fromMatrix() {
-            return [2, 3, 4].map( d => {
-                const param = new Fn.Param( "m", `mat${d}` )
+            function general() {
+                const param = new Fn.Param( "m", "mat2Like|mat3Like|mat4Like" )
+                const body = `
+                    switch ( m.constructor ) {
+                        case mat2: return ${TYPE}.fromMat2( m )
+                        case mat3: return ${TYPE}.fromMat3( m )
+                        case mat4: return ${TYPE}.fromMat4( m )
+                    }
+                    switch ( m.length ) {
+                        case 4: return ${TYPE}.fromMat2( m )
+                        case 9: return ${TYPE}.fromMat3( m )
+                        case 16: return ${TYPE}.fromMat4( m )
+                    }
+                    throw new Error( "not a matrix" )
+                `
+                return new Fn( "fromMatrix", param, body, { type: TYPE, indentFn: setIndent } )
+            }
+            function matrix( d ) {
+                const param = new Fn.Param( "m", `mat${d}Like` )
                 const body = `return new ${TYPE}( ${array( ( { x, y } ) => {
                     return x < d && y < d ? `m[${x + y * d}]` : `${+( x === y )}`
                 } )} )`
                 return new Fn( `fromMat${d}`, param, body, { type: TYPE, indentFn: setIndent } )
-            } )
+            }
+            return [general(), ...[2, 3, 4].map( matrix )]
         }
 
         function scale() {

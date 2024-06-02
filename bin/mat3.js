@@ -43,7 +43,22 @@ export class mat3 {
         this[8] = +( object?.[8] ?? 1 )
     }
 
-    /** @param {mat2} m @returns {mat3} */
+    /** @param {mat2Like|mat3Like|mat4Like} m @returns {mat3} */
+    fromMatrix( m ) {
+        switch ( m.constructor ) {
+            case mat2: return mat3.fromMat2( m )
+            case mat3: return mat3.fromMat3( m )
+            case mat4: return mat3.fromMat4( m )
+        }
+        switch ( m.length ) {
+            case 4: return mat3.fromMat2( m )
+            case 9: return mat3.fromMat3( m )
+            case 16: return mat3.fromMat4( m )
+        }
+        throw new Error( "not a matrix" )
+    }
+
+    /** @param {mat2Like} m @returns {mat3} */
     fromMat2( m ) {
         return new mat3( [
             m[0], m[1], 0,
@@ -52,7 +67,7 @@ export class mat3 {
         ] )
     }
 
-    /** @param {mat3} m @returns {mat3} */
+    /** @param {mat3Like} m @returns {mat3} */
     fromMat3( m ) {
         return new mat3( [
             m[0], m[1], m[2],
@@ -61,7 +76,7 @@ export class mat3 {
         ] )
     }
 
-    /** @param {mat4} m @returns {mat3} */
+    /** @param {mat4Like} m @returns {mat3} */
     fromMat4( m ) {
         return new mat3( [
             m[0], m[1], m[2],
