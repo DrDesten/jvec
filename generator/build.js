@@ -562,16 +562,20 @@ function generateMatrix( dimension ) {
     const TYPELIKE = `${TYPE}Like`
     const TYPELIKE_OR_NUM = `number|${TYPELIKE}`
 
-    const Param_s = fnParameter( "s", "number" )
-    const Param_m = fnParameter( "m", TYPELIKE )
-    const Param_x = fnParameter( "x", TYPELIKE_OR_NUM )
-    const Param_m1 = fnParameter( "m1", TYPELIKE )
-    const Param_m2 = fnParameter( "m2", TYPELIKE )
+    const Param_s = new Fn.Param( "s", "number" )
+    const Param_m = new Fn.Param( "m", TYPELIKE )
+    const Param_x = new Fn.Param( "x", TYPELIKE_OR_NUM )
+    const Param_m1 = new Fn.Param( "m1", TYPELIKE )
+    const Param_m2 = new Fn.Param( "m2", TYPELIKE )
 
     /** @param {number} x @param {number} y @param {string} [prefix=""]  */
     function id( x, y, prefix = "" ) {
         return prefix + x + y
     }
+
+    const DRANGE = Range( dimension )
+    const DMAP = DRANGE.map.bind( DRANGE )
+    const DJOIN = (/** @type {(i:number)=>any} */ fn, join = ", " ) => DMAP( fn ).join( join )
 
     const CRANGE = Array.from( { length: dimension ** 2 }, ( _, i ) => ( {
         id( prefix = "" ) { return id( i % dimension, ~~( i / dimension ), prefix ) },
@@ -624,27 +628,27 @@ function generateMatrix( dimension ) {
 
     function constructors() {
         function constructor() {
-            const params = new Fn.Param( "object", TYPELIKE, { optional: true } )
+            const param = new Fn.Param( "object", TYPELIKE, { optional: true } )
             const body = `
                 ${CJOIN( ( { x, y }, i ) => `/** @type {number} */\nthis[${i}] = +( object?.[${i}] ?? ${+( x === y )} )`, "\n" )}
             `
-            return new Fn( "constructor", params, body, {} ).decl()
+            return new Fn( "constructor", param, body, {} )
         }
 
         function scale() {
-            const params = [fnParameter( "v", VECSOMELIKE )]
+            const param = new Fn.Param( "v", VECSOMELIKE )
             const body = `
 return new ${TYPE}( ${array( ( { x, y } ) => x === y ? `v[${x}] ?? 1` : `0` )} )
             `
-            return fnDeclaration( "scale", params, body, { prefix: "static", type: TYPE, indentFn: setIndent } )
+            return new Fn( "scale", param, body, { prefix: "static", type: TYPE, indentFn: setIndent } )
         }
         function translate() {
-            const params = [fnParameter( "v", VECLIKE.slice( 0, dimension - 2 ).join( "|" ) )]
+            const param = new Fn.Param( "v", VECLIKE.slice( 0, dimension - 2 ).join( "|" ) )
             const body = `
 return new ${TYPE}( ${array( ( { x, y } ) => ( y === dimension - 1 && x < dimension - 1 ? `v[${x}] ?? ` : "" ) + `${+( x === y )}` )
                 } )
             `
-            return fnDeclaration( "translate", params, body, { prefix: "static", type: TYPE, indentFn: setIndent } )
+            return new Fn( "translate", param, body, { prefix: "static", type: TYPE, indentFn: setIndent } )
         }
 
         const functions = [
@@ -656,7 +660,7 @@ return new ${TYPE}( ${array( ( { x, y } ) => ( y === dimension - 1 && x < dimens
     }
 
     function clone() {
-        return fnDeclaration( "clone", [], `return new ${TYPE}( this )`, { type: TYPE } )
+        return new Fn( "clone", [], `return new ${TYPE}( this )`, { type: TYPE } )
     }
 
     function iterator() {
@@ -667,33 +671,34 @@ ${CJOIN( ( _, i ) => `                yield this[${i}]`, "\n" )}
     }
 
     function conversion() {
-        const nestedArrayExpr = `[${Range( dimension ).map( y => `[${Range( dimension ).map( x => `this[${x + y * dimension}]` )}]` )}]`
+        const stringExpr = `\`(${DJOIN( y => `(${DJOIN( x => `\${this[${x + y * dimension}]}` )})` )})\``
+        const nestedArrayExpr = `[${DJOIN( y => `[${DJOIN( x => `this[${x + y * dimension}]` )}]` )}]`
         const arrayExpr = `[${CJOIN( ( _, i ) => `this[${i}]` )}]`
         const conversions = [
-            fnDeclaration( "toString", [], `return \`(${CJOIN( ( _, i ) => `\${this[${i}]}` )})\``, { type: "string", compact: true } ),
-            fnDeclaration( "toArray", [], `return ${nestedArrayExpr}`, { type: "number[][]", compact: true } ),
-            fnDeclaration( "toFlatArray", [], `return ${arrayExpr}`, { type: "number[]", compact: true } ),
-            fnDeclaration( "toInt8Array", [], `return new Int8Array( ${arrayExpr} )`, { type: "Int8Array", compact: true } ),
-            fnDeclaration( "toUint8Array", [], `return new Uint8Array( ${arrayExpr} )`, { type: "Uint8Array", compact: true } ),
-            fnDeclaration( "toUint8ClampedArray", [], `return new Uint8ClampedArray( ${arrayExpr} )`, { type: "Uint8ClampedArray", compact: true } ),
-            fnDeclaration( "toInt16Array", [], `return new Int16Array( ${arrayExpr} )`, { type: "Int16Array", compact: true } ),
-            fnDeclaration( "toUint16Array", [], `return new Uint16Array( ${arrayExpr} )`, { type: "Uint16Array", compact: true } ),
-            fnDeclaration( "toInt32Array", [], `return new Int32Array( ${arrayExpr} )`, { type: "Int32Array", compact: true } ),
-            fnDeclaration( "toUint32Array", [], `return new Uint32Array( ${arrayExpr} )`, { type: "Uint32Array", compact: true } ),
-            fnDeclaration( "toFloat32Array", [], `return new Float32Array( ${arrayExpr} )`, { type: "Float32Array", compact: true } ),
-            fnDeclaration( "toFloat64Array", [], `return new Float64Array( ${arrayExpr} )`, { type: "Float64Array", compact: true } ),
+            new Fn( "toString", [], `return ${stringExpr}`, { type: "string", compact: true } ),
+            new Fn( "toArray", [], `return ${nestedArrayExpr}`, { type: "number[][]", compact: true } ),
+            new Fn( "toFlatArray", [], `return ${arrayExpr}`, { type: "number[]", compact: true } ),
+            new Fn( "toInt8Array", [], `return new Int8Array( ${arrayExpr} )`, { type: "Int8Array", compact: true } ),
+            new Fn( "toUint8Array", [], `return new Uint8Array( ${arrayExpr} )`, { type: "Uint8Array", compact: true } ),
+            new Fn( "toUint8ClampedArray", [], `return new Uint8ClampedArray( ${arrayExpr} )`, { type: "Uint8ClampedArray", compact: true } ),
+            new Fn( "toInt16Array", [], `return new Int16Array( ${arrayExpr} )`, { type: "Int16Array", compact: true } ),
+            new Fn( "toUint16Array", [], `return new Uint16Array( ${arrayExpr} )`, { type: "Uint16Array", compact: true } ),
+            new Fn( "toInt32Array", [], `return new Int32Array( ${arrayExpr} )`, { type: "Int32Array", compact: true } ),
+            new Fn( "toUint32Array", [], `return new Uint32Array( ${arrayExpr} )`, { type: "Uint32Array", compact: true } ),
+            new Fn( "toFloat32Array", [], `return new Float32Array( ${arrayExpr} )`, { type: "Float32Array", compact: true } ),
+            new Fn( "toFloat64Array", [], `return new Float64Array( ${arrayExpr} )`, { type: "Float64Array", compact: true } ),
         ]
         return conversions.join( "\n" )
     }
 
     function boolean() {
         function eq() {
-            const body = [`return ${CJOIN( ( _, i ) => `this[${i}] === m[${i}]`, " && " )}`]
-            return fnAutoStatic( "eq", [[Param_m], [Param_m1, Param_m2]], body, { type: "boolean" }, [[/\bthis\b/g, "m1"], [/\bm\b/g, "m2"]] )
+            const body = `return ${CJOIN( ( _, i ) => `this[${i}] === m[${i}]`, " && " )}`
+            return Fn.autoStatic( "eq", [Param_m, [Param_m1, Param_m2]], body, { type: "boolean" }, [/\bthis\b/g, "m1"], [/\bm\b/g, "m2"] )
         }
         function neq() {
-            const body = [`return ${CJOIN( ( _, i ) => `this[${i}] !== m[${i}]`, " || " )}`]
-            return fnAutoStatic( "neq", [[Param_m], [Param_m1, Param_m2]], body, { type: "boolean" }, [[/\bthis\b/g, "m1"], [/\bm\b/g, "m2"]] )
+            const body = `return ${CJOIN( ( _, i ) => `this[${i}] !== m[${i}]`, " || " )}`
+            return Fn.autoStatic( "neq", [Param_m, [Param_m1, Param_m2]], body, { type: "boolean" }, [/\bthis\b/g, "m1"], [/\bm\b/g, "m2"] )
         }
         const functions = [
             eq(), neq(),
@@ -703,7 +708,6 @@ ${CJOIN( ( _, i ) => `                yield this[${i}]`, "\n" )}
 
     function arithmetic() {
         function mmul() {
-            const params = [fnParameter( "m", TYPELIKE )]
             const body = `
                 ${defcomps( "a" )}
                 ${defcomps( "b", "m" )}
@@ -715,7 +719,7 @@ ${CJOIN( ( _, i ) => `                yield this[${i}]`, "\n" )}
                 , "\n" )}
                 return this
             `
-            return fnDeclaration( "mmul", params, body, { type: TYPE } )
+            return new Fn( "mmul", Param_m, body, { type: TYPE } )
         }
         function inverse2() {
             let body = `
@@ -727,7 +731,7 @@ ${CJOIN( ( _, i ) => `                yield this[${i}]`, "\n" )}
                 this[3] = m00 * det
                 return this
             `
-            return fnDeclaration( "inverse", [], body, { type: TYPE } )
+            return new Fn( "inverse", [], body, { type: TYPE } )
         }
         function inverse3() {
             let body = `
@@ -747,7 +751,7 @@ ${CJOIN( ( _, i ) => `                yield this[${i}]`, "\n" )}
                 this[8] = det * ( m00 * m11 - m01 * m10 )
                 return this
             `
-            return fnDeclaration( "inverse", [], body, { type: TYPE } )
+            return new Fn( "inverse", [], body, { type: TYPE } )
         }
         function inverse4() {
             let body = `
@@ -831,7 +835,7 @@ ${CJOIN( ( _, i ) => `                yield this[${i}]`, "\n" )}
 
                 return this
             `
-            return fnDeclaration( "inverse", [], body, { type: TYPE } )
+            return new Fn( "inverse", [], body, { type: TYPE } )
         }
 
         const functions = [

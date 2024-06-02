@@ -42,18 +42,18 @@ export class mat3 {
     /** @param {vec2Like|vec3Like} v @returns {mat3} */
     static scale( v ) {
         return new mat3( [
-            v[0] ?? 1, 0, 0, 
-            0, v[1] ?? 1, 0, 
-            0, 0, v[2] ?? 1, 
+            v[0] ?? 1, 0, 0,
+            0, v[1] ?? 1, 0,
+            0, 0, v[2] ?? 1,
         ] )
     }
 
     /** @param {vec2Like} v @returns {mat3} */
     static translate( v ) {
         return new mat3( [
-            1, 0, 0, 
-            0, 1, 0, 
-            v[0] ?? 0, v[1] ?? 0, 1, 
+            1, 0, 0,
+            0, 1, 0,
+            v[0] ?? 0, v[1] ?? 0, 1,
         ] )
     }
 
@@ -83,9 +83,9 @@ export class mat3 {
     // ---------------------------
 
     /** @returns {string} */
-    toString() { return `(${this[0]}, ${this[1]}, ${this[2]}, ${this[3]}, ${this[4]}, ${this[5]}, ${this[6]}, ${this[7]}, ${this[8]})` }
+    toString() { return `((${this[0]}, ${this[1]}, ${this[2]}), (${this[3]}, ${this[4]}, ${this[5]}), (${this[6]}, ${this[7]}, ${this[8]}))` }
     /** @returns {number[][]} */
-    toArray() { return [[this[0],this[1],this[2]],[this[3],this[4],this[5]],[this[6],this[7],this[8]]] }
+    toArray() { return [[this[0], this[1], this[2]], [this[3], this[4], this[5]], [this[6], this[7], this[8]]] }
     /** @returns {number[]} */
     toFlatArray() { return [this[0], this[1], this[2], this[3], this[4], this[5], this[6], this[7], this[8]] }
     /** @returns {Int8Array} */

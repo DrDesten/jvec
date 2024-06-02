@@ -56,20 +56,20 @@ export class mat4 {
     /** @param {vec2Like|vec3Like|vec4Like} v @returns {mat4} */
     static scale( v ) {
         return new mat4( [
-            v[0] ?? 1, 0, 0, 0, 
-            0, v[1] ?? 1, 0, 0, 
-            0, 0, v[2] ?? 1, 0, 
-            0, 0, 0, v[3] ?? 1, 
+            v[0] ?? 1, 0, 0, 0,
+            0, v[1] ?? 1, 0, 0,
+            0, 0, v[2] ?? 1, 0,
+            0, 0, 0, v[3] ?? 1,
         ] )
     }
 
     /** @param {vec2Like|vec3Like} v @returns {mat4} */
     static translate( v ) {
         return new mat4( [
-            1, 0, 0, 0, 
-            0, 1, 0, 0, 
-            0, 0, 1, 0, 
-            v[0] ?? 0, v[1] ?? 0, v[2] ?? 0, 1, 
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            v[0] ?? 0, v[1] ?? 0, v[2] ?? 0, 1,
         ] )
     }
 
@@ -106,9 +106,9 @@ export class mat4 {
     // ---------------------------
 
     /** @returns {string} */
-    toString() { return `(${this[0]}, ${this[1]}, ${this[2]}, ${this[3]}, ${this[4]}, ${this[5]}, ${this[6]}, ${this[7]}, ${this[8]}, ${this[9]}, ${this[10]}, ${this[11]}, ${this[12]}, ${this[13]}, ${this[14]}, ${this[15]})` }
+    toString() { return `((${this[0]}, ${this[1]}, ${this[2]}, ${this[3]}), (${this[4]}, ${this[5]}, ${this[6]}, ${this[7]}), (${this[8]}, ${this[9]}, ${this[10]}, ${this[11]}), (${this[12]}, ${this[13]}, ${this[14]}, ${this[15]}))` }
     /** @returns {number[][]} */
-    toArray() { return [[this[0],this[1],this[2],this[3]],[this[4],this[5],this[6],this[7]],[this[8],this[9],this[10],this[11]],[this[12],this[13],this[14],this[15]]] }
+    toArray() { return [[this[0], this[1], this[2], this[3]], [this[4], this[5], this[6], this[7]], [this[8], this[9], this[10], this[11]], [this[12], this[13], this[14], this[15]]] }
     /** @returns {number[]} */
     toFlatArray() { return [this[0], this[1], this[2], this[3], this[4], this[5], this[6], this[7], this[8], this[9], this[10], this[11], this[12], this[13], this[14], this[15]] }
     /** @returns {Int8Array} */
@@ -228,7 +228,7 @@ export class mat4 {
         const m03 = this[12]
         const m13 = this[13]
         const m23 = this[14]
-        const m33 = this[15]             
+        const m33 = this[15]
         const tmp00 = m22 * m33
         const tmp10 = m23 * m32
         const tmp20 = m21 * m33

@@ -32,8 +32,8 @@ export class mat2 {
     /** @param {vec2Like} v @returns {mat2} */
     static scale( v ) {
         return new mat2( [
-            v[0] ?? 1, 0, 
-            0, v[1] ?? 1, 
+            v[0] ?? 1, 0,
+            0, v[1] ?? 1,
         ] )
     }
 
@@ -58,9 +58,9 @@ export class mat2 {
     // ---------------------------
 
     /** @returns {string} */
-    toString() { return `(${this[0]}, ${this[1]}, ${this[2]}, ${this[3]})` }
+    toString() { return `((${this[0]}, ${this[1]}), (${this[2]}, ${this[3]}))` }
     /** @returns {number[][]} */
-    toArray() { return [[this[0],this[1]],[this[2],this[3]]] }
+    toArray() { return [[this[0], this[1]], [this[2], this[3]]] }
     /** @returns {number[]} */
     toFlatArray() { return [this[0], this[1], this[2], this[3]] }
     /** @returns {Int8Array} */
