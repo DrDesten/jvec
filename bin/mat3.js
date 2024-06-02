@@ -17,26 +17,26 @@ export class mat3 {
     //      CONSTRUCTORS
     // ---------------------------
 
-    /** @param {mat3Like} [array] */
-    constructor( array ) {
+    /** @param {mat3Like} [object] */
+    constructor( object ) {
         /** @type {number} */
-        this[0] = +( array?.[0] ?? 1 )
+        this[0] = +( object?.[0] ?? 1 )
         /** @type {number} */
-        this[1] = +( array?.[1] ?? 0 )
+        this[1] = +( object?.[1] ?? 0 )
         /** @type {number} */
-        this[2] = +( array?.[2] ?? 0 )
+        this[2] = +( object?.[2] ?? 0 )
         /** @type {number} */
-        this[3] = +( array?.[3] ?? 0 )
+        this[3] = +( object?.[3] ?? 0 )
         /** @type {number} */
-        this[4] = +( array?.[4] ?? 1 )
+        this[4] = +( object?.[4] ?? 1 )
         /** @type {number} */
-        this[5] = +( array?.[5] ?? 0 )
+        this[5] = +( object?.[5] ?? 0 )
         /** @type {number} */
-        this[6] = +( array?.[6] ?? 0 )
+        this[6] = +( object?.[6] ?? 0 )
         /** @type {number} */
-        this[7] = +( array?.[7] ?? 0 )
+        this[7] = +( object?.[7] ?? 0 )
         /** @type {number} */
-        this[8] = +( array?.[8] ?? 1 )
+        this[8] = +( object?.[8] ?? 1 )
     }
 
     /** @param {vec2Like|vec3Like} v @returns {mat3} */

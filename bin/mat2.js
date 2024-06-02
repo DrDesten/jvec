@@ -17,16 +17,16 @@ export class mat2 {
     //      CONSTRUCTORS
     // ---------------------------
 
-    /** @param {mat2Like} [array] */
-    constructor( array ) {
+    /** @param {mat2Like} [object] */
+    constructor( object ) {
         /** @type {number} */
-        this[0] = +( array?.[0] ?? 1 )
+        this[0] = +( object?.[0] ?? 1 )
         /** @type {number} */
-        this[1] = +( array?.[1] ?? 0 )
+        this[1] = +( object?.[1] ?? 0 )
         /** @type {number} */
-        this[2] = +( array?.[2] ?? 0 )
+        this[2] = +( object?.[2] ?? 0 )
         /** @type {number} */
-        this[3] = +( array?.[3] ?? 1 )
+        this[3] = +( object?.[3] ?? 1 )
     }
 
     /** @param {vec2Like} v @returns {mat2} */

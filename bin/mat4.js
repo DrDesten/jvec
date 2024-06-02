@@ -17,40 +17,40 @@ export class mat4 {
     //      CONSTRUCTORS
     // ---------------------------
 
-    /** @param {mat4Like} [array] */
-    constructor( array ) {
+    /** @param {mat4Like} [object] */
+    constructor( object ) {
         /** @type {number} */
-        this[0] = +( array?.[0] ?? 1 )
+        this[0] = +( object?.[0] ?? 1 )
         /** @type {number} */
-        this[1] = +( array?.[1] ?? 0 )
+        this[1] = +( object?.[1] ?? 0 )
         /** @type {number} */
-        this[2] = +( array?.[2] ?? 0 )
+        this[2] = +( object?.[2] ?? 0 )
         /** @type {number} */
-        this[3] = +( array?.[3] ?? 0 )
+        this[3] = +( object?.[3] ?? 0 )
         /** @type {number} */
-        this[4] = +( array?.[4] ?? 0 )
+        this[4] = +( object?.[4] ?? 0 )
         /** @type {number} */
-        this[5] = +( array?.[5] ?? 1 )
+        this[5] = +( object?.[5] ?? 1 )
         /** @type {number} */
-        this[6] = +( array?.[6] ?? 0 )
+        this[6] = +( object?.[6] ?? 0 )
         /** @type {number} */
-        this[7] = +( array?.[7] ?? 0 )
+        this[7] = +( object?.[7] ?? 0 )
         /** @type {number} */
-        this[8] = +( array?.[8] ?? 0 )
+        this[8] = +( object?.[8] ?? 0 )
         /** @type {number} */
-        this[9] = +( array?.[9] ?? 0 )
+        this[9] = +( object?.[9] ?? 0 )
         /** @type {number} */
-        this[10] = +( array?.[10] ?? 1 )
+        this[10] = +( object?.[10] ?? 1 )
         /** @type {number} */
-        this[11] = +( array?.[11] ?? 0 )
+        this[11] = +( object?.[11] ?? 0 )
         /** @type {number} */
-        this[12] = +( array?.[12] ?? 0 )
+        this[12] = +( object?.[12] ?? 0 )
         /** @type {number} */
-        this[13] = +( array?.[13] ?? 0 )
+        this[13] = +( object?.[13] ?? 0 )
         /** @type {number} */
-        this[14] = +( array?.[14] ?? 0 )
+        this[14] = +( object?.[14] ?? 0 )
         /** @type {number} */
-        this[15] = +( array?.[15] ?? 1 )
+        this[15] = +( object?.[15] ?? 1 )
     }
 
     /** @param {vec2Like|vec3Like|vec4Like} v @returns {mat4} */

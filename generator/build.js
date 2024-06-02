@@ -624,11 +624,11 @@ function generateMatrix( dimension ) {
 
     function constructors() {
         function constructor() {
-            const params = [fnParameter( "array", TYPELIKE, { optional: true } )]
+            const params = new Fn.Param( "object", TYPELIKE, { optional: true } )
             const body = `
-                ${CJOIN( ( { x, y }, i ) => `/** @type {number} */\nthis[${i}] = +( array?.[${i}] ?? ${+( x === y )} )`, "\n" )}
+                ${CJOIN( ( { x, y }, i ) => `/** @type {number} */\nthis[${i}] = +( object?.[${i}] ?? ${+( x === y )} )`, "\n" )}
             `
-            return fnDeclaration( "constructor", params, body, {} )
+            return new Fn( "constructor", params, body, {} ).decl()
         }
 
         function scale() {
@@ -654,7 +654,6 @@ return new ${TYPE}( ${array( ( { x, y } ) => ( y === dimension - 1 && x < dimens
         if ( dimension >= 3 ) functions.push( translate() )
         return functions.join( "\n\n" )
     }
-
 
     function clone() {
         return fnDeclaration( "clone", [], `return new ${TYPE}( this )`, { type: TYPE } )
