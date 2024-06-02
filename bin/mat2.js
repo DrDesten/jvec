@@ -88,22 +88,34 @@ export class mat2 {
 
     /** @param {mat2Like} m @returns {boolean} */
     eq( m ) {
-        return this[0] === m[0] && this[1] === m[1] && this[2] === m[2] && this[3] === m[3]
+        return this[0] === m[0]
+            && this[1] === m[1]
+            && this[2] === m[2]
+            && this[3] === m[3]
     }
 
     /** @param {mat2Like} m1 @param {mat2Like} m2 @returns {boolean} */
     static eq( m1, m2 ) {
-        return m1[0] === m2[0] && m1[1] === m2[1] && m1[2] === m2[2] && m1[3] === m2[3]
+        return m1[0] === m2[0]
+            && m1[1] === m2[1]
+            && m1[2] === m2[2]
+            && m1[3] === m2[3]
     }
 
     /** @param {mat2Like} m @returns {boolean} */
     neq( m ) {
-        return this[0] !== m[0] || this[1] !== m[1] || this[2] !== m[2] || this[3] !== m[3]
+        return this[0] !== m[0]
+            || this[1] !== m[1]
+            || this[2] !== m[2]
+            || this[3] !== m[3]
     }
 
     /** @param {mat2Like} m1 @param {mat2Like} m2 @returns {boolean} */
     static neq( m1, m2 ) {
-        return m1[0] !== m2[0] || m1[1] !== m2[1] || m1[2] !== m2[2] || m1[3] !== m2[3]
+        return m1[0] !== m2[0]
+            || m1[1] !== m2[1]
+            || m1[2] !== m2[2]
+            || m1[3] !== m2[3]
     }
 
     // ---------------------------

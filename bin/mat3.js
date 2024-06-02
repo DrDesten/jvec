@@ -113,22 +113,54 @@ export class mat3 {
 
     /** @param {mat3Like} m @returns {boolean} */
     eq( m ) {
-        return this[0] === m[0] && this[1] === m[1] && this[2] === m[2] && this[3] === m[3] && this[4] === m[4] && this[5] === m[5] && this[6] === m[6] && this[7] === m[7] && this[8] === m[8]
+        return this[0] === m[0]
+            && this[1] === m[1]
+            && this[2] === m[2]
+            && this[3] === m[3]
+            && this[4] === m[4]
+            && this[5] === m[5]
+            && this[6] === m[6]
+            && this[7] === m[7]
+            && this[8] === m[8]
     }
 
     /** @param {mat3Like} m1 @param {mat3Like} m2 @returns {boolean} */
     static eq( m1, m2 ) {
-        return m1[0] === m2[0] && m1[1] === m2[1] && m1[2] === m2[2] && m1[3] === m2[3] && m1[4] === m2[4] && m1[5] === m2[5] && m1[6] === m2[6] && m1[7] === m2[7] && m1[8] === m2[8]
+        return m1[0] === m2[0]
+            && m1[1] === m2[1]
+            && m1[2] === m2[2]
+            && m1[3] === m2[3]
+            && m1[4] === m2[4]
+            && m1[5] === m2[5]
+            && m1[6] === m2[6]
+            && m1[7] === m2[7]
+            && m1[8] === m2[8]
     }
 
     /** @param {mat3Like} m @returns {boolean} */
     neq( m ) {
-        return this[0] !== m[0] || this[1] !== m[1] || this[2] !== m[2] || this[3] !== m[3] || this[4] !== m[4] || this[5] !== m[5] || this[6] !== m[6] || this[7] !== m[7] || this[8] !== m[8]
+        return this[0] !== m[0]
+            || this[1] !== m[1]
+            || this[2] !== m[2]
+            || this[3] !== m[3]
+            || this[4] !== m[4]
+            || this[5] !== m[5]
+            || this[6] !== m[6]
+            || this[7] !== m[7]
+            || this[8] !== m[8]
     }
 
     /** @param {mat3Like} m1 @param {mat3Like} m2 @returns {boolean} */
     static neq( m1, m2 ) {
-        return m1[0] !== m2[0] || m1[1] !== m2[1] || m1[2] !== m2[2] || m1[3] !== m2[3] || m1[4] !== m2[4] || m1[5] !== m2[5] || m1[6] !== m2[6] || m1[7] !== m2[7] || m1[8] !== m2[8]
+        return m1[0] !== m2[0]
+            || m1[1] !== m2[1]
+            || m1[2] !== m2[2]
+            || m1[3] !== m2[3]
+            || m1[4] !== m2[4]
+            || m1[5] !== m2[5]
+            || m1[6] !== m2[6]
+            || m1[7] !== m2[7]
+            || m1[8] !== m2[8]
     }
 
     // ---------------------------

@@ -567,6 +567,8 @@ function generateMatrix( dimension ) {
     const Param_x = new Fn.Param( "x", TYPELIKE_OR_NUM )
     const Param_m1 = new Fn.Param( "m1", TYPELIKE )
     const Param_m2 = new Fn.Param( "m2", TYPELIKE )
+    const Params_m1m2 = [Param_m1, Param_m2]
+    const Param_target = new Fn.Param( "target", TYPELIKE )
 
     /** @param {number} x @param {number} y @param {string} [prefix=""]  */
     function id( x, y, prefix = "" ) {
@@ -592,23 +594,6 @@ function generateMatrix( dimension ) {
     /** @param {string} prefix @param {string} [target="this"]  */
     function defcomps( prefix, target = "this" ) {
         return CJOIN( ( { id }, i ) => `const ${id( prefix )} = ${target}[${i}]`, "\n" )
-    }
-
-    /** @typedef {[RegExp, string]|[RegExp, string][]} StringReplacer */
-    /** @param {string} string @param {StringReplacer} replacer  */
-    function applyReplacer( string, replacer ) {
-        if ( replacer.length === 0 ) return string
-        if ( !( replacer[0] instanceof Array ) ) return string.replace( replacer[0], replacer[1] )
-        return replacer.reduce( ( str, [regex, replacement] ) => str.replace( regex, replacement ), string )
-    }
-    /** @param {string} name @param {[string[], string[]]} params @param {string[]} statements @param {import("./codegen.js").FunctionOptions} opts @param {StringReplacer} replacer */
-    function fnAutoStatic( name, [params, paramsStatic], statements, opts, replacer ) {
-        const wrappers = opts.type === TYPE ? [bodyThis, bodyResult] : [x => x, x => x]
-        const bodyNonstatic = wrappers[0]( statements )
-        const bodyStatic = wrappers[1]( statements.map( statement => applyReplacer( statement, replacer ) ) )
-        const fnNonstatic = fnDeclaration( name, params, bodyNonstatic, opts )
-        const fnStatic = fnDeclaration( name, paramsStatic, bodyStatic, { ...opts, prefix: "static" } )
-        return [fnNonstatic, fnStatic]
     }
 
     function title( text, indent = 0 ) {
@@ -693,12 +678,12 @@ ${CJOIN( ( _, i ) => `                yield this[${i}]`, "\n" )}
 
     function boolean() {
         function eq() {
-            const body = `return ${CJOIN( ( _, i ) => `this[${i}] === m[${i}]`, " && " )}`
-            return Fn.autoStatic( "eq", [Param_m, [Param_m1, Param_m2]], body, { type: "boolean" }, [/\bthis\b/g, "m1"], [/\bm\b/g, "m2"] )
+            const body = `return ${CJOIN( ( _, i ) => `this[${i}] === m[${i}]`, "\n    && " )}`
+            return Fn.autoStatic( "eq", [Param_m, Params_m1m2], body, { type: "boolean", indentFn: setIndent }, [/\bthis\b/g, "m1"], [/\bm\b/g, "m2"] )
         }
         function neq() {
-            const body = `return ${CJOIN( ( _, i ) => `this[${i}] !== m[${i}]`, " || " )}`
-            return Fn.autoStatic( "neq", [Param_m, [Param_m1, Param_m2]], body, { type: "boolean" }, [/\bthis\b/g, "m1"], [/\bm\b/g, "m2"] )
+            const body = `return ${CJOIN( ( _, i ) => `this[${i}] !== m[${i}]`, "\n    || " )}`
+            return Fn.autoStatic( "neq", [Param_m, Params_m1m2], body, { type: "boolean", indentFn: setIndent }, [/\bthis\b/g, "m1"], [/\bm\b/g, "m2"] )
         }
         const functions = [
             eq(), neq(),
@@ -719,7 +704,7 @@ ${CJOIN( ( _, i ) => `                yield this[${i}]`, "\n" )}
                 , "\n" )}
                 return this
             `
-            return new Fn( "mmul", Param_m, body, { type: TYPE } )
+            return Fn.autoStatic( "mmul", [Param_m, Params_m1m2], body, { type: TYPE }, [] )
         }
         function inverse2() {
             let body = `
@@ -814,24 +799,24 @@ ${CJOIN( ( _, i ) => `                yield this[${i}]`, "\n" )}
                 const t33 = ( tmp22 * m22 + tmp61 * m20 + tmp12 * m21 )
                     - ( tmp02 * m21 + tmp32 * m22 + tmp71 * m20 )
 
-                const d = 1.0 / ( m00 * t00 + m01 * t10 + m02 * t20 + m03 * t30 )
+                const det = 1 / ( m00 * t00 + m01 * t10 + m02 * t20 + m03 * t30 )
 
-                this[0] = t00 * d
-                this[1] = t10 * d
-                this[2] = t20 * d
-                this[3] = t30 * d
-                this[4] = t01 * d
-                this[5] = t11 * d
-                this[6] = t21 * d
-                this[7] = t31 * d
-                this[8] = t02 * d
-                this[9] = t12 * d
-                this[10] = t22 * d
-                this[11] = t32 * d
-                this[12] = t03 * d
-                this[13] = t13 * d
-                this[14] = t23 * d
-                this[15] = t33 * d
+                this[0] = t00 * det
+                this[1] = t10 * det
+                this[2] = t20 * det
+                this[3] = t30 * det
+                this[4] = t01 * det
+                this[5] = t11 * det
+                this[6] = t21 * det
+                this[7] = t31 * det
+                this[8] = t02 * det
+                this[9] = t12 * det
+                this[10] = t22 * det
+                this[11] = t32 * det
+                this[12] = t03 * det
+                this[13] = t13 * det
+                this[14] = t23 * det
+                this[15] = t33 * det
 
                 return this
             `

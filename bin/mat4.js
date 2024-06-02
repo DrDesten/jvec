@@ -136,22 +136,82 @@ export class mat4 {
 
     /** @param {mat4Like} m @returns {boolean} */
     eq( m ) {
-        return this[0] === m[0] && this[1] === m[1] && this[2] === m[2] && this[3] === m[3] && this[4] === m[4] && this[5] === m[5] && this[6] === m[6] && this[7] === m[7] && this[8] === m[8] && this[9] === m[9] && this[10] === m[10] && this[11] === m[11] && this[12] === m[12] && this[13] === m[13] && this[14] === m[14] && this[15] === m[15]
+        return this[0] === m[0]
+            && this[1] === m[1]
+            && this[2] === m[2]
+            && this[3] === m[3]
+            && this[4] === m[4]
+            && this[5] === m[5]
+            && this[6] === m[6]
+            && this[7] === m[7]
+            && this[8] === m[8]
+            && this[9] === m[9]
+            && this[10] === m[10]
+            && this[11] === m[11]
+            && this[12] === m[12]
+            && this[13] === m[13]
+            && this[14] === m[14]
+            && this[15] === m[15]
     }
 
     /** @param {mat4Like} m1 @param {mat4Like} m2 @returns {boolean} */
     static eq( m1, m2 ) {
-        return m1[0] === m2[0] && m1[1] === m2[1] && m1[2] === m2[2] && m1[3] === m2[3] && m1[4] === m2[4] && m1[5] === m2[5] && m1[6] === m2[6] && m1[7] === m2[7] && m1[8] === m2[8] && m1[9] === m2[9] && m1[10] === m2[10] && m1[11] === m2[11] && m1[12] === m2[12] && m1[13] === m2[13] && m1[14] === m2[14] && m1[15] === m2[15]
+        return m1[0] === m2[0]
+            && m1[1] === m2[1]
+            && m1[2] === m2[2]
+            && m1[3] === m2[3]
+            && m1[4] === m2[4]
+            && m1[5] === m2[5]
+            && m1[6] === m2[6]
+            && m1[7] === m2[7]
+            && m1[8] === m2[8]
+            && m1[9] === m2[9]
+            && m1[10] === m2[10]
+            && m1[11] === m2[11]
+            && m1[12] === m2[12]
+            && m1[13] === m2[13]
+            && m1[14] === m2[14]
+            && m1[15] === m2[15]
     }
 
     /** @param {mat4Like} m @returns {boolean} */
     neq( m ) {
-        return this[0] !== m[0] || this[1] !== m[1] || this[2] !== m[2] || this[3] !== m[3] || this[4] !== m[4] || this[5] !== m[5] || this[6] !== m[6] || this[7] !== m[7] || this[8] !== m[8] || this[9] !== m[9] || this[10] !== m[10] || this[11] !== m[11] || this[12] !== m[12] || this[13] !== m[13] || this[14] !== m[14] || this[15] !== m[15]
+        return this[0] !== m[0]
+            || this[1] !== m[1]
+            || this[2] !== m[2]
+            || this[3] !== m[3]
+            || this[4] !== m[4]
+            || this[5] !== m[5]
+            || this[6] !== m[6]
+            || this[7] !== m[7]
+            || this[8] !== m[8]
+            || this[9] !== m[9]
+            || this[10] !== m[10]
+            || this[11] !== m[11]
+            || this[12] !== m[12]
+            || this[13] !== m[13]
+            || this[14] !== m[14]
+            || this[15] !== m[15]
     }
 
     /** @param {mat4Like} m1 @param {mat4Like} m2 @returns {boolean} */
     static neq( m1, m2 ) {
-        return m1[0] !== m2[0] || m1[1] !== m2[1] || m1[2] !== m2[2] || m1[3] !== m2[3] || m1[4] !== m2[4] || m1[5] !== m2[5] || m1[6] !== m2[6] || m1[7] !== m2[7] || m1[8] !== m2[8] || m1[9] !== m2[9] || m1[10] !== m2[10] || m1[11] !== m2[11] || m1[12] !== m2[12] || m1[13] !== m2[13] || m1[14] !== m2[14] || m1[15] !== m2[15]
+        return m1[0] !== m2[0]
+            || m1[1] !== m2[1]
+            || m1[2] !== m2[2]
+            || m1[3] !== m2[3]
+            || m1[4] !== m2[4]
+            || m1[5] !== m2[5]
+            || m1[6] !== m2[6]
+            || m1[7] !== m2[7]
+            || m1[8] !== m2[8]
+            || m1[9] !== m2[9]
+            || m1[10] !== m2[10]
+            || m1[11] !== m2[11]
+            || m1[12] !== m2[12]
+            || m1[13] !== m2[13]
+            || m1[14] !== m2[14]
+            || m1[15] !== m2[15]
     }
 
     // ---------------------------
@@ -285,23 +345,23 @@ export class mat4 {
         - ( tmp22 * m23 + tmp41 * m20 + tmp91 * m21 )
         const t33 = ( tmp22 * m22 + tmp61 * m20 + tmp12 * m21 )
         - ( tmp02 * m21 + tmp32 * m22 + tmp71 * m20 )
-        const d = 1.0 / ( m00 * t00 + m01 * t10 + m02 * t20 + m03 * t30 )
-        this[0] = t00 * d
-        this[1] = t10 * d
-        this[2] = t20 * d
-        this[3] = t30 * d
-        this[4] = t01 * d
-        this[5] = t11 * d
-        this[6] = t21 * d
-        this[7] = t31 * d
-        this[8] = t02 * d
-        this[9] = t12 * d
-        this[10] = t22 * d
-        this[11] = t32 * d
-        this[12] = t03 * d
-        this[13] = t13 * d
-        this[14] = t23 * d
-        this[15] = t33 * d
+        const det = 1 / ( m00 * t00 + m01 * t10 + m02 * t20 + m03 * t30 )
+        this[0] = t00 * det
+        this[1] = t10 * det
+        this[2] = t20 * det
+        this[3] = t30 * det
+        this[4] = t01 * det
+        this[5] = t11 * det
+        this[6] = t21 * det
+        this[7] = t31 * det
+        this[8] = t02 * det
+        this[9] = t12 * det
+        this[10] = t22 * det
+        this[11] = t32 * det
+        this[12] = t03 * det
+        this[13] = t13 * det
+        this[14] = t23 * det
+        this[15] = t33 * det
         return this
     }
 
