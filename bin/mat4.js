@@ -73,6 +73,16 @@ export class mat4 {
         ] )
     }
 
+    /** @param {vec2Like|vec3Like} scale @param {vec2Like|vec3Like} translation @returns {mat4} */
+    static scaleTranslate( scale, translation ) {
+        return new mat4( [
+            scale[0] ?? 1, 0, 0, 0,
+            0, scale[1] ?? 1, 0, 0,
+            0, 0, scale[2] ?? 1, 0,
+            translation[0] ?? 0, translation[1] ?? 0, translation[2] ?? 0, 1,
+        ] )
+    }
+
     // ---------------------------
     //      FIELDS
     // ---------------------------

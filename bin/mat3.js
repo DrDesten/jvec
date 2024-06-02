@@ -57,6 +57,15 @@ export class mat3 {
         ] )
     }
 
+    /** @param {vec2Like} scale @param {vec2Like} translation @returns {mat3} */
+    static scaleTranslate( scale, translation ) {
+        return new mat3( [
+            scale[0] ?? 1, 0, 0,
+            0, scale[1] ?? 1, 0,
+            translation[0] ?? 0, translation[1] ?? 0, 1,
+        ] )
+    }
+
     // ---------------------------
     //      FIELDS
     // ---------------------------

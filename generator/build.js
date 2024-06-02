@@ -553,6 +553,18 @@ function generateMatrix( dimension ) {
 
     const VEC = [VEC2, VEC3, VEC4]
     const VECLIKE = [VEC2LIKE, VEC3LIKE, VEC4LIKE]
+
+    function VECRange( p1 = 4, p2 ) {
+        const start = ( p2 === undefined ? 2 : +p1 ) - 2
+        const stop = ( p2 === undefined ? +p1 : +p2 ) - 1
+        return VEC.slice( start, stop ).join( "|" )
+    }
+    function VECLIKERange( p1 = 4, p2 ) {
+        const start = ( p2 === undefined ? 2 : +p1 ) - 2
+        const stop = ( p2 === undefined ? +p1 : +p2 ) - 1
+        return VECLIKE.slice( start, stop ).join( "|" )
+    }
+
     const VECANY = VEC.join( "|" )
     const VECANYLIKE = VECLIKE.join( "|" )
     const VECSOME = VEC.slice( 0, dimension - 1 ).join( "|" )
@@ -620,26 +632,40 @@ function generateMatrix( dimension ) {
             return new Fn( "constructor", param, body, {} )
         }
         function scale() {
-            const param = new Fn.Param( "v", VECSOMELIKE )
+            const param = new Fn.Param( "v", VECLIKERange( dimension ) )
             const body = `
 return new ${TYPE}( ${array( ( { x, y } ) => x === y ? `v[${x}] ?? 1` : `0` )} )
             `
             return new Fn( "scale", param, body, { prefix: "static", type: TYPE, indentFn: setIndent } )
         }
         function translate() {
-            const param = new Fn.Param( "v", VECLIKE.slice( 0, dimension - 2 ).join( "|" ) )
+            const param = new Fn.Param( "v", VECLIKERange( dimension - 1 ) )
             const body = `
 return new ${TYPE}( ${array( ( { x, y } ) => ( y === dimension - 1 && x < dimension - 1 ? `v[${x}] ?? ` : "" ) + `${+( x === y )}` )
                 } )
             `
             return new Fn( "translate", param, body, { prefix: "static", type: TYPE, indentFn: setIndent } )
         }
+        function scaleTranslate() {
+            const params = [
+                new Fn.Param( "scale", VECLIKERange( dimension - 1 ) ),
+                new Fn.Param( "translation", VECLIKERange( dimension - 1 ) ),
+            ]
+            const body = `
+return new ${TYPE}( ${array( ( { x, y } ) => {
+                if ( x === y && x < dimension - 1 ) return `scale[${x}] ?? 1`
+                if ( y === dimension - 1 && x < dimension - 1 ) return `translation[${x}] ?? 0`
+                return `${+( x === y )}`
+            } )} )
+            `
+            return new Fn( "scaleTranslate", params, body, { prefix: "static", type: TYPE, indentFn: setIndent } )
+        }
 
         const functions = [
             constructor(),
             scale(),
         ]
-        if ( dimension >= 3 ) functions.push( translate() )
+        if ( dimension >= 3 ) functions.push( translate(), scaleTranslate() )
         return functions.join( "\n\n" )
     }
 
