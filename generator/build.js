@@ -619,7 +619,6 @@ function generateMatrix( dimension ) {
             `
             return new Fn( "constructor", param, body, {} )
         }
-
         function scale() {
             const param = new Fn.Param( "v", VECSOMELIKE )
             const body = `
@@ -693,30 +692,27 @@ ${CJOIN( ( _, i ) => `                yield this[${i}]`, "\n" )}
 
     function arithmetic() {
         function mmul() {
-            const body = `
-                ${defcomps( "a" )}
-                ${defcomps( "b", "m" )}
-                ${CJOIN( ( { x, y }, i ) =>
-                `this[${i}] = ${Range( dimension )
-                    .map( i => `${id( x, i, "a" )} * ${id( i, y, "b" )}` )
-                    .join( " + " )
-                }`
-                , "\n" )}
-                return this
-            `
-            return Fn.autoStatic( "mmul", [Param_m, Params_m1m2], body, { type: TYPE }, [] )
+            const body = [
+                defcomps( "a" ),
+                defcomps( "b", "m" ),
+                ...CMAP( ( { x, y }, i ) =>
+                    `this[${i}] = ${Range( dimension )
+                        .map( i => `${id( x, i, "a" )} * ${id( i, y, "b" )}` )
+                        .join( " + " )
+                    }` )
+            ]
+            return Fn.autoStatic( "mmul", [Param_m, Params_m1m2], body, { type: TYPE }, [/(?<==\s*)this\b/g, "m1"], [/\bm\b/g, "m2"], [/\bthis\b/g, "target"] )
         }
         function inverse2() {
             let body = `
                 ${defcomps( "m" )}
                 const det = 1 / ( m00 * m11 - m10 * m01 )
-                this[0] = m11 * det
-                this[1] = -m01 * det
-                this[2] = -m10 * det
-                this[3] = m00 * det
-                return this
+                this[0] = det * m11
+                this[1] = det * -m01
+                this[2] = det * -m10
+                this[3] = det * m00
             `
-            return new Fn( "inverse", [], body, { type: TYPE } )
+            return Fn.autoStatic( "inverse", [[], Param_m], body, { type: TYPE }, [/(?<==\s*)this\b/g, "m"], [/\bthis\b/g, "target"] )
         }
         function inverse3() {
             let body = `
@@ -734,9 +730,8 @@ ${CJOIN( ( _, i ) => `                yield this[${i}]`, "\n" )}
                 this[6] = det * z
                 this[7] = det * ( m02 * m10 - m00 * m12 )
                 this[8] = det * ( m00 * m11 - m01 * m10 )
-                return this
             `
-            return new Fn( "inverse", [], body, { type: TYPE } )
+            return Fn.autoStatic( "inverse", [[], Param_m], body, { type: TYPE }, [/(?<==\s*)this\b/g, "m"], [/\bthis\b/g, "target"] )
         }
         function inverse4() {
             let body = `
@@ -817,17 +812,15 @@ ${CJOIN( ( _, i ) => `                yield this[${i}]`, "\n" )}
                 this[13] = t13 * det
                 this[14] = t23 * det
                 this[15] = t33 * det
-
-                return this
             `
-            return new Fn( "inverse", [], body, { type: TYPE } )
+            return Fn.autoStatic( "inverse", [[], Param_m], body, { type: TYPE }, [/(?<==\s*)this\b/g, "m"], [/\bthis\b/g, "target"] )
         }
 
         const functions = [
             mmul(),
         ]
         functions.push( [, , inverse2, inverse3, inverse4][dimension]() )
-        return functions.join( "\n\n" )
+        return functions.flat( 1 ).join( "\n\n" )
     }
 
     const segments = [

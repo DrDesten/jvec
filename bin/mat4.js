@@ -271,6 +271,59 @@ export class mat4 {
         return this
     }
 
+    /** @param {mat4Like} m1 @param {mat4Like} m2 @param {mat4} [target=new mat4] @returns {mat4} */
+    static mmul( m1, m2, target = new mat4 ) {
+        const a00 = m1[0]
+        const a10 = m1[1]
+        const a20 = m1[2]
+        const a30 = m1[3]
+        const a01 = m1[4]
+        const a11 = m1[5]
+        const a21 = m1[6]
+        const a31 = m1[7]
+        const a02 = m1[8]
+        const a12 = m1[9]
+        const a22 = m1[10]
+        const a32 = m1[11]
+        const a03 = m1[12]
+        const a13 = m1[13]
+        const a23 = m1[14]
+        const a33 = m1[15]
+        const b00 = m2[0]
+        const b10 = m2[1]
+        const b20 = m2[2]
+        const b30 = m2[3]
+        const b01 = m2[4]
+        const b11 = m2[5]
+        const b21 = m2[6]
+        const b31 = m2[7]
+        const b02 = m2[8]
+        const b12 = m2[9]
+        const b22 = m2[10]
+        const b32 = m2[11]
+        const b03 = m2[12]
+        const b13 = m2[13]
+        const b23 = m2[14]
+        const b33 = m2[15]
+        target[0] = a00 * b00 + a01 * b10 + a02 * b20 + a03 * b30
+        target[1] = a10 * b00 + a11 * b10 + a12 * b20 + a13 * b30
+        target[2] = a20 * b00 + a21 * b10 + a22 * b20 + a23 * b30
+        target[3] = a30 * b00 + a31 * b10 + a32 * b20 + a33 * b30
+        target[4] = a00 * b01 + a01 * b11 + a02 * b21 + a03 * b31
+        target[5] = a10 * b01 + a11 * b11 + a12 * b21 + a13 * b31
+        target[6] = a20 * b01 + a21 * b11 + a22 * b21 + a23 * b31
+        target[7] = a30 * b01 + a31 * b11 + a32 * b21 + a33 * b31
+        target[8] = a00 * b02 + a01 * b12 + a02 * b22 + a03 * b32
+        target[9] = a10 * b02 + a11 * b12 + a12 * b22 + a13 * b32
+        target[10] = a20 * b02 + a21 * b12 + a22 * b22 + a23 * b32
+        target[11] = a30 * b02 + a31 * b12 + a32 * b22 + a33 * b32
+        target[12] = a00 * b03 + a01 * b13 + a02 * b23 + a03 * b33
+        target[13] = a10 * b03 + a11 * b13 + a12 * b23 + a13 * b33
+        target[14] = a20 * b03 + a21 * b13 + a22 * b23 + a23 * b33
+        target[15] = a30 * b03 + a31 * b13 + a32 * b23 + a33 * b33
+        return target
+    }
+
     /** @returns {mat4} */
     inverse() {
         const m00 = this[0]
@@ -363,6 +416,100 @@ export class mat4 {
         this[14] = t23 * det
         this[15] = t33 * det
         return this
+    }
+
+    /** @param {mat4Like} m @param {mat4} [target=new mat4] @returns {mat4} */
+    static inverse( m, target = new mat4 ) {
+        const m00 = m[0]
+        const m10 = m[1]
+        const m20 = m[2]
+        const m30 = m[3]
+        const m01 = m[4]
+        const m11 = m[5]
+        const m21 = m[6]
+        const m31 = m[7]
+        const m02 = m[8]
+        const m12 = m[9]
+        const m22 = m[10]
+        const m32 = m[11]
+        const m03 = m[12]
+        const m13 = m[13]
+        const m23 = m[14]
+        const m33 = m[15]
+        const tmp00 = m22 * m33
+        const tmp10 = m23 * m32
+        const tmp20 = m21 * m33
+        const tmp30 = m23 * m31
+        const tmp40 = m21 * m32
+        const tmp50 = m22 * m31
+        const tmp60 = m20 * m33
+        const tmp70 = m23 * m30
+        const tmp80 = m20 * m32
+        const tmp90 = m22 * m30
+        const tmp01 = m20 * m31
+        const tmp11 = m21 * m30
+        const tmp21 = m02 * m13
+        const tmp31 = m03 * m12
+        const tmp41 = m01 * m13
+        const tmp51 = m03 * m11
+        const tmp61 = m01 * m12
+        const tmp71 = m02 * m11
+        const tmp81 = m00 * m13
+        const tmp91 = m03 * m10
+        const tmp02 = m00 * m12
+        const tmp12 = m02 * m10
+        const tmp22 = m00 * m11
+        const tmp32 = m01 * m10
+        const t00 = ( tmp00 * m11 + tmp30 * m12 + tmp40 * m13 )
+        - ( tmp10 * m11 + tmp20 * m12 + tmp50 * m13 )
+        const t10 = ( tmp10 * m10 + tmp60 * m12 + tmp90 * m13 )
+        - ( tmp00 * m10 + tmp70 * m12 + tmp80 * m13 )
+        const t20 = ( tmp20 * m10 + tmp70 * m11 + tmp01 * m13 )
+        - ( tmp30 * m10 + tmp60 * m11 + tmp11 * m13 )
+        const t30 = ( tmp50 * m10 + tmp80 * m11 + tmp11 * m12 )
+        - ( tmp40 * m10 + tmp90 * m11 + tmp01 * m12 )
+        const t01 = ( tmp10 * m01 + tmp20 * m02 + tmp50 * m03 )
+        - ( tmp00 * m01 + tmp30 * m02 + tmp40 * m03 )
+        const t11 = ( tmp00 * m00 + tmp70 * m02 + tmp80 * m03 )
+        - ( tmp10 * m00 + tmp60 * m02 + tmp90 * m03 )
+        const t21 = ( tmp30 * m00 + tmp60 * m01 + tmp11 * m03 )
+        - ( tmp20 * m00 + tmp70 * m01 + tmp01 * m03 )
+        const t31 = ( tmp40 * m00 + tmp90 * m01 + tmp01 * m02 )
+        - ( tmp50 * m00 + tmp80 * m01 + tmp11 * m02 )
+        const t02 = ( tmp21 * m31 + tmp51 * m32 + tmp61 * m33 )
+        - ( tmp31 * m31 + tmp41 * m32 + tmp71 * m33 )
+        const t12 = ( tmp31 * m30 + tmp81 * m32 + tmp12 * m33 )
+        - ( tmp21 * m30 + tmp91 * m32 + tmp02 * m33 )
+        const t22 = ( tmp41 * m30 + tmp91 * m31 + tmp22 * m33 )
+        - ( tmp51 * m30 + tmp81 * m31 + tmp32 * m33 )
+        const t32 = ( tmp71 * m30 + tmp02 * m31 + tmp32 * m32 )
+        - ( tmp61 * m30 + tmp12 * m31 + tmp22 * m32 )
+        const t03 = ( tmp41 * m22 + tmp71 * m23 + tmp31 * m21 )
+        - ( tmp61 * m23 + tmp21 * m21 + tmp51 * m22 )
+        const t13 = ( tmp02 * m23 + tmp21 * m20 + tmp91 * m22 )
+        - ( tmp81 * m22 + tmp12 * m23 + tmp31 * m20 )
+        const t23 = ( tmp81 * m21 + tmp32 * m23 + tmp51 * m20 )
+        - ( tmp22 * m23 + tmp41 * m20 + tmp91 * m21 )
+        const t33 = ( tmp22 * m22 + tmp61 * m20 + tmp12 * m21 )
+        - ( tmp02 * m21 + tmp32 * m22 + tmp71 * m20 )
+        const det = 1 / ( m00 * t00 + m01 * t10 + m02 * t20 + m03 * t30 )
+        target[0] = t00 * det
+        target[1] = t10 * det
+        target[2] = t20 * det
+        target[3] = t30 * det
+        target[4] = t01 * det
+        target[5] = t11 * det
+        target[6] = t21 * det
+        target[7] = t31 * det
+        target[8] = t02 * det
+        target[9] = t12 * det
+        target[10] = t22 * det
+        target[11] = t32 * det
+        target[12] = t03 * det
+        target[13] = t13 * det
+        target[14] = t23 * det
+        target[15] = t33 * det
+        return target
     }
 
 }

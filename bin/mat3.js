@@ -199,6 +199,38 @@ export class mat3 {
         return this
     }
 
+    /** @param {mat3Like} m1 @param {mat3Like} m2 @param {mat3} [target=new mat3] @returns {mat3} */
+    static mmul( m1, m2, target = new mat3 ) {
+        const a00 = m1[0]
+        const a10 = m1[1]
+        const a20 = m1[2]
+        const a01 = m1[3]
+        const a11 = m1[4]
+        const a21 = m1[5]
+        const a02 = m1[6]
+        const a12 = m1[7]
+        const a22 = m1[8]
+        const b00 = m2[0]
+        const b10 = m2[1]
+        const b20 = m2[2]
+        const b01 = m2[3]
+        const b11 = m2[4]
+        const b21 = m2[5]
+        const b02 = m2[6]
+        const b12 = m2[7]
+        const b22 = m2[8]
+        target[0] = a00 * b00 + a01 * b10 + a02 * b20
+        target[1] = a10 * b00 + a11 * b10 + a12 * b20
+        target[2] = a20 * b00 + a21 * b10 + a22 * b20
+        target[3] = a00 * b01 + a01 * b11 + a02 * b21
+        target[4] = a10 * b01 + a11 * b11 + a12 * b21
+        target[5] = a20 * b01 + a21 * b11 + a22 * b21
+        target[6] = a00 * b02 + a01 * b12 + a02 * b22
+        target[7] = a10 * b02 + a11 * b12 + a12 * b22
+        target[8] = a20 * b02 + a21 * b12 + a22 * b22
+        return target
+    }
+
     /** @returns {mat3} */
     inverse() {
         const m00 = this[0]
@@ -224,6 +256,33 @@ export class mat3 {
         this[7] = det * ( m02 * m10 - m00 * m12 )
         this[8] = det * ( m00 * m11 - m01 * m10 )
         return this
+    }
+
+    /** @param {mat3Like} m @param {mat3} [target=new mat3] @returns {mat3} */
+    static inverse( m, target = new mat3 ) {
+        const m00 = m[0]
+        const m10 = m[1]
+        const m20 = m[2]
+        const m01 = m[3]
+        const m11 = m[4]
+        const m21 = m[5]
+        const m02 = m[6]
+        const m12 = m[7]
+        const m22 = m[8]
+        const x = m11 * m22 - m12 * m21
+        const y = m21 * m02 - m01 * m22
+        const z = m01 * m12 - m02 * m11
+        const det = 1 / ( m00 * x + m10 * y + m20 * z )
+        target[0] = det * x
+        target[1] = det * ( m20 * m12 - m10 * m22 )
+        target[2] = det * ( m10 * m21 - m20 * m11 )
+        target[3] = det * y
+        target[4] = det * ( m00 * m22 - m20 * m02 )
+        target[5] = det * ( m01 * m20 - m00 * m21 )
+        target[6] = det * z
+        target[7] = det * ( m02 * m10 - m00 * m12 )
+        target[8] = det * ( m00 * m11 - m01 * m10 )
+        return target
     }
 
 }

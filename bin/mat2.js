@@ -139,6 +139,23 @@ export class mat2 {
         return this
     }
 
+    /** @param {mat2Like} m1 @param {mat2Like} m2 @param {mat2} [target=new mat2] @returns {mat2} */
+    static mmul( m1, m2, target = new mat2 ) {
+        const a00 = m1[0]
+        const a10 = m1[1]
+        const a01 = m1[2]
+        const a11 = m1[3]
+        const b00 = m2[0]
+        const b10 = m2[1]
+        const b01 = m2[2]
+        const b11 = m2[3]
+        target[0] = a00 * b00 + a01 * b10
+        target[1] = a10 * b00 + a11 * b10
+        target[2] = a00 * b01 + a01 * b11
+        target[3] = a10 * b01 + a11 * b11
+        return target
+    }
+
     /** @returns {mat2} */
     inverse() {
         const m00 = this[0]
@@ -146,11 +163,25 @@ export class mat2 {
         const m01 = this[2]
         const m11 = this[3]
         const det = 1 / ( m00 * m11 - m10 * m01 )
-        this[0] = m11 * det
-        this[1] = -m01 * det
-        this[2] = -m10 * det
-        this[3] = m00 * det
+        this[0] = det * m11
+        this[1] = det * -m01
+        this[2] = det * -m10
+        this[3] = det * m00
         return this
+    }
+
+    /** @param {mat2Like} m @param {mat2} [target=new mat2] @returns {mat2} */
+    static inverse( m, target = new mat2 ) {
+        const m00 = m[0]
+        const m10 = m[1]
+        const m01 = m[2]
+        const m11 = m[3]
+        const det = 1 / ( m00 * m11 - m10 * m01 )
+        target[0] = det * m11
+        target[1] = det * -m01
+        target[2] = det * -m10
+        target[3] = det * m00
+        return target
     }
 
 }

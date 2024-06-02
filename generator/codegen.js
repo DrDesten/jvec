@@ -114,7 +114,9 @@ export class Fn {
     string() {
         const { name, params, body, opts: { prefix, compact, indentFn } } = this
         const fnParams = params.map( p => p.string() ).join( ", " )
-        const fnBody = body.map( stmt => stmt.split( "\n" ).map( l => l.trimEnd() ).join( "\n" ) ).join( compact ? "; " : "\n" )
+        const fnBody = body.map( stmt =>
+            stmt.split( "\n" ).map( l => l.trimEnd() ).filter( x => x ).join( "\n" ) )
+            .join( compact ? "; " : "\n" )
         const fnHead = `${prefix ? `${prefix} ` : ""}${name}(${fnParams ? ` ${fnParams} ` : ""})`
         const fnDecl = compact ? `${fnHead} { ${fnBody} }` : `${fnHead} {\n${indentFn( fnBody, 4 )}\n}`
         return fnDecl
