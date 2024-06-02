@@ -646,7 +646,7 @@ return new ${TYPE}( ${array( ( { x, y } ) => x === y ? `v[${x}] ?? 1` : `0` )} )
         function translate() {
             const param = new Fn.Param( "v", VECLIKERange( dimension - 1 ) )
             const body = `
-return new ${TYPE}( ${array( ( { x, y } ) => ( y === dimension - 1 && x < dimension - 1 ? `v[${x}] ?? ` : "" ) + `${+( x === y )}` )
+return new ${TYPE}( ${array( ( { x, y } ) => y === dimension - 1 && x < dimension - 1 ? `v[${x}] ?? 0` : `${+( x === y )}` )
                 } )
             `
             return new Fn( "translate", param, body, { prefix: "static", type: TYPE, indentFn: setIndent } )
