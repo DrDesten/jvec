@@ -1,3 +1,7 @@
+import { mat3 } from "./mat3.js"
+/** @typedef {import("./mat3.js").mat3Like} mat3Like */
+import { mat4 } from "./mat4.js"
+/** @typedef {import("./mat4.js").mat4Like} mat4Like */
 import { vec2 } from "./vec2.js"
 /** @typedef {import("./vec2.js").vec2Like} vec2Like */
 import { vec3 } from "./vec3.js"
@@ -27,6 +31,30 @@ export class mat2 {
         this[2] = +( object?.[2] ?? 0 )
         /** @type {number} */
         this[3] = +( object?.[3] ?? 1 )
+    }
+
+    /** @param {mat2} m @returns {mat2} */
+    fromMat2( m ) {
+        return new mat2( [
+            m[0], m[1],
+            m[2], m[3],
+        ] )
+    }
+
+    /** @param {mat3} m @returns {mat2} */
+    fromMat3( m ) {
+        return new mat2( [
+            m[0], m[1],
+            m[3], m[4],
+        ] )
+    }
+
+    /** @param {mat4} m @returns {mat2} */
+    fromMat4( m ) {
+        return new mat2( [
+            m[0], m[1],
+            m[4], m[5],
+        ] )
     }
 
     /** @param {vec2Like} v @returns {mat2} */

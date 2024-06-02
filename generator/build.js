@@ -565,11 +565,6 @@ function generateMatrix( dimension ) {
         return VECLIKE.slice( start, stop ).join( "|" )
     }
 
-    const VECANY = VEC.join( "|" )
-    const VECANYLIKE = VECLIKE.join( "|" )
-    const VECSOME = VEC.slice( 0, dimension - 1 ).join( "|" )
-    const VECSOMELIKE = VECLIKE.slice( 0, dimension - 1 ).join( "|" )
-
     const TYPE = `mat${dimension}`
     const TYPELIKE = `${TYPE}Like`
     const TYPELIKE_OR_NUM = `number|${TYPELIKE}`
@@ -631,6 +626,16 @@ function generateMatrix( dimension ) {
             `
             return new Fn( "constructor", param, body, {} )
         }
+        function fromMatrix() {
+            return [2, 3, 4].map( d => {
+                const param = new Fn.Param( "m", `mat${d}` )
+                const body = `return new ${TYPE}( ${array( ( { x, y } ) => {
+                    return x < d && y < d ? `m[${x + y * d}]` : `${+( x === y )}`
+                } )} )`
+                return new Fn( `fromMat${d}`, param, body, { type: TYPE, indentFn: setIndent } )
+            } )
+        }
+
         function scale() {
             const param = new Fn.Param( "v", VECLIKERange( dimension ) )
             const body = `
@@ -663,6 +668,7 @@ return new ${TYPE}( ${array( ( { x, y } ) => {
 
         const functions = [
             constructor(),
+            ...fromMatrix(),
             scale(),
         ]
         if ( dimension >= 3 ) functions.push( translate(), scaleTranslate() )
@@ -851,6 +857,8 @@ ${CJOIN( ( _, i ) => `                yield this[${i}]`, "\n" )}
 
     const segments = [
         [
+            ...Range( MIN_DIMENSION, MAX_DIMENSION + 1 ).filter( d => d !== dimension )
+                .map( i => `import { mat${i} } from "./mat${i}.js"\n/** @typedef {import("./mat${i}.js").mat${i}Like} mat${i}Like */` ),
             ...Range( MIN_DIMENSION, MAX_DIMENSION + 1 )
                 .map( i => `import { vec${i} } from "./vec${i}.js"\n/** @typedef {import("./vec${i}.js").vec${i}Like} vec${i}Like */` )
         ].join( "\n" ),
