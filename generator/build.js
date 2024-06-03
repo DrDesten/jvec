@@ -49,7 +49,7 @@ function generateVector( dimension ) {
     const TYPELIKE_OR_NUM = `number|${TYPELIKE}`
 
 
-    const IFNUM = ( isnum, notnum, varname = "x" ) => `typeof ${varname} === "number" ? ${isnum} : ${notnum}`
+    const IFNUM = ( isnum, notnum, varname = "x", indent = false ) => `typeof ${varname} === "number"${indent ? "\n    " : " "}? ${isnum}${indent ? "\n    " : " "}: ${notnum}`
     const iMapXYZW = "xyzw"
     const iMapRGBA = "rgba"
 
@@ -321,18 +321,51 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
         ]
 
         function general( name ) {
+            const bodyNonstatic = `return ${IFNUM( `this.s${name}( x )`, `this.v${name}( x )` )}`
+            const bodyStatic = `return ${IFNUM( `${TYPE}.s${name}( v, x, target )`, `${TYPE}.v${name}( v, x, target )` )}`
             return [
-                new Fn( name, [Param_x], `return ${IFNUM( `this.s${name}( x )`, `this.v${name}( x )` )}`, { type: TYPE } ),
-                new Fn( name, [Param_v, Param_x, Param_target], `return ${IFNUM( `${TYPE}.s${name}( v, x, target )`, `${TYPE}.v${name}( v, x, target )` )}`, { prefix: "static", type: TYPE } ),
+                new Fn( name, [Param_x], bodyNonstatic, { type: TYPE } ),
+                new Fn( name, [Param_v, Param_x, Param_target], bodyStatic, { prefix: "static", type: TYPE } ),
             ]
         }
-        function scalar( name, operation ) {
-            const body = DRANGE.map( i => `this[${i}] = this[${i}] ${operation} s` )
-            return Fn.autoStatic( `s${name}`, [Param_s, [Param_v, Param_s]], body, { type: TYPE }, ["this", "target"], [/\bthis\b/g, "v"] )
+        function operation( name, operation ) {
+            const bodyScalar = DRANGE.map( i => `this[${i}] = this[${i}] ${operation} s` )
+            const bodyVector = DRANGE.map( i => `this[${i}] = this[${i}] ${operation} v[${i}]` )
+            return [
+                Fn.autoStatic( `s${name}`, [Param_s, [Param_v, Param_s]], bodyScalar, { type: TYPE }, ["this", "target"], [/\bthis\b/g, "v"] ),
+                Fn.autoStatic( `v${name}`, [Param_v, Params_v1v2], bodyVector, { type: TYPE }, ["this", "target"], [/\bthis\b/g, "v1"], [/\bv\b/g, "v2"] ),
+            ]
         }
-        function vector( name, operation ) {
-            const body = DRANGE.map( i => `this[${i}] = this[${i}] ${operation} v[${i}]` )
-            return Fn.autoStatic( `v${name}`, [Param_v, Params_v1v2], body, { type: TYPE }, ["this", "target"], [/\bthis\b/g, "v1"], [/\bv\b/g, "v2"] )
+        function fma() {
+            const pM = new Fn.Param( "m", TYPELIKE_OR_NUM )
+            const pA = new Fn.Param( "a", TYPELIKE_OR_NUM )
+            const bodyNonstatic = `return ${IFNUM(
+                `(${IFNUM( `this.sfma( m, a )`, `this.svfma( m, a )`, "a" )})`,
+                `(${IFNUM( `this.vsfma( m, a )`, `this.vfma( m, a )`, "a" )})`,
+                "m", true
+            )}`
+            const bodyStatic = `return ${IFNUM(
+                `( ${IFNUM( `${TYPE}.sfma( v, m, a, target )`, `${TYPE}.svfma( v, m, a, target )`, "a" )} )`,
+                `( ${IFNUM( `${TYPE}.vsfma( v, m, a, target )`, `${TYPE}.vfma( v, m, a, target )`, "a" )} )`,
+                "m", true
+            )}`
+
+            const pMS = new Fn.Param( "m", "number" )
+            const pMV = new Fn.Param( "m", TYPELIKE )
+            const pAS = new Fn.Param( "a", "number" )
+            const pAV = new Fn.Param( "a", TYPELIKE )
+            const bodyS = DRANGE.map( i => `this[${i}] = this[${i}] * m + a` )
+            const bodySV = DRANGE.map( i => `this[${i}] = this[${i}] * m + a[${i}]` )
+            const bodyVS = DRANGE.map( i => `this[${i}] = this[${i}] * m[${i}] + a` )
+            const bodyV = DRANGE.map( i => `this[${i}] = this[${i}] * m[${i}] + a[${i}]` )
+            return [
+                new Fn( "fma", [pM, pA], bodyNonstatic, { type: TYPE, indentFn: setIndent } ),
+                new Fn( "fma", [Param_v, pM, pA, Param_target], bodyStatic, { prefix: "static", type: TYPE, indentFn: setIndent } ),
+                Fn.autoStatic( `sfma`, [[pMS, pAS], [Param_v, pMS, pAS]], bodyS, { type: TYPE }, ["this", "target"], [/\bthis\b/g, "v"] ),
+                Fn.autoStatic( `svfma`, [[pMS, pAV], [Param_v, pMS, pAV]], bodySV, { type: TYPE }, ["this", "target"], [/\bthis\b/g, "v"] ),
+                Fn.autoStatic( `vsfma`, [[pMV, pAS], [Param_v, pMV, pAS]], bodyVS, { type: TYPE }, ["this", "target"], [/\bthis\b/g, "v"] ),
+                Fn.autoStatic( `vfma`, [[pMV, pAV], [Param_v, pMV, pAV]], bodyV, { type: TYPE }, ["this", "target"], [/\bthis\b/g, "v"] ),
+            ]
         }
 
         function mmul() {
@@ -362,16 +395,16 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
 
         const functions = operations.map( ( [name, op] ) => [
             general( name, op ),
-            scalar( name, op ),
-            vector( name, op ),
-        ] ).flat( 2 )
+            operation( name, op ),
+        ] )
         functions.push(
-            ...mmul(),
-            ...apply(),
-            ...mathCandidates.map( name => builtinMath( name ) ),
-            ...staticMathCandidates.map( name => staticBuiltinMath( name ) )
+            fma(),
+            mmul(),
+            apply(),
+            mathCandidates.map( name => builtinMath( name ) ),
+            staticMathCandidates.map( name => staticBuiltinMath( name ) )
         )
-        return functions.join( "\n\n" )
+        return functions.flat( Infinity ).join( "\n\n" )
     }
 
     function properties() {

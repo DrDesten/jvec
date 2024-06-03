@@ -1126,6 +1126,84 @@ export class vec3 {
         return target
     }
 
+    /** @param {number|vec3Like} m @param {number|vec3Like} a @returns {vec3} */
+    fma( m, a ) {
+        return typeof m === "number"
+            ? (typeof a === "number" ? this.sfma( m, a ) : this.svfma( m, a ))
+            : (typeof a === "number" ? this.vsfma( m, a ) : this.vfma( m, a ))
+    }
+
+    /** @param {vec3Like} v @param {number|vec3Like} m @param {number|vec3Like} a @param {vec3} [target=new vec3] @returns {vec3} */
+    static fma( v, m, a, target = new vec3 ) {
+        return typeof m === "number"
+            ? ( typeof a === "number" ? vec3.sfma( v, m, a, target ) : vec3.svfma( v, m, a, target ) )
+            : ( typeof a === "number" ? vec3.vsfma( v, m, a, target ) : vec3.vfma( v, m, a, target ) )
+    }
+
+    /** @param {number} m @param {number} a @returns {vec3} */
+    sfma( m, a ) {
+        this[0] = this[0] * m + a
+        this[1] = this[1] * m + a
+        this[2] = this[2] * m + a
+        return this
+    }
+
+    /** @param {vec3Like} v @param {number} m @param {number} a @param {vec3} [target=new vec3] @returns {vec3} */
+    static sfma( v, m, a, target = new vec3 ) {
+        target[0] = v[0] * m + a
+        target[1] = v[1] * m + a
+        target[2] = v[2] * m + a
+        return target
+    }
+
+    /** @param {number} m @param {vec3Like} a @returns {vec3} */
+    svfma( m, a ) {
+        this[0] = this[0] * m + a[0]
+        this[1] = this[1] * m + a[1]
+        this[2] = this[2] * m + a[2]
+        return this
+    }
+
+    /** @param {vec3Like} v @param {number} m @param {vec3Like} a @param {vec3} [target=new vec3] @returns {vec3} */
+    static svfma( v, m, a, target = new vec3 ) {
+        target[0] = v[0] * m + a[0]
+        target[1] = v[1] * m + a[1]
+        target[2] = v[2] * m + a[2]
+        return target
+    }
+
+    /** @param {vec3Like} m @param {number} a @returns {vec3} */
+    vsfma( m, a ) {
+        this[0] = this[0] * m[0] + a
+        this[1] = this[1] * m[1] + a
+        this[2] = this[2] * m[2] + a
+        return this
+    }
+
+    /** @param {vec3Like} v @param {vec3Like} m @param {number} a @param {vec3} [target=new vec3] @returns {vec3} */
+    static vsfma( v, m, a, target = new vec3 ) {
+        target[0] = v[0] * m[0] + a
+        target[1] = v[1] * m[1] + a
+        target[2] = v[2] * m[2] + a
+        return target
+    }
+
+    /** @param {vec3Like} m @param {vec3Like} a @returns {vec3} */
+    vfma( m, a ) {
+        this[0] = this[0] * m[0] + a[0]
+        this[1] = this[1] * m[1] + a[1]
+        this[2] = this[2] * m[2] + a[2]
+        return this
+    }
+
+    /** @param {vec3Like} v @param {vec3Like} m @param {vec3Like} a @param {vec3} [target=new vec3] @returns {vec3} */
+    static vfma( v, m, a, target = new vec3 ) {
+        target[0] = v[0] * m[0] + a[0]
+        target[1] = v[1] * m[1] + a[1]
+        target[2] = v[2] * m[2] + a[2]
+        return target
+    }
+
     /** @param {mat3Like} m @returns {vec3} */
     mmul( m ) {
         const c0 = this[0]
