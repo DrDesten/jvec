@@ -510,9 +510,31 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
             return new Fn( `max`, param, body, { prefix: "static", type: TYPE } )
         }
         function clamp() {
-            const params = [Param_v, new Fn.Param( "min", "number" ), new Fn.Param( "max", "number" ), Param_target]
-            const body = bodyTarget( DRANGE.map( i => `target[${i}] = Math.min( Math.max( v[${i}], min ), max  )` ) )
-            return new Fn( `clamp`, params, body, { prefix: "static", type: TYPE } )
+            const pMin = new Fn.Param( "min", TYPELIKE_OR_NUM )
+            const pMax = new Fn.Param( "max", TYPELIKE_OR_NUM )
+            const pSMin = new Fn.Param( "min", "number" )
+            const pSMax = new Fn.Param( "max", "number" )
+            const pVMin = new Fn.Param( "min", TYPELIKE )
+            const pVMax = new Fn.Param( "max", TYPELIKE )
+
+            const body = `return ${IFNUM(
+                `( ${IFNUM( `${TYPE}.sclamp( v, min, max, target )`, `${TYPE}.svclamp( v, min, max, target )`, "max" )} )`,
+                `( ${IFNUM( `${TYPE}.vsclamp( v, min, max, target )`, `${TYPE}.vclamp( v, min, max, target )`, "max" )} )`,
+                "min", true
+            )}`
+            const bodyS = bodyTarget( DRANGE.map( i => `target[${i}] = Math.min( Math.max( v[${i}], min ), max  )` ) )
+            const bodySV = bodyTarget( DRANGE.map( i => `target[${i}] = Math.min( Math.max( v[${i}], min ), max[${i}]  )` ) )
+            const bodyVS = bodyTarget( DRANGE.map( i => `target[${i}] = Math.min( Math.max( v[${i}], min[${i}] ), max  )` ) )
+            const bodyV = bodyTarget( DRANGE.map( i => `target[${i}] = Math.min( Math.max( v[${i}], min[${i}] ), max[${i}]  )` ) )
+
+            const opts = { prefix: "static", type: TYPE, indentFn: setIndent }
+            return [
+                new Fn( `clamp`, [Param_v, pMin, pMax, Param_target], body, opts ),
+                new Fn( `sclamp`, [Param_v, pSMin, pSMax, Param_target], bodyS, opts ),
+                new Fn( `svclamp`, [Param_v, pSMin, pVMax, Param_target], bodySV, opts ),
+                new Fn( `vsclamp`, [Param_v, pVMin, pSMax, Param_target], bodyVS, opts ),
+                new Fn( `vclamp`, [Param_v, pVMin, pVMax, Param_target], bodyV, opts ),
+            ]
         }
         function saturate() {
             const body = bodyTarget( DRANGE.map( i => `target[${i}] = Math.min( Math.max( v[${i}], 0 ), 1 )` ) )
@@ -533,7 +555,7 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
             saturate(),
             mix(),
         ]
-        return functions.join( "\n\n" )
+        return functions.flat( Infinity ).join( "\n\n" )
     }
 
     const segments = [

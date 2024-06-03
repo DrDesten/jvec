@@ -1102,10 +1102,38 @@ export class vec2 {
         return target
     }
 
-    /** @param {vec2Like} v @param {number} min @param {number} max @param {vec2} [target=new vec2] @returns {vec2} */
+    /** @param {vec2Like} v @param {number|vec2Like} min @param {number|vec2Like} max @param {vec2} [target=new vec2] @returns {vec2} */
     static clamp( v, min, max, target = new vec2 ) {
+        return typeof min === "number"
+            ? ( typeof max === "number" ? vec2.sclamp( v, min, max, target ) : vec2.svclamp( v, min, max, target ) )
+            : ( typeof max === "number" ? vec2.vsclamp( v, min, max, target ) : vec2.vclamp( v, min, max, target ) )
+    }
+
+    /** @param {vec2Like} v @param {number} min @param {number} max @param {vec2} [target=new vec2] @returns {vec2} */
+    static sclamp( v, min, max, target = new vec2 ) {
         target[0] = Math.min( Math.max( v[0], min ), max  )
         target[1] = Math.min( Math.max( v[1], min ), max  )
+        return target
+    }
+
+    /** @param {vec2Like} v @param {number} min @param {vec2Like} max @param {vec2} [target=new vec2] @returns {vec2} */
+    static svclamp( v, min, max, target = new vec2 ) {
+        target[0] = Math.min( Math.max( v[0], min ), max[0]  )
+        target[1] = Math.min( Math.max( v[1], min ), max[1]  )
+        return target
+    }
+
+    /** @param {vec2Like} v @param {vec2Like} min @param {number} max @param {vec2} [target=new vec2] @returns {vec2} */
+    static vsclamp( v, min, max, target = new vec2 ) {
+        target[0] = Math.min( Math.max( v[0], min[0] ), max  )
+        target[1] = Math.min( Math.max( v[1], min[1] ), max  )
+        return target
+    }
+
+    /** @param {vec2Like} v @param {vec2Like} min @param {vec2Like} max @param {vec2} [target=new vec2] @returns {vec2} */
+    static vclamp( v, min, max, target = new vec2 ) {
+        target[0] = Math.min( Math.max( v[0], min[0] ), max[0]  )
+        target[1] = Math.min( Math.max( v[1], min[1] ), max[1]  )
         return target
     }
 
