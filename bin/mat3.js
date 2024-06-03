@@ -44,7 +44,7 @@ export class mat3 {
     }
 
     /** @param {mat2Like|mat3Like|mat4Like} m @returns {mat3} */
-    fromMatrix( m ) {
+    static fromMatrix( m ) {
         switch ( m.constructor ) {
             case mat2: return mat3.fromMat2( m )
             case mat3: return mat3.fromMat3( m )
@@ -59,7 +59,7 @@ export class mat3 {
     }
 
     /** @param {mat2Like} m @returns {mat3} */
-    fromMat2( m ) {
+    static fromMat2( m ) {
         return new mat3( [
             m[0], m[1], 0,
             m[2], m[3], 0,
@@ -68,7 +68,7 @@ export class mat3 {
     }
 
     /** @param {mat3Like} m @returns {mat3} */
-    fromMat3( m ) {
+    static fromMat3( m ) {
         return new mat3( [
             m[0], m[1], m[2],
             m[3], m[4], m[5],
@@ -77,7 +77,7 @@ export class mat3 {
     }
 
     /** @param {mat4Like} m @returns {mat3} */
-    fromMat4( m ) {
+    static fromMat4( m ) {
         return new mat3( [
             m[0], m[1], m[2],
             m[4], m[5], m[6],

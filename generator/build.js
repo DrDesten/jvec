@@ -642,14 +642,14 @@ function generateMatrix( dimension ) {
                     }
                     throw new Error( "not a matrix" )
                 `
-                return new Fn( "fromMatrix", param, body, { type: TYPE, indentFn: setIndent } )
+                return new Fn( "fromMatrix", param, body, { prefix: "static", type: TYPE, indentFn: setIndent } )
             }
             function matrix( d ) {
                 const param = new Fn.Param( "m", `mat${d}Like` )
                 const body = `return new ${TYPE}( ${array( ( { x, y } ) => {
                     return x < d && y < d ? `m[${x + y * d}]` : `${+( x === y )}`
                 } )} )`
-                return new Fn( `fromMat${d}`, param, body, { type: TYPE, indentFn: setIndent } )
+                return new Fn( `fromMat${d}`, param, body, { prefix: "static", type: TYPE, indentFn: setIndent } )
             }
             return [general(), ...[2, 3, 4].map( matrix )]
         }
