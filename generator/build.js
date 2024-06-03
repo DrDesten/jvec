@@ -710,8 +710,8 @@ ${CJOIN( ( _, i ) => `                yield this[${i}]`, "\n" )}
         const arrayExpr = `[${CJOIN( ( _, i ) => `this[${i}]` )}]`
         const conversions = [
             new Fn( "toString", [], `return ${stringExpr}`, { type: "string", compact: true } ),
-            new Fn( "toArray", [], `return ${nestedArrayExpr}`, { type: "number[][]", compact: true } ),
-            new Fn( "toFlatArray", [], `return ${arrayExpr}`, { type: "number[]", compact: true } ),
+            new Fn( "toArray", [], `return ${arrayExpr}`, { type: "number[]", compact: true } ),
+            new Fn( "toArray2D", [], `return ${nestedArrayExpr}`, { type: "number[][]", compact: true } ),
             new Fn( "toInt8Array", [], `return new Int8Array( ${arrayExpr} )`, { type: "Int8Array", compact: true } ),
             new Fn( "toUint8Array", [], `return new Uint8Array( ${arrayExpr} )`, { type: "Uint8Array", compact: true } ),
             new Fn( "toUint8ClampedArray", [], `return new Uint8ClampedArray( ${arrayExpr} )`, { type: "Uint8ClampedArray", compact: true } ),

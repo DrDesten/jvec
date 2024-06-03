@@ -102,10 +102,10 @@ export class mat2 {
 
     /** @returns {string} */
     toString() { return `((${this[0]}, ${this[1]}), (${this[2]}, ${this[3]}))` }
-    /** @returns {number[][]} */
-    toArray() { return [[this[0], this[1]], [this[2], this[3]]] }
     /** @returns {number[]} */
-    toFlatArray() { return [this[0], this[1], this[2], this[3]] }
+    toArray() { return [this[0], this[1], this[2], this[3]] }
+    /** @returns {number[][]} */
+    toArray2D() { return [[this[0], this[1]], [this[2], this[3]]] }
     /** @returns {Int8Array} */
     toInt8Array() { return new Int8Array( [this[0], this[1], this[2], this[3]] ) }
     /** @returns {Uint8Array} */

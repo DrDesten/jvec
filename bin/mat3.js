@@ -139,10 +139,10 @@ export class mat3 {
 
     /** @returns {string} */
     toString() { return `((${this[0]}, ${this[1]}, ${this[2]}), (${this[3]}, ${this[4]}, ${this[5]}), (${this[6]}, ${this[7]}, ${this[8]}))` }
-    /** @returns {number[][]} */
-    toArray() { return [[this[0], this[1], this[2]], [this[3], this[4], this[5]], [this[6], this[7], this[8]]] }
     /** @returns {number[]} */
-    toFlatArray() { return [this[0], this[1], this[2], this[3], this[4], this[5], this[6], this[7], this[8]] }
+    toArray() { return [this[0], this[1], this[2], this[3], this[4], this[5], this[6], this[7], this[8]] }
+    /** @returns {number[][]} */
+    toArray2D() { return [[this[0], this[1], this[2]], [this[3], this[4], this[5]], [this[6], this[7], this[8]]] }
     /** @returns {Int8Array} */
     toInt8Array() { return new Int8Array( [this[0], this[1], this[2], this[3], this[4], this[5], this[6], this[7], this[8]] ) }
     /** @returns {Uint8Array} */
