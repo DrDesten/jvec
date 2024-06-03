@@ -116,6 +116,26 @@ export class mat3 {
     //      FIELDS
     // ---------------------------
 
+    /** @param {number} column @returns {vec3} */
+    col( column ) {
+        return new vec3( this[column * 3], this[column * 3 + 1], this[column * 3 + 2] )
+    }
+
+    /** @param {mat3Like} m @param {number} column @returns {vec3} */
+    static col( m, column ) {
+        return new vec3( m[column * 3], m[column * 3 + 1], m[column * 3 + 2] )
+    }
+
+    /** @param {number} row @returns {vec3} */
+    row( row ) {
+        return new vec3( this[row], this[row + 3], this[row + 6] )
+    }
+
+    /** @param {mat3Like} m @param {number} row @returns {vec3} */
+    static row( m, row ) {
+        return new vec3( m[row], m[row + 3], m[row + 6] )
+    }
+
     /** @returns {mat3} */
     clone() {
         return new mat3( this )

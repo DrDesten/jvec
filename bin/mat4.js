@@ -136,6 +136,26 @@ export class mat4 {
     //      FIELDS
     // ---------------------------
 
+    /** @param {number} column @returns {vec4} */
+    col( column ) {
+        return new vec4( this[column * 4], this[column * 4 + 1], this[column * 4 + 2], this[column * 4 + 3] )
+    }
+
+    /** @param {mat4Like} m @param {number} column @returns {vec4} */
+    static col( m, column ) {
+        return new vec4( m[column * 4], m[column * 4 + 1], m[column * 4 + 2], m[column * 4 + 3] )
+    }
+
+    /** @param {number} row @returns {vec4} */
+    row( row ) {
+        return new vec4( this[row], this[row + 4], this[row + 8], this[row + 12] )
+    }
+
+    /** @param {mat4Like} m @param {number} row @returns {vec4} */
+    static row( m, row ) {
+        return new vec4( m[row], m[row + 4], m[row + 8], m[row + 12] )
+    }
+
     /** @returns {mat4} */
     clone() {
         return new mat4( this )

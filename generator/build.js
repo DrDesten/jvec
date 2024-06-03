@@ -599,25 +599,18 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
 /** @param {number} dimension matrix dimension */
 function generateMatrix( dimension ) {
 
-    const VEC2 = `vec2`
-    const VEC2LIKE = `vec2Like`
-    const VEC3 = `vec3`
-    const VEC3LIKE = `vec3Like`
-    const VEC4 = `vec4`
-    const VEC4LIKE = `vec4Like`
-
-    const VEC = [VEC2, VEC3, VEC4]
-    const VECLIKE = [VEC2LIKE, VEC3LIKE, VEC4LIKE]
+    const VEC = { "2": `vec2`, "3": `vec3`, "4": `vec4` }
+    const VECLIKE = { "2": `vec2Like`, "3": `vec3Like`, "4": `vec4Like` }
 
     function VECRange( p1 = 4, p2 ) {
         const start = ( p2 === undefined ? 2 : +p1 ) - 2
         const stop = ( p2 === undefined ? +p1 : +p2 ) - 1
-        return VEC.slice( start, stop ).join( "|" )
+        return [`vec2`, `vec3`, `vec4`].slice( start, stop ).join( "|" )
     }
     function VECLIKERange( p1 = 4, p2 ) {
         const start = ( p2 === undefined ? 2 : +p1 ) - 2
         const stop = ( p2 === undefined ? +p1 : +p2 ) - 1
-        return VECLIKE.slice( start, stop ).join( "|" )
+        return [`vec2Like`, `vec3Like`, `vec4Like`].slice( start, stop ).join( "|" )
     }
 
     const TYPE = `mat${dimension}`
@@ -746,6 +739,20 @@ return new ${TYPE}( ${array( ( { x, y } ) => {
         ]
         if ( dimension >= 3 ) functions.push( translate(), scaleTranslate() )
         return functions.join( "\n\n" )
+    }
+
+    function fields() {
+        function col() {
+            const param = new Fn.Param( "column", "number" )
+            const body = `return new ${VEC[dimension]}( ${DJOIN( d => `this[column * ${dimension}${d !== 0 ? ` + ${d}` : ""}]` )} )`
+            return Fn.autoStatic( "col", [param, [Param_m, param]], body, { type: VEC[dimension] }, [/\bthis\b/g, "m"] )
+        }
+        function row() {
+            const param = new Fn.Param( "row", "number" )
+            const body = `return new ${VEC[dimension]}( ${DJOIN( d => `this[row${d !== 0 ? ` + ${dimension * d}` : ""}]` )} )`
+            return Fn.autoStatic( "row", [param, [Param_m, param]], body, { type: VEC[dimension] }, [/\bthis\b/g, "m"] )
+        }
+        return [col(), row()].flat().join( "\n\n" )
     }
 
     function clone() {
@@ -951,6 +958,7 @@ ${CJOIN( ( _, i ) => `                yield this[${i}]`, "\n" )}
         subtitle( "CONSTRUCTORS" ),
         constructors(),
         subtitle( "FIELDS" ),
+        fields(),
         clone(),
         iterator(),
         subtitle( "CONVERSION" ),

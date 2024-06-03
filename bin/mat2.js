@@ -84,6 +84,26 @@ export class mat2 {
     //      FIELDS
     // ---------------------------
 
+    /** @param {number} column @returns {vec2} */
+    col( column ) {
+        return new vec2( this[column * 2], this[column * 2 + 1] )
+    }
+
+    /** @param {mat2Like} m @param {number} column @returns {vec2} */
+    static col( m, column ) {
+        return new vec2( m[column * 2], m[column * 2 + 1] )
+    }
+
+    /** @param {number} row @returns {vec2} */
+    row( row ) {
+        return new vec2( this[row], this[row + 2] )
+    }
+
+    /** @param {mat2Like} m @param {number} row @returns {vec2} */
+    static row( m, row ) {
+        return new vec2( m[row], m[row + 2] )
+    }
+
     /** @returns {mat2} */
     clone() {
         return new mat2( this )
