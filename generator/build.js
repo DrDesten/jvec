@@ -753,6 +753,13 @@ ${CJOIN( ( _, i ) => `                yield this[${i}]`, "\n" )}
             ]
             return Fn.autoStatic( "mmul", [Param_m, Params_m1m2], body, { type: TYPE }, [/(?<==\s*)this\b/g, "m1"], [/\bm\b/g, "m2"], [/\bthis\b/g, "target"] )
         }
+        function transpose() {
+            const body = [
+                defcomps( "m" ),
+                ...CMAP( ( { x, y }, i ) => `this[${i}] = ${id( y, x, "m" )}` )
+            ]
+            return Fn.autoStatic( "transpose", [[], Param_m], body, { type: TYPE }, [/(?<==\s*)this\b/g, "m"], [/\bthis\b/g, "target"] )
+        }
         function inverse2() {
             let body = `
                 ${defcomps( "m" )}
@@ -868,6 +875,7 @@ ${CJOIN( ( _, i ) => `                yield this[${i}]`, "\n" )}
 
         const functions = [
             mmul(),
+            transpose(),
         ]
         functions.push( [, , inverse2, inverse3, inverse4][dimension]() )
         return functions.flat( 1 ).join( "\n\n" )

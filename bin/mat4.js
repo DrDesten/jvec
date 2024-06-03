@@ -384,6 +384,80 @@ export class mat4 {
     }
 
     /** @returns {mat4} */
+    transpose() {
+        const m00 = this[0]
+        const m10 = this[1]
+        const m20 = this[2]
+        const m30 = this[3]
+        const m01 = this[4]
+        const m11 = this[5]
+        const m21 = this[6]
+        const m31 = this[7]
+        const m02 = this[8]
+        const m12 = this[9]
+        const m22 = this[10]
+        const m32 = this[11]
+        const m03 = this[12]
+        const m13 = this[13]
+        const m23 = this[14]
+        const m33 = this[15]
+        this[0] = m00
+        this[1] = m01
+        this[2] = m02
+        this[3] = m03
+        this[4] = m10
+        this[5] = m11
+        this[6] = m12
+        this[7] = m13
+        this[8] = m20
+        this[9] = m21
+        this[10] = m22
+        this[11] = m23
+        this[12] = m30
+        this[13] = m31
+        this[14] = m32
+        this[15] = m33
+        return this
+    }
+
+    /** @param {mat4Like} m @param {mat4} [target=new mat4] @returns {mat4} */
+    static transpose( m, target = new mat4 ) {
+        const m00 = m[0]
+        const m10 = m[1]
+        const m20 = m[2]
+        const m30 = m[3]
+        const m01 = m[4]
+        const m11 = m[5]
+        const m21 = m[6]
+        const m31 = m[7]
+        const m02 = m[8]
+        const m12 = m[9]
+        const m22 = m[10]
+        const m32 = m[11]
+        const m03 = m[12]
+        const m13 = m[13]
+        const m23 = m[14]
+        const m33 = m[15]
+        target[0] = m00
+        target[1] = m01
+        target[2] = m02
+        target[3] = m03
+        target[4] = m10
+        target[5] = m11
+        target[6] = m12
+        target[7] = m13
+        target[8] = m20
+        target[9] = m21
+        target[10] = m22
+        target[11] = m23
+        target[12] = m30
+        target[13] = m31
+        target[14] = m32
+        target[15] = m33
+        return target
+    }
+
+    /** @returns {mat4} */
     inverse() {
         const m00 = this[0]
         const m10 = this[1]

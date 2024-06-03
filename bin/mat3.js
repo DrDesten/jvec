@@ -287,6 +287,52 @@ export class mat3 {
     }
 
     /** @returns {mat3} */
+    transpose() {
+        const m00 = this[0]
+        const m10 = this[1]
+        const m20 = this[2]
+        const m01 = this[3]
+        const m11 = this[4]
+        const m21 = this[5]
+        const m02 = this[6]
+        const m12 = this[7]
+        const m22 = this[8]
+        this[0] = m00
+        this[1] = m01
+        this[2] = m02
+        this[3] = m10
+        this[4] = m11
+        this[5] = m12
+        this[6] = m20
+        this[7] = m21
+        this[8] = m22
+        return this
+    }
+
+    /** @param {mat3Like} m @param {mat3} [target=new mat3] @returns {mat3} */
+    static transpose( m, target = new mat3 ) {
+        const m00 = m[0]
+        const m10 = m[1]
+        const m20 = m[2]
+        const m01 = m[3]
+        const m11 = m[4]
+        const m21 = m[5]
+        const m02 = m[6]
+        const m12 = m[7]
+        const m22 = m[8]
+        target[0] = m00
+        target[1] = m01
+        target[2] = m02
+        target[3] = m10
+        target[4] = m11
+        target[5] = m12
+        target[6] = m20
+        target[7] = m21
+        target[8] = m22
+        return target
+    }
+
+    /** @returns {mat3} */
     inverse() {
         const m00 = this[0]
         const m10 = this[1]

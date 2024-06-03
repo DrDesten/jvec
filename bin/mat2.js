@@ -200,6 +200,32 @@ export class mat2 {
     }
 
     /** @returns {mat2} */
+    transpose() {
+        const m00 = this[0]
+        const m10 = this[1]
+        const m01 = this[2]
+        const m11 = this[3]
+        this[0] = m00
+        this[1] = m01
+        this[2] = m10
+        this[3] = m11
+        return this
+    }
+
+    /** @param {mat2Like} m @param {mat2} [target=new mat2] @returns {mat2} */
+    static transpose( m, target = new mat2 ) {
+        const m00 = m[0]
+        const m10 = m[1]
+        const m01 = m[2]
+        const m11 = m[3]
+        target[0] = m00
+        target[1] = m01
+        target[2] = m10
+        target[3] = m11
+        return target
+    }
+
+    /** @returns {mat2} */
     inverse() {
         const m00 = this[0]
         const m10 = this[1]
