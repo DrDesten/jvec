@@ -1591,13 +1591,15 @@ export class vec3 {
         return this
     }
 
-    /** @param {vec3Like} v1 @param {vec3Like} v2 @returns {vec3} */
-    static cross( v1, v2 ) {
-        const result = new vec3
-        result[0] = v1[1] * v2[2] - v1[2] * v2[1]
-        result[1] = v1[2] * v2[0] - v1[0] * v2[2]
-        result[2] = v1[0] * v2[1] - v1[1] * v2[0]
-        return result
+    /** @param {vec3Like} v1 @param {vec3Like} v2 @param {vec3} [target=new vec3] @returns {vec3} */
+    static cross( v1, v2, target = new vec3 ) {
+        const t0 = v1[1] * v2[2] - v1[2] * v2[1]
+        const t1 = v1[2] * v2[0] - v1[0] * v2[2]
+        const t2 = v1[0] * v2[1] - v1[1] * v2[0]
+        target[0] = t0
+        target[1] = t1
+        target[2] = t2
+        return target
     }
 
     // ---------------------------

@@ -439,6 +439,17 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
             ]
             return Fn.autoStatic( `setLength`, [Param_s, [Param_v, Param_s]], body, { type: TYPE }, [/\bthis\b(?=.*=)/, "target"], [/\bthis\b/g, "v"] )
         }
+        function rotate2() {
+            const Param_angle = new Fn.Param( "angle", "number" )
+            const body = [
+                `const sin = Math.sin( angle ), cos = Math.cos( angle )`,
+                `const t0 = this[0] * cos - this[1] * sin`,
+                `const t1 = this[0] * sin + this[1] * cos`,
+                `this[0] = t0`,
+                `this[1] = t1`,
+            ]
+            return Fn.autoStatic( `rotate`, [Param_angle, [Param_v, Param_angle]], body, { type: TYPE }, [/\bthis\b(?=.*=)/g, "target"], [/\bthis\b/g, "v"] )
+        }
 
         function dot() {
             const body = `return ${DMAP( i => `this[${i}] * v[${i}]`, " + " )}`
@@ -452,19 +463,8 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
                 this[0] = t0
                 this[1] = t1
                 this[2] = t2
-                return this
             `
-            return new Fn( `cross`, Param_v, body, { type: TYPE } )
-        }
-        function staticCross3() {
-            const body = `
-                const result = new ${TYPE}
-                result[0] = v1[1] * v2[2] - v1[2] * v2[1]
-                result[1] = v1[2] * v2[0] - v1[0] * v2[2]
-                result[2] = v1[0] * v2[1] - v1[1] * v2[0]
-                return result
-            `
-            return new Fn( `cross`, Params_v1v2, body, { prefix: "static", type: TYPE } )
+            return Fn.autoStatic( `cross`, [Param_v, Params_v1v2], body, { type: TYPE }, [/\bthis\b(?=.*=)/g, "target"], [/\bthis\b/g, "v1"], [/\bv\b/g, "v2"] )
         }
 
         const functions = [
@@ -473,7 +473,8 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
             ...setLength(),
             ...dot(),
         ]
-        if ( dimension === 3 ) functions.push( cross3(), staticCross3(), )
+        if ( dimension === 2 ) functions.push( ...rotate2() )
+        if ( dimension === 3 ) functions.push( ...cross3() )
         return functions.join( "\n\n" )
     }
 

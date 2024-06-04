@@ -1068,6 +1068,26 @@ export class vec2 {
         return v1[0] * v2[0] + v1[1] * v2[1]
     }
 
+    /** @param {number} angle @returns {vec2} */
+    rotate( angle ) {
+        const sin = Math.sin( angle ), cos = Math.cos( angle )
+        const t0 = this[0] * cos - this[1] * sin
+        const t1 = this[0] * sin + this[1] * cos
+        this[0] = t0
+        this[1] = t1
+        return this
+    }
+
+    /** @param {vec2Like} v @param {number} angle @param {vec2} [target=new vec2] @returns {vec2} */
+    static rotate( v, angle, target = new vec2 ) {
+        const sin = Math.sin( angle ), cos = Math.cos( angle )
+        const t0 = v[0] * cos - v[1] * sin
+        const t1 = v[0] * sin + v[1] * cos
+        target[0] = t0
+        target[1] = t1
+        return target
+    }
+
     // ---------------------------
     //      VECTOR UTILS
     // ---------------------------
