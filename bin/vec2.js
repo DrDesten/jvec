@@ -1088,6 +1088,24 @@ export class vec2 {
         return target
     }
 
+    /** @returns {vec2} */
+    rotate90() {
+        const t0 = this[1]
+        const t1 = this[0]
+        this[0] = t0
+        this[1] = t1
+        return this
+    }
+
+    /** @param {vec2Like} v @param {vec2} [target=new vec2] @returns {vec2} */
+    static rotate90( v, target = new vec2 ) {
+        const t0 = v[1]
+        const t1 = v[0]
+        target[0] = t0
+        target[1] = t1
+        return target
+    }
+
     // ---------------------------
     //      VECTOR UTILS
     // ---------------------------

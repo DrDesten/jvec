@@ -448,7 +448,16 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
                 `this[0] = t0`,
                 `this[1] = t1`,
             ]
-            return Fn.autoStatic( `rotate`, [Param_angle, [Param_v, Param_angle]], body, { type: TYPE }, [/\bthis\b(?=.*=)/g, "target"], [/\bthis\b/g, "v"] )
+            const body90 = [
+                `const t0 = this[1]`,
+                `const t1 = this[0]`,
+                `this[0] = t0`,
+                `this[1] = t1`,
+            ]
+            return [
+                ...Fn.autoStatic( `rotate`, [Param_angle, [Param_v, Param_angle]], body, { type: TYPE }, [/\bthis\b(?=.*=)/g, "target"], [/\bthis\b/g, "v"] ),
+                ...Fn.autoStatic( `rotate90`, [[], Param_v], body90, { type: TYPE }, [/\bthis\b(?=.*=)/g, "target"], [/\bthis\b/g, "v"] )
+            ]
         }
 
         function dot() {
