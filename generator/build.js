@@ -450,7 +450,7 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
                 `this[1] = t1`,
             ]
             const body90 = [
-                `const t0 = this[1]`,
+                `const t0 = -this[1]`,
                 `const t1 = this[0]`,
                 `this[0] = t0`,
                 `this[1] = t1`,
