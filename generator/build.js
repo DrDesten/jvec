@@ -223,6 +223,7 @@ ${DMAP( i => `                yield this[${i}]`, "\n" )}
         const arrayExpr = `[${DMAP( i => `this[${i}]` )}]`
         const conversions = [
             [
+                new Fn( "[Symbol.toStringTag]", [], `return "${TYPE}"`, { type: "string", compact: true } ),
                 new Fn( "toString", [], `return \`(${DMAP( i => `\${this[${i}]}` )})\``, { type: "string", compact: true } ),
                 new Fn( "toArray", [], `return ${arrayExpr}`, { type: "number[]", compact: true } ),
                 new Fn( "toInt8Array", [], `return new Int8Array( ${arrayExpr} )`, { type: "Int8Array", compact: true } ),
@@ -781,6 +782,7 @@ ${CJOIN( ( _, i ) => `                yield this[${i}]`, "\n" )}
         const nestedArrayExpr = `[${DJOIN( y => `[${DJOIN( x => `this[${x + y * dimension}]` )}]` )}]`
         const arrayExpr = `[${CJOIN( ( _, i ) => `this[${i}]` )}]`
         const conversions = [
+            new Fn( "[Symbol.toStringTag]", [], `return "${TYPE}"`, { type: "string", compact: true } ),
             new Fn( "toString", [], `return ${stringExpr}`, { type: "string", compact: true } ),
             new Fn( "toArray", [], `return ${arrayExpr}`, { type: "number[]", compact: true } ),
             new Fn( "toArray2D", [], `return ${nestedArrayExpr}`, { type: "number[][]", compact: true } ),

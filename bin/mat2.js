@@ -121,6 +121,8 @@ export class mat2 {
     // ---------------------------
 
     /** @returns {string} */
+    [Symbol.toStringTag]() { return "mat2" }
+    /** @returns {string} */
     toString() { return `((${this[0]}, ${this[1]}), (${this[2]}, ${this[3]}))` }
     /** @returns {number[]} */
     toArray() { return [this[0], this[1], this[2], this[3]] }

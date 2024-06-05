@@ -185,6 +185,8 @@ export class mat4 {
     // ---------------------------
 
     /** @returns {string} */
+    [Symbol.toStringTag]() { return "mat4" }
+    /** @returns {string} */
     toString() { return `((${this[0]}, ${this[1]}, ${this[2]}, ${this[3]}), (${this[4]}, ${this[5]}, ${this[6]}, ${this[7]}), (${this[8]}, ${this[9]}, ${this[10]}, ${this[11]}), (${this[12]}, ${this[13]}, ${this[14]}, ${this[15]}))` }
     /** @returns {number[]} */
     toArray() { return [this[0], this[1], this[2], this[3], this[4], this[5], this[6], this[7], this[8], this[9], this[10], this[11], this[12], this[13], this[14], this[15]] }

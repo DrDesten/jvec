@@ -241,6 +241,8 @@ export class vec2 {
     // ---------------------------
 
     /** @returns {string} */
+    [Symbol.toStringTag]() { return "vec2" }
+    /** @returns {string} */
     toString() { return `(${this[0]}, ${this[1]})` }
     /** @returns {number[]} */
     toArray() { return [this[0], this[1]] }

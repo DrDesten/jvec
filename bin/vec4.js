@@ -1726,6 +1726,8 @@ export class vec4 {
     // ---------------------------
 
     /** @returns {string} */
+    [Symbol.toStringTag]() { return "vec4" }
+    /** @returns {string} */
     toString() { return `(${this[0]}, ${this[1]}, ${this[2]}, ${this[3]})` }
     /** @returns {number[]} */
     toArray() { return [this[0], this[1], this[2], this[3]] }
