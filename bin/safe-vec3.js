@@ -1,3 +1,28 @@
+function tc_numberundefined( x ) {
+    const result = ( x => ( x => typeof x === "number" )(x)||( x => x === undefined )(x) )(x)
+    if ( !result ) throw new TypeError( `Expected Type 'number|undefined', got [${x?.constructor?.name||typeof x}]: ${x}` )
+}
+function tc_number( x ) {
+    const result = ( x => typeof x === "number" )(x)
+    if ( !result ) throw new TypeError( `Expected Type 'number', got [${x?.constructor?.name||typeof x}]: ${x}` )
+}
+function tc_numbervec3Like( x ) {
+    const result = ( x => ( x => typeof x === "number" )(x)||( x => Array.from( { length: 3 } ).every( ( _, i ) => typeof x[i] === "number" ) )(x) )(x)
+    if ( !result ) throw new TypeError( `Expected Type 'number|vec3Like', got [${x?.constructor?.name||typeof x}]: ${x}` )
+}
+function tc_vec3Like( x ) {
+    const result = ( x => Array.from( { length: 3 } ).every( ( _, i ) => typeof x[i] === "number" ) )(x)
+    if ( !result ) throw new TypeError( `Expected Type 'vec3Like', got [${x?.constructor?.name||typeof x}]: ${x}` )
+}
+function tc_vec3undefined( x ) {
+    const result = ( x => ( x => x instanceof vec3 )(x)||( x => x === undefined )(x) )(x)
+    if ( !result ) throw new TypeError( `Expected Type 'vec3|undefined', got [${x?.constructor?.name||typeof x}]: ${x}` )
+}
+function tc_mat3Like( x ) {
+    const result = ( x => Array.from( { length: 3 ** 2 } ).every( ( _, i ) => typeof x[i] === "number" ) )(x)
+    if ( !result ) throw new TypeError( `Expected Type 'mat3Like', got [${x?.constructor?.name||typeof x}]: ${x}` )
+}
+
 import { randomNorm } from "./vechelper.js"
 import { vec2 } from "./vec2.js"
 /** @typedef {import("./vec2.js").vec2Like} vec2Like */
@@ -30,6 +55,8 @@ export class vec3 {
      * @param {number|undefined} [z]
      */
     constructor( object = 0, y, z ) {
+        tc_numberundefined( y )
+        tc_numberundefined( z )
         if ( typeof object === "number" )
             y === undefined
                 ? ( this[0] = object, this[1] = object, this[2] = object )
@@ -48,6 +75,8 @@ export class vec3 {
 
     /** @param {ArrayLike<number>} array @param {number|undefined} [index=0] @param {number|undefined} [stride=1] @returns {vec3} */
     static fromArray( array, index = 0, stride = 1 ) {
+        tc_numberundefined( index )
+        tc_numberundefined( stride )
         return new vec3( array[0 * stride + index], array[1 * stride + index], array[2 * stride + index] )
     }
 
@@ -83,27 +112,27 @@ export class vec3 {
     /** @returns {number} */
     get x() { return this[0] }
     /** @param {number} s */
-    set x( s ) { this[0] = s }
+    set x( s ) { tc_number( s ); this[0] = s }
     /** @returns {number} */
     get r() { return this[0] }
     /** @param {number} s */
-    set r( s ) { this[0] = s }
+    set r( s ) { tc_number( s ); this[0] = s }
     /** @returns {number} */
     get y() { return this[1] }
     /** @param {number} s */
-    set y( s ) { this[1] = s }
+    set y( s ) { tc_number( s ); this[1] = s }
     /** @returns {number} */
     get g() { return this[1] }
     /** @param {number} s */
-    set g( s ) { this[1] = s }
+    set g( s ) { tc_number( s ); this[1] = s }
     /** @returns {number} */
     get z() { return this[2] }
     /** @param {number} s */
-    set z( s ) { this[2] = s }
+    set z( s ) { tc_number( s ); this[2] = s }
     /** @returns {number} */
     get b() { return this[2] }
     /** @param {number} s */
-    set b( s ) { this[2] = s }
+    set b( s ) { tc_number( s ); this[2] = s }
     /** @returns {vec2} */
     get xx() { return new vec2( this[0], this[0] ) }
     /** @returns {vec2} */
@@ -623,6 +652,7 @@ export class vec3 {
 
     /** @param {number|vec3Like} x @param {number} [y] @param {number} [z] @returns {vec3} */
     set( x, y, z ) {
+        tc_numbervec3Like( x )
         typeof x === "number"
             ? ( this[0] = x, this[1] = y, this[2] = z )
             : ( this[0] = x[0], this[1] = x[1], this[2] = x[2] )
@@ -690,21 +720,27 @@ export class vec3 {
 
     /** @param {vec3Like} v @returns {boolean} */
     eq( v ) {
+        tc_vec3Like( v )
         return this[0] === v[0] && this[1] === v[1] && this[2] === v[2]
     }
 
     /** @param {vec3Like} v1 @param {vec3Like} v2 @returns {boolean} */
     static eq( v1, v2 ) {
+        tc_vec3Like( v1 )
+        tc_vec3Like( v2 )
         return v1[0] === v2[0] && v1[1] === v2[1] && v1[2] === v2[2]
     }
 
     /** @param {vec3Like} v @returns {boolean} */
     neq( v ) {
+        tc_vec3Like( v )
         return this[0] !== v[0] || this[1] !== v[1] || this[2] !== v[2]
     }
 
     /** @param {vec3Like} v1 @param {vec3Like} v2 @returns {boolean} */
     static neq( v1, v2 ) {
+        tc_vec3Like( v1 )
+        tc_vec3Like( v2 )
         return v1[0] !== v2[0] || v1[1] !== v2[1] || v1[2] !== v2[2]
     }
 
@@ -715,6 +751,7 @@ export class vec3 {
 
     /** @param {vec3Like} v @returns {boolean} */
     static all( v ) {
+        tc_vec3Like( v )
         return !!v[0] && !!v[1] && !!v[2]
     }
 
@@ -725,11 +762,13 @@ export class vec3 {
 
     /** @param {vec3Like} v @returns {boolean} */
     static any( v ) {
+        tc_vec3Like( v )
         return !!v[0] || !!v[1] || !!v[2]
     }
 
     /** @param {vec3Like} v @returns {vec3} */
     greaterThan( v ) {
+        tc_vec3Like( v )
         this[0] = +( this[0] > v[0] )
         this[1] = +( this[1] > v[1] )
         this[2] = +( this[2] > v[2] )
@@ -738,6 +777,9 @@ export class vec3 {
 
     /** @param {vec3Like} v1 @param {vec3Like} v2 @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static greaterThan( v1, v2, target = new vec3 ) {
+        tc_vec3Like( v1 )
+        tc_vec3Like( v2 )
+        tc_vec3undefined( target )
         target[0] = +( v1[0] > v2[0] )
         target[1] = +( v1[1] > v2[1] )
         target[2] = +( v1[2] > v2[2] )
@@ -746,6 +788,7 @@ export class vec3 {
 
     /** @param {vec3Like} v @returns {vec3} */
     greaterThanEqual( v ) {
+        tc_vec3Like( v )
         this[0] = +( this[0] >= v[0] )
         this[1] = +( this[1] >= v[1] )
         this[2] = +( this[2] >= v[2] )
@@ -754,6 +797,9 @@ export class vec3 {
 
     /** @param {vec3Like} v1 @param {vec3Like} v2 @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static greaterThanEqual( v1, v2, target = new vec3 ) {
+        tc_vec3Like( v1 )
+        tc_vec3Like( v2 )
+        tc_vec3undefined( target )
         target[0] = +( v1[0] >= v2[0] )
         target[1] = +( v1[1] >= v2[1] )
         target[2] = +( v1[2] >= v2[2] )
@@ -762,6 +808,7 @@ export class vec3 {
 
     /** @param {vec3Like} v @returns {vec3} */
     lessThan( v ) {
+        tc_vec3Like( v )
         this[0] = +( this[0] < v[0] )
         this[1] = +( this[1] < v[1] )
         this[2] = +( this[2] < v[2] )
@@ -770,6 +817,9 @@ export class vec3 {
 
     /** @param {vec3Like} v1 @param {vec3Like} v2 @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static lessThan( v1, v2, target = new vec3 ) {
+        tc_vec3Like( v1 )
+        tc_vec3Like( v2 )
+        tc_vec3undefined( target )
         target[0] = +( v1[0] < v2[0] )
         target[1] = +( v1[1] < v2[1] )
         target[2] = +( v1[2] < v2[2] )
@@ -778,6 +828,7 @@ export class vec3 {
 
     /** @param {vec3Like} v @returns {vec3} */
     lessThanEqual( v ) {
+        tc_vec3Like( v )
         this[0] = +( this[0] <= v[0] )
         this[1] = +( this[1] <= v[1] )
         this[2] = +( this[2] <= v[2] )
@@ -786,6 +837,9 @@ export class vec3 {
 
     /** @param {vec3Like} v1 @param {vec3Like} v2 @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static lessThanEqual( v1, v2, target = new vec3 ) {
+        tc_vec3Like( v1 )
+        tc_vec3Like( v2 )
+        tc_vec3undefined( target )
         target[0] = +( v1[0] <= v2[0] )
         target[1] = +( v1[1] <= v2[1] )
         target[2] = +( v1[2] <= v2[2] )
@@ -794,6 +848,7 @@ export class vec3 {
 
     /** @param {vec3Like} v @returns {vec3} */
     equal( v ) {
+        tc_vec3Like( v )
         this[0] = +( this[0] === v[0] )
         this[1] = +( this[1] === v[1] )
         this[2] = +( this[2] === v[2] )
@@ -802,6 +857,9 @@ export class vec3 {
 
     /** @param {vec3Like} v1 @param {vec3Like} v2 @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static equal( v1, v2, target = new vec3 ) {
+        tc_vec3Like( v1 )
+        tc_vec3Like( v2 )
+        tc_vec3undefined( target )
         target[0] = +( v1[0] === v2[0] )
         target[1] = +( v1[1] === v2[1] )
         target[2] = +( v1[2] === v2[2] )
@@ -810,6 +868,7 @@ export class vec3 {
 
     /** @param {vec3Like} v @returns {vec3} */
     notEqual( v ) {
+        tc_vec3Like( v )
         this[0] = +( this[0] !== v[0] )
         this[1] = +( this[1] !== v[1] )
         this[2] = +( this[2] !== v[2] )
@@ -818,6 +877,9 @@ export class vec3 {
 
     /** @param {vec3Like} v1 @param {vec3Like} v2 @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static notEqual( v1, v2, target = new vec3 ) {
+        tc_vec3Like( v1 )
+        tc_vec3Like( v2 )
+        tc_vec3undefined( target )
         target[0] = +( v1[0] !== v2[0] )
         target[1] = +( v1[1] !== v2[1] )
         target[2] = +( v1[2] !== v2[2] )
@@ -834,6 +896,8 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static not( v, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         target[0] = +!v[0]
         target[1] = +!v[1]
         target[2] = +!v[2]
@@ -850,6 +914,8 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static isinf( v, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         target[0] = +( v[0] === -Infinity || v[0] === Infinity )
         target[1] = +( v[1] === -Infinity || v[1] === Infinity )
         target[2] = +( v[2] === -Infinity || v[2] === Infinity )
@@ -866,6 +932,8 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static isnan( v, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         target[0] = +( v[0] !== v[0] )
         target[1] = +( v[1] !== v[1] )
         target[2] = +( v[2] !== v[2] )
@@ -878,16 +946,21 @@ export class vec3 {
 
     /** @param {number|vec3Like} x @returns {vec3} */
     add( x ) {
+        tc_numbervec3Like( x )
         return typeof x === "number" ? this.sadd( x ) : this.vadd( x )
     }
 
     /** @param {vec3Like} v @param {number|vec3Like} x @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static add( v, x, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_numbervec3Like( x )
+        tc_vec3undefined( target )
         return typeof x === "number" ? vec3.sadd( v, x, target ) : vec3.vadd( v, x, target )
     }
 
     /** @param {number} s @returns {vec3} */
     sadd( s ) {
+        tc_number( s )
         this[0] += s
         this[1] += s
         this[2] += s
@@ -896,6 +969,9 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {number} s @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static sadd( v, s, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_number( s )
+        tc_vec3undefined( target )
         target[0] = v[0] + s
         target[1] = v[1] + s
         target[2] = v[2] + s
@@ -904,6 +980,7 @@ export class vec3 {
 
     /** @param {vec3Like} v @returns {vec3} */
     vadd( v ) {
+        tc_vec3Like( v )
         this[0] += v[0]
         this[1] += v[1]
         this[2] += v[2]
@@ -912,6 +989,9 @@ export class vec3 {
 
     /** @param {vec3Like} v1 @param {vec3Like} v2 @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static vadd( v1, v2, target = new vec3 ) {
+        tc_vec3Like( v1 )
+        tc_vec3Like( v2 )
+        tc_vec3undefined( target )
         target[0] = v1[0] + v2[0]
         target[1] = v1[1] + v2[1]
         target[2] = v1[2] + v2[2]
@@ -920,16 +1000,21 @@ export class vec3 {
 
     /** @param {number|vec3Like} x @returns {vec3} */
     sub( x ) {
+        tc_numbervec3Like( x )
         return typeof x === "number" ? this.ssub( x ) : this.vsub( x )
     }
 
     /** @param {vec3Like} v @param {number|vec3Like} x @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static sub( v, x, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_numbervec3Like( x )
+        tc_vec3undefined( target )
         return typeof x === "number" ? vec3.ssub( v, x, target ) : vec3.vsub( v, x, target )
     }
 
     /** @param {number} s @returns {vec3} */
     ssub( s ) {
+        tc_number( s )
         this[0] -= s
         this[1] -= s
         this[2] -= s
@@ -938,6 +1023,9 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {number} s @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static ssub( v, s, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_number( s )
+        tc_vec3undefined( target )
         target[0] = v[0] - s
         target[1] = v[1] - s
         target[2] = v[2] - s
@@ -946,6 +1034,7 @@ export class vec3 {
 
     /** @param {vec3Like} v @returns {vec3} */
     vsub( v ) {
+        tc_vec3Like( v )
         this[0] -= v[0]
         this[1] -= v[1]
         this[2] -= v[2]
@@ -954,6 +1043,9 @@ export class vec3 {
 
     /** @param {vec3Like} v1 @param {vec3Like} v2 @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static vsub( v1, v2, target = new vec3 ) {
+        tc_vec3Like( v1 )
+        tc_vec3Like( v2 )
+        tc_vec3undefined( target )
         target[0] = v1[0] - v2[0]
         target[1] = v1[1] - v2[1]
         target[2] = v1[2] - v2[2]
@@ -962,16 +1054,21 @@ export class vec3 {
 
     /** @param {number|vec3Like} x @returns {vec3} */
     mul( x ) {
+        tc_numbervec3Like( x )
         return typeof x === "number" ? this.smul( x ) : this.vmul( x )
     }
 
     /** @param {vec3Like} v @param {number|vec3Like} x @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static mul( v, x, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_numbervec3Like( x )
+        tc_vec3undefined( target )
         return typeof x === "number" ? vec3.smul( v, x, target ) : vec3.vmul( v, x, target )
     }
 
     /** @param {number} s @returns {vec3} */
     smul( s ) {
+        tc_number( s )
         this[0] *= s
         this[1] *= s
         this[2] *= s
@@ -980,6 +1077,9 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {number} s @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static smul( v, s, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_number( s )
+        tc_vec3undefined( target )
         target[0] = v[0] * s
         target[1] = v[1] * s
         target[2] = v[2] * s
@@ -988,6 +1088,7 @@ export class vec3 {
 
     /** @param {vec3Like} v @returns {vec3} */
     vmul( v ) {
+        tc_vec3Like( v )
         this[0] *= v[0]
         this[1] *= v[1]
         this[2] *= v[2]
@@ -996,6 +1097,9 @@ export class vec3 {
 
     /** @param {vec3Like} v1 @param {vec3Like} v2 @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static vmul( v1, v2, target = new vec3 ) {
+        tc_vec3Like( v1 )
+        tc_vec3Like( v2 )
+        tc_vec3undefined( target )
         target[0] = v1[0] * v2[0]
         target[1] = v1[1] * v2[1]
         target[2] = v1[2] * v2[2]
@@ -1004,16 +1108,21 @@ export class vec3 {
 
     /** @param {number|vec3Like} x @returns {vec3} */
     div( x ) {
+        tc_numbervec3Like( x )
         return typeof x === "number" ? this.sdiv( x ) : this.vdiv( x )
     }
 
     /** @param {vec3Like} v @param {number|vec3Like} x @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static div( v, x, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_numbervec3Like( x )
+        tc_vec3undefined( target )
         return typeof x === "number" ? vec3.sdiv( v, x, target ) : vec3.vdiv( v, x, target )
     }
 
     /** @param {number} s @returns {vec3} */
     sdiv( s ) {
+        tc_number( s )
         this[0] /= s
         this[1] /= s
         this[2] /= s
@@ -1022,6 +1131,9 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {number} s @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static sdiv( v, s, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_number( s )
+        tc_vec3undefined( target )
         target[0] = v[0] / s
         target[1] = v[1] / s
         target[2] = v[2] / s
@@ -1030,6 +1142,7 @@ export class vec3 {
 
     /** @param {vec3Like} v @returns {vec3} */
     vdiv( v ) {
+        tc_vec3Like( v )
         this[0] /= v[0]
         this[1] /= v[1]
         this[2] /= v[2]
@@ -1038,6 +1151,9 @@ export class vec3 {
 
     /** @param {vec3Like} v1 @param {vec3Like} v2 @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static vdiv( v1, v2, target = new vec3 ) {
+        tc_vec3Like( v1 )
+        tc_vec3Like( v2 )
+        tc_vec3undefined( target )
         target[0] = v1[0] / v2[0]
         target[1] = v1[1] / v2[1]
         target[2] = v1[2] / v2[2]
@@ -1046,16 +1162,21 @@ export class vec3 {
 
     /** @param {number|vec3Like} x @returns {vec3} */
     rem( x ) {
+        tc_numbervec3Like( x )
         return typeof x === "number" ? this.srem( x ) : this.vrem( x )
     }
 
     /** @param {vec3Like} v @param {number|vec3Like} x @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static rem( v, x, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_numbervec3Like( x )
+        tc_vec3undefined( target )
         return typeof x === "number" ? vec3.srem( v, x, target ) : vec3.vrem( v, x, target )
     }
 
     /** @param {number} s @returns {vec3} */
     srem( s ) {
+        tc_number( s )
         this[0] %= s
         this[1] %= s
         this[2] %= s
@@ -1064,6 +1185,9 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {number} s @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static srem( v, s, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_number( s )
+        tc_vec3undefined( target )
         target[0] = v[0] % s
         target[1] = v[1] % s
         target[2] = v[2] % s
@@ -1072,6 +1196,7 @@ export class vec3 {
 
     /** @param {vec3Like} v @returns {vec3} */
     vrem( v ) {
+        tc_vec3Like( v )
         this[0] %= v[0]
         this[1] %= v[1]
         this[2] %= v[2]
@@ -1080,6 +1205,9 @@ export class vec3 {
 
     /** @param {vec3Like} v1 @param {vec3Like} v2 @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static vrem( v1, v2, target = new vec3 ) {
+        tc_vec3Like( v1 )
+        tc_vec3Like( v2 )
+        tc_vec3undefined( target )
         target[0] = v1[0] % v2[0]
         target[1] = v1[1] % v2[1]
         target[2] = v1[2] % v2[2]
@@ -1088,16 +1216,21 @@ export class vec3 {
 
     /** @param {number|vec3Like} x @returns {vec3} */
     pow( x ) {
+        tc_numbervec3Like( x )
         return typeof x === "number" ? this.spow( x ) : this.vpow( x )
     }
 
     /** @param {vec3Like} v @param {number|vec3Like} x @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static pow( v, x, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_numbervec3Like( x )
+        tc_vec3undefined( target )
         return typeof x === "number" ? vec3.spow( v, x, target ) : vec3.vpow( v, x, target )
     }
 
     /** @param {number} s @returns {vec3} */
     spow( s ) {
+        tc_number( s )
         this[0] **= s
         this[1] **= s
         this[2] **= s
@@ -1106,6 +1239,9 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {number} s @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static spow( v, s, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_number( s )
+        tc_vec3undefined( target )
         target[0] = v[0] ** s
         target[1] = v[1] ** s
         target[2] = v[2] ** s
@@ -1114,6 +1250,7 @@ export class vec3 {
 
     /** @param {vec3Like} v @returns {vec3} */
     vpow( v ) {
+        tc_vec3Like( v )
         this[0] **= v[0]
         this[1] **= v[1]
         this[2] **= v[2]
@@ -1122,6 +1259,9 @@ export class vec3 {
 
     /** @param {vec3Like} v1 @param {vec3Like} v2 @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static vpow( v1, v2, target = new vec3 ) {
+        tc_vec3Like( v1 )
+        tc_vec3Like( v2 )
+        tc_vec3undefined( target )
         target[0] = v1[0] ** v2[0]
         target[1] = v1[1] ** v2[1]
         target[2] = v1[2] ** v2[2]
@@ -1130,6 +1270,8 @@ export class vec3 {
 
     /** @param {number|vec3Like} m @param {number|vec3Like} a @returns {vec3} */
     fma( m, a ) {
+        tc_numbervec3Like( m )
+        tc_numbervec3Like( a )
         return typeof m === "number"
             ? ( typeof a === "number" ? this.sfma( m, a ) : this.svfma( m, a ) )
             : ( typeof a === "number" ? this.vsfma( m, a ) : this.vfma( m, a ) )
@@ -1137,6 +1279,10 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {number|vec3Like} m @param {number|vec3Like} a @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static fma( v, m, a, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_numbervec3Like( m )
+        tc_numbervec3Like( a )
+        tc_vec3undefined( target )
         return typeof m === "number"
             ? ( typeof a === "number" ? vec3.sfma( v, m, a, target ) : vec3.svfma( v, m, a, target ) )
             : ( typeof a === "number" ? vec3.vsfma( v, m, a, target ) : vec3.vfma( v, m, a, target ) )
@@ -1152,6 +1298,8 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {number} m @param {number} a @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static sfma( v, m, a, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         target[0] = v[0] * m + a
         target[1] = v[1] * m + a
         target[2] = v[2] * m + a
@@ -1160,6 +1308,7 @@ export class vec3 {
 
     /** @param {number} m @param {vec3Like} a @returns {vec3} */
     svfma( m, a ) {
+        tc_vec3Like( a )
         this[0] = this[0] * m + a[0]
         this[1] = this[1] * m + a[1]
         this[2] = this[2] * m + a[2]
@@ -1168,6 +1317,9 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {number} m @param {vec3Like} a @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static svfma( v, m, a, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3Like( a )
+        tc_vec3undefined( target )
         target[0] = v[0] * m + a[0]
         target[1] = v[1] * m + a[1]
         target[2] = v[2] * m + a[2]
@@ -1176,6 +1328,7 @@ export class vec3 {
 
     /** @param {vec3Like} m @param {number} a @returns {vec3} */
     vsfma( m, a ) {
+        tc_vec3Like( m )
         this[0] = this[0] * m[0] + a
         this[1] = this[1] * m[1] + a
         this[2] = this[2] * m[2] + a
@@ -1184,6 +1337,9 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {vec3Like} m @param {number} a @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static vsfma( v, m, a, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3Like( m )
+        tc_vec3undefined( target )
         target[0] = v[0] * m[0] + a
         target[1] = v[1] * m[1] + a
         target[2] = v[2] * m[2] + a
@@ -1192,6 +1348,8 @@ export class vec3 {
 
     /** @param {vec3Like} m @param {vec3Like} a @returns {vec3} */
     vfma( m, a ) {
+        tc_vec3Like( m )
+        tc_vec3Like( a )
         this[0] = this[0] * m[0] + a[0]
         this[1] = this[1] * m[1] + a[1]
         this[2] = this[2] * m[2] + a[2]
@@ -1200,6 +1358,10 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {vec3Like} m @param {vec3Like} a @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static vfma( v, m, a, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3Like( m )
+        tc_vec3Like( a )
+        tc_vec3undefined( target )
         target[0] = v[0] * m[0] + a[0]
         target[1] = v[1] * m[1] + a[1]
         target[2] = v[2] * m[2] + a[2]
@@ -1208,6 +1370,7 @@ export class vec3 {
 
     /** @param {mat3Like} m @returns {vec3} */
     mmul( m ) {
+        tc_mat3Like( m )
         const c0 = this[0]
         const c1 = this[1]
         const c2 = this[2]
@@ -1219,6 +1382,9 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {mat3Like} m @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static mmul( v, m, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_mat3Like( m )
+        tc_vec3undefined( target )
         const c0 = v[0]
         const c1 = v[1]
         const c2 = v[2]
@@ -1238,6 +1404,8 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {(value: number, index: number) => number} fn @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static apply( v, fn, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         target[0] = fn( v[0], 0 )
         target[1] = fn( v[1], 1 )
         target[2] = fn( v[2], 2 )
@@ -1294,6 +1462,8 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static abs( v, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         target[0] = Math.abs( v[0] )
         target[1] = Math.abs( v[1] )
         target[2] = Math.abs( v[2] )
@@ -1302,6 +1472,8 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static acos( v, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         target[0] = Math.acos( v[0] )
         target[1] = Math.acos( v[1] )
         target[2] = Math.acos( v[2] )
@@ -1310,6 +1482,8 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static acosh( v, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         target[0] = Math.acosh( v[0] )
         target[1] = Math.acosh( v[1] )
         target[2] = Math.acosh( v[2] )
@@ -1318,6 +1492,8 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static asin( v, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         target[0] = Math.asin( v[0] )
         target[1] = Math.asin( v[1] )
         target[2] = Math.asin( v[2] )
@@ -1326,6 +1502,8 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static asinh( v, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         target[0] = Math.asinh( v[0] )
         target[1] = Math.asinh( v[1] )
         target[2] = Math.asinh( v[2] )
@@ -1334,6 +1512,8 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static atan( v, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         target[0] = Math.atan( v[0] )
         target[1] = Math.atan( v[1] )
         target[2] = Math.atan( v[2] )
@@ -1342,6 +1522,8 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static atanh( v, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         target[0] = Math.atanh( v[0] )
         target[1] = Math.atanh( v[1] )
         target[2] = Math.atanh( v[2] )
@@ -1350,6 +1532,8 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static ceil( v, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         target[0] = Math.ceil( v[0] )
         target[1] = Math.ceil( v[1] )
         target[2] = Math.ceil( v[2] )
@@ -1358,6 +1542,8 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static cbrt( v, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         target[0] = Math.cbrt( v[0] )
         target[1] = Math.cbrt( v[1] )
         target[2] = Math.cbrt( v[2] )
@@ -1366,6 +1552,8 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static expm1( v, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         target[0] = Math.expm1( v[0] )
         target[1] = Math.expm1( v[1] )
         target[2] = Math.expm1( v[2] )
@@ -1374,6 +1562,8 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static cos( v, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         target[0] = Math.cos( v[0] )
         target[1] = Math.cos( v[1] )
         target[2] = Math.cos( v[2] )
@@ -1382,6 +1572,8 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static cosh( v, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         target[0] = Math.cosh( v[0] )
         target[1] = Math.cosh( v[1] )
         target[2] = Math.cosh( v[2] )
@@ -1390,6 +1582,8 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static exp( v, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         target[0] = Math.exp( v[0] )
         target[1] = Math.exp( v[1] )
         target[2] = Math.exp( v[2] )
@@ -1398,6 +1592,8 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static floor( v, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         target[0] = Math.floor( v[0] )
         target[1] = Math.floor( v[1] )
         target[2] = Math.floor( v[2] )
@@ -1406,6 +1602,8 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static log( v, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         target[0] = Math.log( v[0] )
         target[1] = Math.log( v[1] )
         target[2] = Math.log( v[2] )
@@ -1414,6 +1612,8 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static log1p( v, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         target[0] = Math.log1p( v[0] )
         target[1] = Math.log1p( v[1] )
         target[2] = Math.log1p( v[2] )
@@ -1422,6 +1622,8 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static log2( v, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         target[0] = Math.log2( v[0] )
         target[1] = Math.log2( v[1] )
         target[2] = Math.log2( v[2] )
@@ -1430,6 +1632,8 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static log10( v, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         target[0] = Math.log10( v[0] )
         target[1] = Math.log10( v[1] )
         target[2] = Math.log10( v[2] )
@@ -1438,6 +1642,8 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static round( v, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         target[0] = Math.round( v[0] )
         target[1] = Math.round( v[1] )
         target[2] = Math.round( v[2] )
@@ -1446,6 +1652,8 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static sign( v, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         target[0] = Math.sign( v[0] )
         target[1] = Math.sign( v[1] )
         target[2] = Math.sign( v[2] )
@@ -1454,6 +1662,8 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static sin( v, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         target[0] = Math.sin( v[0] )
         target[1] = Math.sin( v[1] )
         target[2] = Math.sin( v[2] )
@@ -1462,6 +1672,8 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static sinh( v, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         target[0] = Math.sinh( v[0] )
         target[1] = Math.sinh( v[1] )
         target[2] = Math.sinh( v[2] )
@@ -1470,6 +1682,8 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static sqrt( v, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         target[0] = Math.sqrt( v[0] )
         target[1] = Math.sqrt( v[1] )
         target[2] = Math.sqrt( v[2] )
@@ -1478,6 +1692,8 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static tan( v, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         target[0] = Math.tan( v[0] )
         target[1] = Math.tan( v[1] )
         target[2] = Math.tan( v[2] )
@@ -1486,6 +1702,8 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static tanh( v, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         target[0] = Math.tanh( v[0] )
         target[1] = Math.tanh( v[1] )
         target[2] = Math.tanh( v[2] )
@@ -1494,6 +1712,8 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static trunc( v, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         target[0] = Math.trunc( v[0] )
         target[1] = Math.trunc( v[1] )
         target[2] = Math.trunc( v[2] )
@@ -1511,6 +1731,7 @@ export class vec3 {
 
     /** @param {vec3Like} v @returns {number} */
     static length( v ) {
+        tc_vec3Like( v )
         return Math.sqrt( v[0] * v[0] + v[1] * v[1] + v[2] * v[2] )
     }
 
@@ -1521,6 +1742,7 @@ export class vec3 {
 
     /** @param {vec3Like} v @returns {number} */
     static lengthSq( v ) {
+        tc_vec3Like( v )
         return v[0] * v[0] + v[1] * v[1] + v[2] * v[2]
     }
 
@@ -1530,6 +1752,7 @@ export class vec3 {
 
     /** @param {vec3Like} v @returns {vec3} */
     pointTo( v ) {
+        tc_vec3Like( v )
         this[0] = v[0] - this[0]
         this[1] = v[1] - this[1]
         this[2] = v[2] - this[2]
@@ -1538,6 +1761,9 @@ export class vec3 {
 
     /** @param {vec3Like} from @param {vec3Like} to @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static pointTo( from, to, target = new vec3 ) {
+        tc_vec3Like( from )
+        tc_vec3Like( to )
+        tc_vec3undefined( target )
         target[0] = to[0] - from[0]
         target[1] = to[1] - from[1]
         target[2] = to[2] - from[2]
@@ -1555,6 +1781,8 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static normalize( v, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         const factor = 1 / Math.sqrt( v[0] * v[0] + v[1] * v[1] + v[2] * v[2] )
         target[0] = v[0] * factor
         target[1] = v[1] * factor
@@ -1564,6 +1792,7 @@ export class vec3 {
 
     /** @param {number} s @returns {vec3} */
     setLength( s ) {
+        tc_number( s )
         const factor = s / Math.sqrt( this[0] * this[0] + this[1] * this[1] + this[2] * this[2] )
         this[0] *= factor
         this[1] *= factor
@@ -1573,6 +1802,9 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {number} s @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static setLength( v, s, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_number( s )
+        tc_vec3undefined( target )
         const factor = s / Math.sqrt( v[0] * v[0] + v[1] * v[1] + v[2] * v[2] )
         target[0] = v[0] * factor
         target[1] = v[1] * factor
@@ -1582,16 +1814,20 @@ export class vec3 {
 
     /** @param {vec3Like} v @returns {number} */
     dot( v ) {
+        tc_vec3Like( v )
         return this[0] * v[0] + this[1] * v[1] + this[2] * v[2]
     }
 
     /** @param {vec3Like} v1 @param {vec3Like} v2 @returns {number} */
     static dot( v1, v2 ) {
+        tc_vec3Like( v1 )
+        tc_vec3Like( v2 )
         return v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2]
     }
 
     /** @param {vec3Like} v @returns {vec3} */
     cross( v ) {
+        tc_vec3Like( v )
         const t0 = this[1] * v[2] - this[2] * v[1]
         const t1 = this[2] * v[0] - this[0] * v[2]
         const t2 = this[0] * v[1] - this[1] * v[0]
@@ -1603,6 +1839,9 @@ export class vec3 {
 
     /** @param {vec3Like} v1 @param {vec3Like} v2 @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static cross( v1, v2, target = new vec3 ) {
+        tc_vec3Like( v1 )
+        tc_vec3Like( v2 )
+        tc_vec3undefined( target )
         const t0 = v1[1] * v2[2] - v1[2] * v2[1]
         const t1 = v1[2] * v2[0] - v1[0] * v2[2]
         const t2 = v1[0] * v2[1] - v1[1] * v2[0]
@@ -1618,6 +1857,8 @@ export class vec3 {
 
     /** @param {vec3Like} v1 @param {vec3Like} v2 @returns {number} */
     static distance( v1, v2 ) {
+        tc_vec3Like( v1 )
+        tc_vec3Like( v2 )
         const d0 = v1[0] - v2[0]
         const d1 = v1[1] - v2[1]
         const d2 = v1[2] - v2[2]
@@ -1626,6 +1867,8 @@ export class vec3 {
 
     /** @param {vec3Like} v1 @param {vec3Like} v2 @returns {number} */
     static distanceSq( v1, v2 ) {
+        tc_vec3Like( v1 )
+        tc_vec3Like( v2 )
         const d0 = v1[0] - v2[0]
         const d1 = v1[1] - v2[1]
         const d2 = v1[2] - v2[2]
@@ -1652,6 +1895,10 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {number|vec3Like} min @param {number|vec3Like} max @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static clamp( v, min, max, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_numbervec3Like( min )
+        tc_numbervec3Like( max )
+        tc_vec3undefined( target )
         return typeof min === "number"
             ? ( typeof max === "number" ? vec3.sclamp( v, min, max, target ) : vec3.svclamp( v, min, max, target ) )
             : ( typeof max === "number" ? vec3.vsclamp( v, min, max, target ) : vec3.vclamp( v, min, max, target ) )
@@ -1659,6 +1906,8 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {number} min @param {number} max @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static sclamp( v, min, max, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         target[0] = Math.min( Math.max( v[0], min ), max  )
         target[1] = Math.min( Math.max( v[1], min ), max  )
         target[2] = Math.min( Math.max( v[2], min ), max  )
@@ -1667,6 +1916,9 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {number} min @param {vec3Like} max @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static svclamp( v, min, max, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3Like( max )
+        tc_vec3undefined( target )
         target[0] = Math.min( Math.max( v[0], min ), max[0]  )
         target[1] = Math.min( Math.max( v[1], min ), max[1]  )
         target[2] = Math.min( Math.max( v[2], min ), max[2]  )
@@ -1675,6 +1927,9 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {vec3Like} min @param {number} max @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static vsclamp( v, min, max, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3Like( min )
+        tc_vec3undefined( target )
         target[0] = Math.min( Math.max( v[0], min[0] ), max  )
         target[1] = Math.min( Math.max( v[1], min[1] ), max  )
         target[2] = Math.min( Math.max( v[2], min[2] ), max  )
@@ -1683,6 +1938,10 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {vec3Like} min @param {vec3Like} max @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static vclamp( v, min, max, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3Like( min )
+        tc_vec3Like( max )
+        tc_vec3undefined( target )
         target[0] = Math.min( Math.max( v[0], min[0] ), max[0]  )
         target[1] = Math.min( Math.max( v[1], min[1] ), max[1]  )
         target[2] = Math.min( Math.max( v[2], min[2] ), max[2]  )
@@ -1691,6 +1950,8 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static saturate( v, target = new vec3 ) {
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         target[0] = Math.min( Math.max( v[0], 0 ), 1 )
         target[1] = Math.min( Math.max( v[1], 0 ), 1 )
         target[2] = Math.min( Math.max( v[2], 0 ), 1 )
@@ -1699,6 +1960,9 @@ export class vec3 {
 
     /** @param {vec3Like} v1 @param {vec3Like} v2 @param {number} t @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static mix( v1, v2, t, target = new vec3 ) {
+        tc_vec3Like( v1 )
+        tc_vec3Like( v2 )
+        tc_vec3undefined( target )
         target[0] = v1[0] * ( 1 - t ) + v2[0] * t
         target[1] = v1[1] * ( 1 - t ) + v2[1] * t
         target[2] = v1[2] * ( 1 - t ) + v2[2] * t

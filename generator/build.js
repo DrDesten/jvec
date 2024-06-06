@@ -13,7 +13,7 @@ import { Range } from "./genlib.js"
 
 // Constants
 
-const NUMBER_TYPE = new Type( "number", x => typeof x === "number" )
+const NUMBER_TYPE = Type.number
 const VECTOR_TYPES = {
     "2": new Type( "vec2", x => x instanceof vec2 ),
     "3": new Type( "vec3", x => x instanceof vec3 ),
@@ -55,21 +55,31 @@ const OUTPUT_DIR = "../bin"
 
 for ( let dim = MIN_DIMENSION; dim <= MAX_DIMENSION; dim++ ) {
     const file = generateVector( dim )
+    const tc_file = generateVector( dim, true )
     writeFileSync( join( __dirname, OUTPUT_DIR, `vec${dim}.js` ), file, { encoding: "utf8" } )
+    writeFileSync( join( __dirname, OUTPUT_DIR, `safe-vec${dim}.js` ), tc_file, { encoding: "utf8" } )
 }
 for ( let dim = MIN_DIMENSION; dim <= MAX_DIMENSION; dim++ ) {
     const file = generateMatrix( dim )
+    const tc_file = generateMatrix( dim, true )
     writeFileSync( join( __dirname, OUTPUT_DIR, `mat${dim}.js` ), file, { encoding: "utf8" } )
+    writeFileSync( join( __dirname, OUTPUT_DIR, `safe-mat${dim}.js` ), tc_file, { encoding: "utf8" } )
 }
 
 const vec = Range( MIN_DIMENSION, MAX_DIMENSION + 1 )
-    .map( dim => `export { vec${dim} } from "./vec${dim}.js"` )
-    .join( "\n" )
-const mat = Range( MIN_DIMENSION, MAX_DIMENSION + 1 )
-    .map( dim => `export { mat${dim} } from "./mat${dim}.js"` )
-    .join( "\n" )
+    .map( dim => `export { vec${dim} } from "./vec${dim}.js"` ).join( "\n" )
 writeFileSync( join( __dirname, OUTPUT_DIR, `vec.js` ), vec, { encoding: "utf8" } )
+const mat = Range( MIN_DIMENSION, MAX_DIMENSION + 1 )
+    .map( dim => `export { mat${dim} } from "./mat${dim}.js"` ).join( "\n" )
 writeFileSync( join( __dirname, OUTPUT_DIR, `mat.js` ), mat, { encoding: "utf8" } )
+
+const safeVec = Range( MIN_DIMENSION, MAX_DIMENSION + 1 )
+    .map( dim => `export { vec${dim} } from "./safe-vec${dim}.js"` ).join( "\n" )
+writeFileSync( join( __dirname, OUTPUT_DIR, `safe-vec.js` ), safeVec, { encoding: "utf8" } )
+
+const safemat = Range( MIN_DIMENSION, MAX_DIMENSION + 1 )
+    .map( dim => `export { mat${dim} } from "./safe-mat${dim}.js"` ).join( "\n" )
+writeFileSync( join( __dirname, OUTPUT_DIR, `safe-mat.js` ), safemat, { encoding: "utf8" } )
 
 // ------------------------------
 // generate()
@@ -157,7 +167,7 @@ ${DMAP( i => `/** @type {number} ${iMapXYZW[i]}-coordinate of the vector */\nthi
             return new Fn( `fromFunction`, params, body, { prefix: "static", type: TYPE } )
         }
         function fromAngle2() {
-            const params = new Fn.Param( "angle", "number" )
+            const params = new Fn.Param( "angle", NUMBER_TYPE )
             const body = `return new vec2( Math.cos( angle ), Math.sin( angle ) )`
             return new Fn( `fromAngle`, params, body, { prefix: "static", type: TYPE } )
         }
@@ -218,7 +228,7 @@ ${DMAP( i => `/** @type {number} ${iMapXYZW[i]}-coordinate of the vector */\nthi
             const out = [getter1, getter2]
 
             if ( new Set( perm ).size === dim ) {
-                const setterParam = new Fn.Param( "v", `vec${dim}Like` )
+                const setterParam = new Fn.Param( "v", VECTORLIKE_TYPES[dim] )
                 const setterBody = Range( dim ).map( i => `this[${perm[i]}] = v[${i}]` ).join( ", " )
                 const setter1 = new Fn( name1, setterParam, setterBody, { prefix: "set", compact: true } )
                 const setter2 = new Fn( name2, setterParam, setterBody, { prefix: "set", compact: true } )
@@ -639,7 +649,7 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
         utilityFunctions(),
         `}`
     ]
-    return Fn.buildClass( segments )
+    return Fn.buildClass( segments, typecheck )
 }
 
 /** @param {number} dimension matrix dimension */

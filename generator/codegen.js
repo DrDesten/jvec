@@ -9,22 +9,44 @@ import { JSDoc } from "./docgen.js"
  */
 
 export class Type {
+    static undefined = new Type( "undefined", x => x === undefined )
+    static null = new Type( "null", x => x === null )
+    static boolean = new Type( "boolean", x => typeof x === "boolean" )
+    static bigint = new Type( "bigint", x => typeof x === "bigint" )
+    static number = new Type( "number", x => typeof x === "number" )
+    static symbol = new Type( "symbol", x => typeof x === "symbol" )
+    static string = new Type( "string", x => typeof x === "string" )
+    static function = new Type( "function", x => typeof x === "function" )
+    static object = new Type( "object", x => typeof x === "object" )
+    static any = new Type( "any", () => true )
+
     /**
      * @param {string|Type[]} name 
-     * @param {(x: any) => boolean} check
+     * @param {string|(x: any) => boolean} check
      */
     constructor( name, check ) {
         if ( typeof name === "string" ) {
             this.name = name
-            this.check = [check]
+            this.check = `( ${check} )(x)`
         } else {
-            this.name = name.map( ( { name } ) => /[^\w\s]/.test( name ) ? `(${name})` : name ).join( "|" )
-            this.check = name.map( ( { check } ) => check )
+            this.name = name.map( t => /[^\w\s]/.test( t.name ) ? `(${t.name})` : t.name ).join( "|" )
+            this.check = `( x => ${name.map( t => t.check ).join( "||" )} )(x)`
         }
         /** @type {string} */
         this.name
-        /** @type {((x: any) => boolean)[]} */
+        /** @type {string} */
         this.check
+
+        this._optional = null
+    }
+
+    toOptional() {
+        this._optional ??= new Type( [this, Type.undefined] )
+        this._optional._optional = this._optional
+        return this._optional
+    }
+    toArray() {
+        return Type.any
     }
 
     toString() {
@@ -85,6 +107,13 @@ export class Fn {
         this.body = body instanceof Array ? body : [body]
 
         this.opts = { ...Fn.DefaultOpts, ...opts }
+
+        this.params.forEach( param => {
+            if ( param.type instanceof Type ) {
+                param.opts.optional && ( param.type = param.type.toOptional() )
+                param.opts.rest && ( param.type = param.type.toArray() )
+            }
+        } )
     }
     /** @returns {Fn} */
     clone() {
@@ -110,7 +139,7 @@ export class Fn {
             if ( typeof type === "string" ) continue
             let tcid = identifierMap.get( type )
             if ( !tcid ) {
-                tcid = `tc_${type.toString().replace( /\W/, "" )}`
+                tcid = `tc_${type.toString().replace( /\W/g, "" )}`
                 while ( usedIdentifiers.has( tcid ) ) {
                     tcid += Math.floor( Math.random() * 36 ).toString( 36 )
                 }
@@ -118,8 +147,8 @@ export class Fn {
                 identifierMap.set( type, tcid )
                 declarations.push( [
                     `function ${tcid}( x ) {`,
-                    `    const result = ${type.check.map( f => `(${f})(x)` ).join( " || " )}`,
-                    `    if ( !result ) throw new TypeError( \`Expected Type '${type}', got [\${x?.constructor.name||x?.[Symbol.toStringTag]||typeof x}]: \${x}\` )`,
+                    `    const result = ${type.check}`,
+                    `    if ( !result ) throw new TypeError( \`Expected Type '${type}', got [\${x?.constructor?.name||typeof x}]: \${x}\` )`,
                     `}`
                 ].join( "\n" ) )
             }
