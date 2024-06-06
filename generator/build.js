@@ -15,9 +15,9 @@ import { Range } from "./genlib.js"
 
 const NUMBER_TYPE = new Type( "number", x => typeof x === "number" && isFinite( x ) )
 const VECTOR_TYPES = {
-    "2": new Type( "vec2", x => x instanceof vec2 && !x.isnan().any() && !x.isinf().any() ),
-    "3": new Type( "vec3", x => x instanceof vec3 && !x.isnan().any() && !x.isinf().any() ),
-    "4": new Type( "vec4", x => x instanceof vec4 && !x.isnan().any() && !x.isinf().any() ),
+    "2": new Type( "vec2", x => x instanceof vec2 && [...x].every( isFinite ) ),
+    "3": new Type( "vec3", x => x instanceof vec3 && [...x].every( isFinite ) ),
+    "4": new Type( "vec4", x => x instanceof vec4 && [...x].every( isFinite ) ),
 }
 const VECTORLIKE_TYPES = {
     "2": new Type( "vec2Like", x => Array.from( { length: 2 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) ),

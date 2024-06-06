@@ -18,8 +18,12 @@ function tc_numbervec3Like( x ) {
     const result = ( x => ( x => typeof x === "number" && isFinite( x ) )(x)||( x => Array.from( { length: 3 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) )(x) )(x)
     if ( !result ) throw new TypeError( `Expected Type 'number|vec3Like', got [${x?.constructor?.name||typeof x}]: ${x}` )
 }
+function tc_vec3( x ) {
+    const result = ( x => x instanceof vec3 && [...x].every( isFinite ) )(x)
+    if ( !result ) throw new TypeError( `Expected Type 'vec3', got [${x?.constructor?.name||typeof x}]: ${x}` )
+}
 function tc_vec3undefined( x ) {
-    const result = ( x => ( x => x instanceof vec3 && !x.isnan().any() && !x.isinf().any() )(x)||( x => x === undefined )(x) )(x)
+    const result = ( x => ( x => x instanceof vec3 && [...x].every( isFinite ) )(x)||( x => x === undefined )(x) )(x)
     if ( !result ) throw new TypeError( `Expected Type 'vec3|undefined', got [${x?.constructor?.name||typeof x}]: ${x}` )
 }
 function tc_mat3Like( x ) {
@@ -660,6 +664,8 @@ export class vec3 {
         typeof x === "number"
             ? ( this[0] = x, this[1] = y, this[2] = z )
             : ( this[0] = x[0], this[1] = x[1], this[2] = x[2] )
+        tc_numbervec3Like( x )
+        tc_vec3( this )
         return this
     }
 
@@ -776,6 +782,8 @@ export class vec3 {
         this[0] = +( this[0] > v[0] )
         this[1] = +( this[1] > v[1] )
         this[2] = +( this[2] > v[2] )
+        tc_vec3Like( v )
+        tc_vec3( this )
         return this
     }
 
@@ -787,6 +795,9 @@ export class vec3 {
         target[0] = +( v1[0] > v2[0] )
         target[1] = +( v1[1] > v2[1] )
         target[2] = +( v1[2] > v2[2] )
+        tc_vec3Like( v1 )
+        tc_vec3Like( v2 )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -796,6 +807,8 @@ export class vec3 {
         this[0] = +( this[0] >= v[0] )
         this[1] = +( this[1] >= v[1] )
         this[2] = +( this[2] >= v[2] )
+        tc_vec3Like( v )
+        tc_vec3( this )
         return this
     }
 
@@ -807,6 +820,9 @@ export class vec3 {
         target[0] = +( v1[0] >= v2[0] )
         target[1] = +( v1[1] >= v2[1] )
         target[2] = +( v1[2] >= v2[2] )
+        tc_vec3Like( v1 )
+        tc_vec3Like( v2 )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -816,6 +832,8 @@ export class vec3 {
         this[0] = +( this[0] < v[0] )
         this[1] = +( this[1] < v[1] )
         this[2] = +( this[2] < v[2] )
+        tc_vec3Like( v )
+        tc_vec3( this )
         return this
     }
 
@@ -827,6 +845,9 @@ export class vec3 {
         target[0] = +( v1[0] < v2[0] )
         target[1] = +( v1[1] < v2[1] )
         target[2] = +( v1[2] < v2[2] )
+        tc_vec3Like( v1 )
+        tc_vec3Like( v2 )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -836,6 +857,8 @@ export class vec3 {
         this[0] = +( this[0] <= v[0] )
         this[1] = +( this[1] <= v[1] )
         this[2] = +( this[2] <= v[2] )
+        tc_vec3Like( v )
+        tc_vec3( this )
         return this
     }
 
@@ -847,6 +870,9 @@ export class vec3 {
         target[0] = +( v1[0] <= v2[0] )
         target[1] = +( v1[1] <= v2[1] )
         target[2] = +( v1[2] <= v2[2] )
+        tc_vec3Like( v1 )
+        tc_vec3Like( v2 )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -856,6 +882,8 @@ export class vec3 {
         this[0] = +( this[0] === v[0] )
         this[1] = +( this[1] === v[1] )
         this[2] = +( this[2] === v[2] )
+        tc_vec3Like( v )
+        tc_vec3( this )
         return this
     }
 
@@ -867,6 +895,9 @@ export class vec3 {
         target[0] = +( v1[0] === v2[0] )
         target[1] = +( v1[1] === v2[1] )
         target[2] = +( v1[2] === v2[2] )
+        tc_vec3Like( v1 )
+        tc_vec3Like( v2 )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -876,6 +907,8 @@ export class vec3 {
         this[0] = +( this[0] !== v[0] )
         this[1] = +( this[1] !== v[1] )
         this[2] = +( this[2] !== v[2] )
+        tc_vec3Like( v )
+        tc_vec3( this )
         return this
     }
 
@@ -887,6 +920,9 @@ export class vec3 {
         target[0] = +( v1[0] !== v2[0] )
         target[1] = +( v1[1] !== v2[1] )
         target[2] = +( v1[2] !== v2[2] )
+        tc_vec3Like( v1 )
+        tc_vec3Like( v2 )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -895,6 +931,7 @@ export class vec3 {
         this[0] = +!this[0]
         this[1] = +!this[1]
         this[2] = +!this[2]
+        tc_vec3( this )
         return this
     }
 
@@ -905,6 +942,8 @@ export class vec3 {
         target[0] = +!v[0]
         target[1] = +!v[1]
         target[2] = +!v[2]
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -913,6 +952,7 @@ export class vec3 {
         this[0] = +( this[0] === -Infinity || this[0] === Infinity )
         this[1] = +( this[1] === -Infinity || this[1] === Infinity )
         this[2] = +( this[2] === -Infinity || this[2] === Infinity )
+        tc_vec3( this )
         return this
     }
 
@@ -923,6 +963,8 @@ export class vec3 {
         target[0] = +( v[0] === -Infinity || v[0] === Infinity )
         target[1] = +( v[1] === -Infinity || v[1] === Infinity )
         target[2] = +( v[2] === -Infinity || v[2] === Infinity )
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -931,6 +973,7 @@ export class vec3 {
         this[0] = +( this[0] !== this[0] )
         this[1] = +( this[1] !== this[1] )
         this[2] = +( this[2] !== this[2] )
+        tc_vec3( this )
         return this
     }
 
@@ -941,6 +984,8 @@ export class vec3 {
         target[0] = +( v[0] !== v[0] )
         target[1] = +( v[1] !== v[1] )
         target[2] = +( v[2] !== v[2] )
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -968,6 +1013,8 @@ export class vec3 {
         this[0] += s
         this[1] += s
         this[2] += s
+        tc_number( s )
+        tc_vec3( this )
         return this
     }
 
@@ -979,6 +1026,9 @@ export class vec3 {
         target[0] = v[0] + s
         target[1] = v[1] + s
         target[2] = v[2] + s
+        tc_vec3Like( v )
+        tc_number( s )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -988,6 +1038,8 @@ export class vec3 {
         this[0] += v[0]
         this[1] += v[1]
         this[2] += v[2]
+        tc_vec3Like( v )
+        tc_vec3( this )
         return this
     }
 
@@ -999,6 +1051,9 @@ export class vec3 {
         target[0] = v1[0] + v2[0]
         target[1] = v1[1] + v2[1]
         target[2] = v1[2] + v2[2]
+        tc_vec3Like( v1 )
+        tc_vec3Like( v2 )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1022,6 +1077,8 @@ export class vec3 {
         this[0] -= s
         this[1] -= s
         this[2] -= s
+        tc_number( s )
+        tc_vec3( this )
         return this
     }
 
@@ -1033,6 +1090,9 @@ export class vec3 {
         target[0] = v[0] - s
         target[1] = v[1] - s
         target[2] = v[2] - s
+        tc_vec3Like( v )
+        tc_number( s )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1042,6 +1102,8 @@ export class vec3 {
         this[0] -= v[0]
         this[1] -= v[1]
         this[2] -= v[2]
+        tc_vec3Like( v )
+        tc_vec3( this )
         return this
     }
 
@@ -1053,6 +1115,9 @@ export class vec3 {
         target[0] = v1[0] - v2[0]
         target[1] = v1[1] - v2[1]
         target[2] = v1[2] - v2[2]
+        tc_vec3Like( v1 )
+        tc_vec3Like( v2 )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1076,6 +1141,8 @@ export class vec3 {
         this[0] *= s
         this[1] *= s
         this[2] *= s
+        tc_number( s )
+        tc_vec3( this )
         return this
     }
 
@@ -1087,6 +1154,9 @@ export class vec3 {
         target[0] = v[0] * s
         target[1] = v[1] * s
         target[2] = v[2] * s
+        tc_vec3Like( v )
+        tc_number( s )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1096,6 +1166,8 @@ export class vec3 {
         this[0] *= v[0]
         this[1] *= v[1]
         this[2] *= v[2]
+        tc_vec3Like( v )
+        tc_vec3( this )
         return this
     }
 
@@ -1107,6 +1179,9 @@ export class vec3 {
         target[0] = v1[0] * v2[0]
         target[1] = v1[1] * v2[1]
         target[2] = v1[2] * v2[2]
+        tc_vec3Like( v1 )
+        tc_vec3Like( v2 )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1130,6 +1205,8 @@ export class vec3 {
         this[0] /= s
         this[1] /= s
         this[2] /= s
+        tc_number( s )
+        tc_vec3( this )
         return this
     }
 
@@ -1141,6 +1218,9 @@ export class vec3 {
         target[0] = v[0] / s
         target[1] = v[1] / s
         target[2] = v[2] / s
+        tc_vec3Like( v )
+        tc_number( s )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1150,6 +1230,8 @@ export class vec3 {
         this[0] /= v[0]
         this[1] /= v[1]
         this[2] /= v[2]
+        tc_vec3Like( v )
+        tc_vec3( this )
         return this
     }
 
@@ -1161,6 +1243,9 @@ export class vec3 {
         target[0] = v1[0] / v2[0]
         target[1] = v1[1] / v2[1]
         target[2] = v1[2] / v2[2]
+        tc_vec3Like( v1 )
+        tc_vec3Like( v2 )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1184,6 +1269,8 @@ export class vec3 {
         this[0] %= s
         this[1] %= s
         this[2] %= s
+        tc_number( s )
+        tc_vec3( this )
         return this
     }
 
@@ -1195,6 +1282,9 @@ export class vec3 {
         target[0] = v[0] % s
         target[1] = v[1] % s
         target[2] = v[2] % s
+        tc_vec3Like( v )
+        tc_number( s )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1204,6 +1294,8 @@ export class vec3 {
         this[0] %= v[0]
         this[1] %= v[1]
         this[2] %= v[2]
+        tc_vec3Like( v )
+        tc_vec3( this )
         return this
     }
 
@@ -1215,6 +1307,9 @@ export class vec3 {
         target[0] = v1[0] % v2[0]
         target[1] = v1[1] % v2[1]
         target[2] = v1[2] % v2[2]
+        tc_vec3Like( v1 )
+        tc_vec3Like( v2 )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1238,6 +1333,8 @@ export class vec3 {
         this[0] **= s
         this[1] **= s
         this[2] **= s
+        tc_number( s )
+        tc_vec3( this )
         return this
     }
 
@@ -1249,6 +1346,9 @@ export class vec3 {
         target[0] = v[0] ** s
         target[1] = v[1] ** s
         target[2] = v[2] ** s
+        tc_vec3Like( v )
+        tc_number( s )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1258,6 +1358,8 @@ export class vec3 {
         this[0] **= v[0]
         this[1] **= v[1]
         this[2] **= v[2]
+        tc_vec3Like( v )
+        tc_vec3( this )
         return this
     }
 
@@ -1269,6 +1371,9 @@ export class vec3 {
         target[0] = v1[0] ** v2[0]
         target[1] = v1[1] ** v2[1]
         target[2] = v1[2] ** v2[2]
+        tc_vec3Like( v1 )
+        tc_vec3Like( v2 )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1297,6 +1402,7 @@ export class vec3 {
         this[0] = this[0] * m + a
         this[1] = this[1] * m + a
         this[2] = this[2] * m + a
+        tc_vec3( this )
         return this
     }
 
@@ -1307,6 +1413,8 @@ export class vec3 {
         target[0] = v[0] * m + a
         target[1] = v[1] * m + a
         target[2] = v[2] * m + a
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1316,6 +1424,8 @@ export class vec3 {
         this[0] = this[0] * m + a[0]
         this[1] = this[1] * m + a[1]
         this[2] = this[2] * m + a[2]
+        tc_vec3Like( a )
+        tc_vec3( this )
         return this
     }
 
@@ -1327,6 +1437,9 @@ export class vec3 {
         target[0] = v[0] * m + a[0]
         target[1] = v[1] * m + a[1]
         target[2] = v[2] * m + a[2]
+        tc_vec3Like( v )
+        tc_vec3Like( a )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1336,6 +1449,8 @@ export class vec3 {
         this[0] = this[0] * m[0] + a
         this[1] = this[1] * m[1] + a
         this[2] = this[2] * m[2] + a
+        tc_vec3Like( m )
+        tc_vec3( this )
         return this
     }
 
@@ -1347,6 +1462,9 @@ export class vec3 {
         target[0] = v[0] * m[0] + a
         target[1] = v[1] * m[1] + a
         target[2] = v[2] * m[2] + a
+        tc_vec3Like( v )
+        tc_vec3Like( m )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1357,6 +1475,9 @@ export class vec3 {
         this[0] = this[0] * m[0] + a[0]
         this[1] = this[1] * m[1] + a[1]
         this[2] = this[2] * m[2] + a[2]
+        tc_vec3Like( m )
+        tc_vec3Like( a )
+        tc_vec3( this )
         return this
     }
 
@@ -1369,6 +1490,10 @@ export class vec3 {
         target[0] = v[0] * m[0] + a[0]
         target[1] = v[1] * m[1] + a[1]
         target[2] = v[2] * m[2] + a[2]
+        tc_vec3Like( v )
+        tc_vec3Like( m )
+        tc_vec3Like( a )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1381,6 +1506,8 @@ export class vec3 {
         this[0] = c0 * m[0] + c1 * m[3] + c2 * m[6]
         this[1] = c0 * m[1] + c1 * m[4] + c2 * m[7]
         this[2] = c0 * m[2] + c1 * m[5] + c2 * m[8]
+        tc_mat3Like( m )
+        tc_vec3( this )
         return this
     }
 
@@ -1395,6 +1522,9 @@ export class vec3 {
         target[0] = c0 * m[0] + c1 * m[3] + c2 * m[6]
         target[1] = c0 * m[1] + c1 * m[4] + c2 * m[7]
         target[2] = c0 * m[2] + c1 * m[5] + c2 * m[8]
+        tc_vec3Like( v )
+        tc_mat3Like( m )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1403,6 +1533,7 @@ export class vec3 {
         this[0] = fn( this[0], 0 )
         this[1] = fn( this[1], 1 )
         this[2] = fn( this[2], 2 )
+        tc_vec3( this )
         return this
     }
 
@@ -1413,6 +1544,8 @@ export class vec3 {
         target[0] = fn( v[0], 0 )
         target[1] = fn( v[1], 1 )
         target[2] = fn( v[2], 2 )
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1421,6 +1554,7 @@ export class vec3 {
         this[0] = Math.abs( this[0] )
         this[1] = Math.abs( this[1] )
         this[2] = Math.abs( this[2] )
+        tc_vec3( this )
         return this
     }
 
@@ -1429,6 +1563,7 @@ export class vec3 {
         this[0] = Math.sign( this[0] )
         this[1] = Math.sign( this[1] )
         this[2] = Math.sign( this[2] )
+        tc_vec3( this )
         return this
     }
 
@@ -1437,6 +1572,7 @@ export class vec3 {
         this[0] = Math.trunc( this[0] )
         this[1] = Math.trunc( this[1] )
         this[2] = Math.trunc( this[2] )
+        tc_vec3( this )
         return this
     }
 
@@ -1445,6 +1581,7 @@ export class vec3 {
         this[0] = Math.round( this[0] )
         this[1] = Math.round( this[1] )
         this[2] = Math.round( this[2] )
+        tc_vec3( this )
         return this
     }
 
@@ -1453,6 +1590,7 @@ export class vec3 {
         this[0] = Math.floor( this[0] )
         this[1] = Math.floor( this[1] )
         this[2] = Math.floor( this[2] )
+        tc_vec3( this )
         return this
     }
 
@@ -1461,6 +1599,7 @@ export class vec3 {
         this[0] = Math.ceil( this[0] )
         this[1] = Math.ceil( this[1] )
         this[2] = Math.ceil( this[2] )
+        tc_vec3( this )
         return this
     }
 
@@ -1471,6 +1610,8 @@ export class vec3 {
         target[0] = Math.abs( v[0] )
         target[1] = Math.abs( v[1] )
         target[2] = Math.abs( v[2] )
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1481,6 +1622,8 @@ export class vec3 {
         target[0] = Math.acos( v[0] )
         target[1] = Math.acos( v[1] )
         target[2] = Math.acos( v[2] )
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1491,6 +1634,8 @@ export class vec3 {
         target[0] = Math.acosh( v[0] )
         target[1] = Math.acosh( v[1] )
         target[2] = Math.acosh( v[2] )
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1501,6 +1646,8 @@ export class vec3 {
         target[0] = Math.asin( v[0] )
         target[1] = Math.asin( v[1] )
         target[2] = Math.asin( v[2] )
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1511,6 +1658,8 @@ export class vec3 {
         target[0] = Math.asinh( v[0] )
         target[1] = Math.asinh( v[1] )
         target[2] = Math.asinh( v[2] )
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1521,6 +1670,8 @@ export class vec3 {
         target[0] = Math.atan( v[0] )
         target[1] = Math.atan( v[1] )
         target[2] = Math.atan( v[2] )
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1531,6 +1682,8 @@ export class vec3 {
         target[0] = Math.atanh( v[0] )
         target[1] = Math.atanh( v[1] )
         target[2] = Math.atanh( v[2] )
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1541,6 +1694,8 @@ export class vec3 {
         target[0] = Math.ceil( v[0] )
         target[1] = Math.ceil( v[1] )
         target[2] = Math.ceil( v[2] )
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1551,6 +1706,8 @@ export class vec3 {
         target[0] = Math.cbrt( v[0] )
         target[1] = Math.cbrt( v[1] )
         target[2] = Math.cbrt( v[2] )
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1561,6 +1718,8 @@ export class vec3 {
         target[0] = Math.expm1( v[0] )
         target[1] = Math.expm1( v[1] )
         target[2] = Math.expm1( v[2] )
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1571,6 +1730,8 @@ export class vec3 {
         target[0] = Math.cos( v[0] )
         target[1] = Math.cos( v[1] )
         target[2] = Math.cos( v[2] )
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1581,6 +1742,8 @@ export class vec3 {
         target[0] = Math.cosh( v[0] )
         target[1] = Math.cosh( v[1] )
         target[2] = Math.cosh( v[2] )
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1591,6 +1754,8 @@ export class vec3 {
         target[0] = Math.exp( v[0] )
         target[1] = Math.exp( v[1] )
         target[2] = Math.exp( v[2] )
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1601,6 +1766,8 @@ export class vec3 {
         target[0] = Math.floor( v[0] )
         target[1] = Math.floor( v[1] )
         target[2] = Math.floor( v[2] )
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1611,6 +1778,8 @@ export class vec3 {
         target[0] = Math.log( v[0] )
         target[1] = Math.log( v[1] )
         target[2] = Math.log( v[2] )
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1621,6 +1790,8 @@ export class vec3 {
         target[0] = Math.log1p( v[0] )
         target[1] = Math.log1p( v[1] )
         target[2] = Math.log1p( v[2] )
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1631,6 +1802,8 @@ export class vec3 {
         target[0] = Math.log2( v[0] )
         target[1] = Math.log2( v[1] )
         target[2] = Math.log2( v[2] )
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1641,6 +1814,8 @@ export class vec3 {
         target[0] = Math.log10( v[0] )
         target[1] = Math.log10( v[1] )
         target[2] = Math.log10( v[2] )
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1651,6 +1826,8 @@ export class vec3 {
         target[0] = Math.round( v[0] )
         target[1] = Math.round( v[1] )
         target[2] = Math.round( v[2] )
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1661,6 +1838,8 @@ export class vec3 {
         target[0] = Math.sign( v[0] )
         target[1] = Math.sign( v[1] )
         target[2] = Math.sign( v[2] )
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1671,6 +1850,8 @@ export class vec3 {
         target[0] = Math.sin( v[0] )
         target[1] = Math.sin( v[1] )
         target[2] = Math.sin( v[2] )
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1681,6 +1862,8 @@ export class vec3 {
         target[0] = Math.sinh( v[0] )
         target[1] = Math.sinh( v[1] )
         target[2] = Math.sinh( v[2] )
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1691,6 +1874,8 @@ export class vec3 {
         target[0] = Math.sqrt( v[0] )
         target[1] = Math.sqrt( v[1] )
         target[2] = Math.sqrt( v[2] )
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1701,6 +1886,8 @@ export class vec3 {
         target[0] = Math.tan( v[0] )
         target[1] = Math.tan( v[1] )
         target[2] = Math.tan( v[2] )
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1711,6 +1898,8 @@ export class vec3 {
         target[0] = Math.tanh( v[0] )
         target[1] = Math.tanh( v[1] )
         target[2] = Math.tanh( v[2] )
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1721,6 +1910,8 @@ export class vec3 {
         target[0] = Math.trunc( v[0] )
         target[1] = Math.trunc( v[1] )
         target[2] = Math.trunc( v[2] )
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1760,6 +1951,8 @@ export class vec3 {
         this[0] = v[0] - this[0]
         this[1] = v[1] - this[1]
         this[2] = v[2] - this[2]
+        tc_vec3Like( v )
+        tc_vec3( this )
         return this
     }
 
@@ -1771,6 +1964,9 @@ export class vec3 {
         target[0] = to[0] - from[0]
         target[1] = to[1] - from[1]
         target[2] = to[2] - from[2]
+        tc_vec3Like( from )
+        tc_vec3Like( to )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1780,6 +1976,7 @@ export class vec3 {
         this[0] *= factor
         this[1] *= factor
         this[2] *= factor
+        tc_vec3( this )
         return this
     }
 
@@ -1791,6 +1988,8 @@ export class vec3 {
         target[0] = v[0] * factor
         target[1] = v[1] * factor
         target[2] = v[2] * factor
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1801,6 +2000,8 @@ export class vec3 {
         this[0] *= factor
         this[1] *= factor
         this[2] *= factor
+        tc_number( s )
+        tc_vec3( this )
         return this
     }
 
@@ -1813,6 +2014,9 @@ export class vec3 {
         target[0] = v[0] * factor
         target[1] = v[1] * factor
         target[2] = v[2] * factor
+        tc_vec3Like( v )
+        tc_number( s )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1838,6 +2042,8 @@ export class vec3 {
         this[0] = t0
         this[1] = t1
         this[2] = t2
+        tc_vec3Like( v )
+        tc_vec3( this )
         return this
     }
 
@@ -1852,6 +2058,9 @@ export class vec3 {
         target[0] = t0
         target[1] = t1
         target[2] = t2
+        tc_vec3Like( v1 )
+        tc_vec3Like( v2 )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1915,6 +2124,8 @@ export class vec3 {
         target[0] = Math.min( Math.max( v[0], min ), max  )
         target[1] = Math.min( Math.max( v[1], min ), max  )
         target[2] = Math.min( Math.max( v[2], min ), max  )
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1926,6 +2137,9 @@ export class vec3 {
         target[0] = Math.min( Math.max( v[0], min ), max[0]  )
         target[1] = Math.min( Math.max( v[1], min ), max[1]  )
         target[2] = Math.min( Math.max( v[2], min ), max[2]  )
+        tc_vec3Like( v )
+        tc_vec3Like( max )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1937,6 +2151,9 @@ export class vec3 {
         target[0] = Math.min( Math.max( v[0], min[0] ), max  )
         target[1] = Math.min( Math.max( v[1], min[1] ), max  )
         target[2] = Math.min( Math.max( v[2], min[2] ), max  )
+        tc_vec3Like( v )
+        tc_vec3Like( min )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1949,6 +2166,10 @@ export class vec3 {
         target[0] = Math.min( Math.max( v[0], min[0] ), max[0]  )
         target[1] = Math.min( Math.max( v[1], min[1] ), max[1]  )
         target[2] = Math.min( Math.max( v[2], min[2] ), max[2]  )
+        tc_vec3Like( v )
+        tc_vec3Like( min )
+        tc_vec3Like( max )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1959,6 +2180,8 @@ export class vec3 {
         target[0] = Math.min( Math.max( v[0], 0 ), 1 )
         target[1] = Math.min( Math.max( v[1], 0 ), 1 )
         target[2] = Math.min( Math.max( v[2], 0 ), 1 )
+        tc_vec3Like( v )
+        tc_vec3undefined( target )
         return target
     }
 
@@ -1970,6 +2193,9 @@ export class vec3 {
         target[0] = v1[0] * ( 1 - t ) + v2[0] * t
         target[1] = v1[1] * ( 1 - t ) + v2[1] * t
         target[2] = v1[2] * ( 1 - t ) + v2[2] * t
+        tc_vec3Like( v1 )
+        tc_vec3Like( v2 )
+        tc_vec3undefined( target )
         return target
     }
 

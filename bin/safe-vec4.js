@@ -22,8 +22,12 @@ function tc_numbervec4Like( x ) {
     const result = ( x => ( x => typeof x === "number" && isFinite( x ) )(x)||( x => Array.from( { length: 4 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) )(x) )(x)
     if ( !result ) throw new TypeError( `Expected Type 'number|vec4Like', got [${x?.constructor?.name||typeof x}]: ${x}` )
 }
+function tc_vec4( x ) {
+    const result = ( x => x instanceof vec4 && [...x].every( isFinite ) )(x)
+    if ( !result ) throw new TypeError( `Expected Type 'vec4', got [${x?.constructor?.name||typeof x}]: ${x}` )
+}
 function tc_vec4undefined( x ) {
-    const result = ( x => ( x => x instanceof vec4 && !x.isnan().any() && !x.isinf().any() )(x)||( x => x === undefined )(x) )(x)
+    const result = ( x => ( x => x instanceof vec4 && [...x].every( isFinite ) )(x)||( x => x === undefined )(x) )(x)
     if ( !result ) throw new TypeError( `Expected Type 'vec4|undefined', got [${x?.constructor?.name||typeof x}]: ${x}` )
 }
 function tc_mat4Like( x ) {
@@ -1745,6 +1749,8 @@ export class vec4 {
         typeof x === "number"
             ? ( this[0] = x, this[1] = y, this[2] = z, this[3] = w )
             : ( this[0] = x[0], this[1] = x[1], this[2] = x[2], this[3] = x[3] )
+        tc_numbervec4Like( x )
+        tc_vec4( this )
         return this
     }
 
@@ -1865,6 +1871,8 @@ export class vec4 {
         this[1] = +( this[1] > v[1] )
         this[2] = +( this[2] > v[2] )
         this[3] = +( this[3] > v[3] )
+        tc_vec4Like( v )
+        tc_vec4( this )
         return this
     }
 
@@ -1877,6 +1885,9 @@ export class vec4 {
         target[1] = +( v1[1] > v2[1] )
         target[2] = +( v1[2] > v2[2] )
         target[3] = +( v1[3] > v2[3] )
+        tc_vec4Like( v1 )
+        tc_vec4Like( v2 )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -1887,6 +1898,8 @@ export class vec4 {
         this[1] = +( this[1] >= v[1] )
         this[2] = +( this[2] >= v[2] )
         this[3] = +( this[3] >= v[3] )
+        tc_vec4Like( v )
+        tc_vec4( this )
         return this
     }
 
@@ -1899,6 +1912,9 @@ export class vec4 {
         target[1] = +( v1[1] >= v2[1] )
         target[2] = +( v1[2] >= v2[2] )
         target[3] = +( v1[3] >= v2[3] )
+        tc_vec4Like( v1 )
+        tc_vec4Like( v2 )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -1909,6 +1925,8 @@ export class vec4 {
         this[1] = +( this[1] < v[1] )
         this[2] = +( this[2] < v[2] )
         this[3] = +( this[3] < v[3] )
+        tc_vec4Like( v )
+        tc_vec4( this )
         return this
     }
 
@@ -1921,6 +1939,9 @@ export class vec4 {
         target[1] = +( v1[1] < v2[1] )
         target[2] = +( v1[2] < v2[2] )
         target[3] = +( v1[3] < v2[3] )
+        tc_vec4Like( v1 )
+        tc_vec4Like( v2 )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -1931,6 +1952,8 @@ export class vec4 {
         this[1] = +( this[1] <= v[1] )
         this[2] = +( this[2] <= v[2] )
         this[3] = +( this[3] <= v[3] )
+        tc_vec4Like( v )
+        tc_vec4( this )
         return this
     }
 
@@ -1943,6 +1966,9 @@ export class vec4 {
         target[1] = +( v1[1] <= v2[1] )
         target[2] = +( v1[2] <= v2[2] )
         target[3] = +( v1[3] <= v2[3] )
+        tc_vec4Like( v1 )
+        tc_vec4Like( v2 )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -1953,6 +1979,8 @@ export class vec4 {
         this[1] = +( this[1] === v[1] )
         this[2] = +( this[2] === v[2] )
         this[3] = +( this[3] === v[3] )
+        tc_vec4Like( v )
+        tc_vec4( this )
         return this
     }
 
@@ -1965,6 +1993,9 @@ export class vec4 {
         target[1] = +( v1[1] === v2[1] )
         target[2] = +( v1[2] === v2[2] )
         target[3] = +( v1[3] === v2[3] )
+        tc_vec4Like( v1 )
+        tc_vec4Like( v2 )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -1975,6 +2006,8 @@ export class vec4 {
         this[1] = +( this[1] !== v[1] )
         this[2] = +( this[2] !== v[2] )
         this[3] = +( this[3] !== v[3] )
+        tc_vec4Like( v )
+        tc_vec4( this )
         return this
     }
 
@@ -1987,6 +2020,9 @@ export class vec4 {
         target[1] = +( v1[1] !== v2[1] )
         target[2] = +( v1[2] !== v2[2] )
         target[3] = +( v1[3] !== v2[3] )
+        tc_vec4Like( v1 )
+        tc_vec4Like( v2 )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -1996,6 +2032,7 @@ export class vec4 {
         this[1] = +!this[1]
         this[2] = +!this[2]
         this[3] = +!this[3]
+        tc_vec4( this )
         return this
     }
 
@@ -2007,6 +2044,8 @@ export class vec4 {
         target[1] = +!v[1]
         target[2] = +!v[2]
         target[3] = +!v[3]
+        tc_vec4Like( v )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2016,6 +2055,7 @@ export class vec4 {
         this[1] = +( this[1] === -Infinity || this[1] === Infinity )
         this[2] = +( this[2] === -Infinity || this[2] === Infinity )
         this[3] = +( this[3] === -Infinity || this[3] === Infinity )
+        tc_vec4( this )
         return this
     }
 
@@ -2027,6 +2067,8 @@ export class vec4 {
         target[1] = +( v[1] === -Infinity || v[1] === Infinity )
         target[2] = +( v[2] === -Infinity || v[2] === Infinity )
         target[3] = +( v[3] === -Infinity || v[3] === Infinity )
+        tc_vec4Like( v )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2036,6 +2078,7 @@ export class vec4 {
         this[1] = +( this[1] !== this[1] )
         this[2] = +( this[2] !== this[2] )
         this[3] = +( this[3] !== this[3] )
+        tc_vec4( this )
         return this
     }
 
@@ -2047,6 +2090,8 @@ export class vec4 {
         target[1] = +( v[1] !== v[1] )
         target[2] = +( v[2] !== v[2] )
         target[3] = +( v[3] !== v[3] )
+        tc_vec4Like( v )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2075,6 +2120,8 @@ export class vec4 {
         this[1] += s
         this[2] += s
         this[3] += s
+        tc_number( s )
+        tc_vec4( this )
         return this
     }
 
@@ -2087,6 +2134,9 @@ export class vec4 {
         target[1] = v[1] + s
         target[2] = v[2] + s
         target[3] = v[3] + s
+        tc_vec4Like( v )
+        tc_number( s )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2097,6 +2147,8 @@ export class vec4 {
         this[1] += v[1]
         this[2] += v[2]
         this[3] += v[3]
+        tc_vec4Like( v )
+        tc_vec4( this )
         return this
     }
 
@@ -2109,6 +2161,9 @@ export class vec4 {
         target[1] = v1[1] + v2[1]
         target[2] = v1[2] + v2[2]
         target[3] = v1[3] + v2[3]
+        tc_vec4Like( v1 )
+        tc_vec4Like( v2 )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2133,6 +2188,8 @@ export class vec4 {
         this[1] -= s
         this[2] -= s
         this[3] -= s
+        tc_number( s )
+        tc_vec4( this )
         return this
     }
 
@@ -2145,6 +2202,9 @@ export class vec4 {
         target[1] = v[1] - s
         target[2] = v[2] - s
         target[3] = v[3] - s
+        tc_vec4Like( v )
+        tc_number( s )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2155,6 +2215,8 @@ export class vec4 {
         this[1] -= v[1]
         this[2] -= v[2]
         this[3] -= v[3]
+        tc_vec4Like( v )
+        tc_vec4( this )
         return this
     }
 
@@ -2167,6 +2229,9 @@ export class vec4 {
         target[1] = v1[1] - v2[1]
         target[2] = v1[2] - v2[2]
         target[3] = v1[3] - v2[3]
+        tc_vec4Like( v1 )
+        tc_vec4Like( v2 )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2191,6 +2256,8 @@ export class vec4 {
         this[1] *= s
         this[2] *= s
         this[3] *= s
+        tc_number( s )
+        tc_vec4( this )
         return this
     }
 
@@ -2203,6 +2270,9 @@ export class vec4 {
         target[1] = v[1] * s
         target[2] = v[2] * s
         target[3] = v[3] * s
+        tc_vec4Like( v )
+        tc_number( s )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2213,6 +2283,8 @@ export class vec4 {
         this[1] *= v[1]
         this[2] *= v[2]
         this[3] *= v[3]
+        tc_vec4Like( v )
+        tc_vec4( this )
         return this
     }
 
@@ -2225,6 +2297,9 @@ export class vec4 {
         target[1] = v1[1] * v2[1]
         target[2] = v1[2] * v2[2]
         target[3] = v1[3] * v2[3]
+        tc_vec4Like( v1 )
+        tc_vec4Like( v2 )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2249,6 +2324,8 @@ export class vec4 {
         this[1] /= s
         this[2] /= s
         this[3] /= s
+        tc_number( s )
+        tc_vec4( this )
         return this
     }
 
@@ -2261,6 +2338,9 @@ export class vec4 {
         target[1] = v[1] / s
         target[2] = v[2] / s
         target[3] = v[3] / s
+        tc_vec4Like( v )
+        tc_number( s )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2271,6 +2351,8 @@ export class vec4 {
         this[1] /= v[1]
         this[2] /= v[2]
         this[3] /= v[3]
+        tc_vec4Like( v )
+        tc_vec4( this )
         return this
     }
 
@@ -2283,6 +2365,9 @@ export class vec4 {
         target[1] = v1[1] / v2[1]
         target[2] = v1[2] / v2[2]
         target[3] = v1[3] / v2[3]
+        tc_vec4Like( v1 )
+        tc_vec4Like( v2 )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2307,6 +2392,8 @@ export class vec4 {
         this[1] %= s
         this[2] %= s
         this[3] %= s
+        tc_number( s )
+        tc_vec4( this )
         return this
     }
 
@@ -2319,6 +2406,9 @@ export class vec4 {
         target[1] = v[1] % s
         target[2] = v[2] % s
         target[3] = v[3] % s
+        tc_vec4Like( v )
+        tc_number( s )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2329,6 +2419,8 @@ export class vec4 {
         this[1] %= v[1]
         this[2] %= v[2]
         this[3] %= v[3]
+        tc_vec4Like( v )
+        tc_vec4( this )
         return this
     }
 
@@ -2341,6 +2433,9 @@ export class vec4 {
         target[1] = v1[1] % v2[1]
         target[2] = v1[2] % v2[2]
         target[3] = v1[3] % v2[3]
+        tc_vec4Like( v1 )
+        tc_vec4Like( v2 )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2365,6 +2460,8 @@ export class vec4 {
         this[1] **= s
         this[2] **= s
         this[3] **= s
+        tc_number( s )
+        tc_vec4( this )
         return this
     }
 
@@ -2377,6 +2474,9 @@ export class vec4 {
         target[1] = v[1] ** s
         target[2] = v[2] ** s
         target[3] = v[3] ** s
+        tc_vec4Like( v )
+        tc_number( s )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2387,6 +2487,8 @@ export class vec4 {
         this[1] **= v[1]
         this[2] **= v[2]
         this[3] **= v[3]
+        tc_vec4Like( v )
+        tc_vec4( this )
         return this
     }
 
@@ -2399,6 +2501,9 @@ export class vec4 {
         target[1] = v1[1] ** v2[1]
         target[2] = v1[2] ** v2[2]
         target[3] = v1[3] ** v2[3]
+        tc_vec4Like( v1 )
+        tc_vec4Like( v2 )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2428,6 +2533,7 @@ export class vec4 {
         this[1] = this[1] * m + a
         this[2] = this[2] * m + a
         this[3] = this[3] * m + a
+        tc_vec4( this )
         return this
     }
 
@@ -2439,6 +2545,8 @@ export class vec4 {
         target[1] = v[1] * m + a
         target[2] = v[2] * m + a
         target[3] = v[3] * m + a
+        tc_vec4Like( v )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2449,6 +2557,8 @@ export class vec4 {
         this[1] = this[1] * m + a[1]
         this[2] = this[2] * m + a[2]
         this[3] = this[3] * m + a[3]
+        tc_vec4Like( a )
+        tc_vec4( this )
         return this
     }
 
@@ -2461,6 +2571,9 @@ export class vec4 {
         target[1] = v[1] * m + a[1]
         target[2] = v[2] * m + a[2]
         target[3] = v[3] * m + a[3]
+        tc_vec4Like( v )
+        tc_vec4Like( a )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2471,6 +2584,8 @@ export class vec4 {
         this[1] = this[1] * m[1] + a
         this[2] = this[2] * m[2] + a
         this[3] = this[3] * m[3] + a
+        tc_vec4Like( m )
+        tc_vec4( this )
         return this
     }
 
@@ -2483,6 +2598,9 @@ export class vec4 {
         target[1] = v[1] * m[1] + a
         target[2] = v[2] * m[2] + a
         target[3] = v[3] * m[3] + a
+        tc_vec4Like( v )
+        tc_vec4Like( m )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2494,6 +2612,9 @@ export class vec4 {
         this[1] = this[1] * m[1] + a[1]
         this[2] = this[2] * m[2] + a[2]
         this[3] = this[3] * m[3] + a[3]
+        tc_vec4Like( m )
+        tc_vec4Like( a )
+        tc_vec4( this )
         return this
     }
 
@@ -2507,6 +2628,10 @@ export class vec4 {
         target[1] = v[1] * m[1] + a[1]
         target[2] = v[2] * m[2] + a[2]
         target[3] = v[3] * m[3] + a[3]
+        tc_vec4Like( v )
+        tc_vec4Like( m )
+        tc_vec4Like( a )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2521,6 +2646,8 @@ export class vec4 {
         this[1] = c0 * m[1] + c1 * m[5] + c2 * m[9] + c3 * m[13]
         this[2] = c0 * m[2] + c1 * m[6] + c2 * m[10] + c3 * m[14]
         this[3] = c0 * m[3] + c1 * m[7] + c2 * m[11] + c3 * m[15]
+        tc_mat4Like( m )
+        tc_vec4( this )
         return this
     }
 
@@ -2537,6 +2664,9 @@ export class vec4 {
         target[1] = c0 * m[1] + c1 * m[5] + c2 * m[9] + c3 * m[13]
         target[2] = c0 * m[2] + c1 * m[6] + c2 * m[10] + c3 * m[14]
         target[3] = c0 * m[3] + c1 * m[7] + c2 * m[11] + c3 * m[15]
+        tc_vec4Like( v )
+        tc_mat4Like( m )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2546,6 +2676,7 @@ export class vec4 {
         this[1] = fn( this[1], 1 )
         this[2] = fn( this[2], 2 )
         this[3] = fn( this[3], 3 )
+        tc_vec4( this )
         return this
     }
 
@@ -2557,6 +2688,8 @@ export class vec4 {
         target[1] = fn( v[1], 1 )
         target[2] = fn( v[2], 2 )
         target[3] = fn( v[3], 3 )
+        tc_vec4Like( v )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2566,6 +2699,7 @@ export class vec4 {
         this[1] = Math.abs( this[1] )
         this[2] = Math.abs( this[2] )
         this[3] = Math.abs( this[3] )
+        tc_vec4( this )
         return this
     }
 
@@ -2575,6 +2709,7 @@ export class vec4 {
         this[1] = Math.sign( this[1] )
         this[2] = Math.sign( this[2] )
         this[3] = Math.sign( this[3] )
+        tc_vec4( this )
         return this
     }
 
@@ -2584,6 +2719,7 @@ export class vec4 {
         this[1] = Math.trunc( this[1] )
         this[2] = Math.trunc( this[2] )
         this[3] = Math.trunc( this[3] )
+        tc_vec4( this )
         return this
     }
 
@@ -2593,6 +2729,7 @@ export class vec4 {
         this[1] = Math.round( this[1] )
         this[2] = Math.round( this[2] )
         this[3] = Math.round( this[3] )
+        tc_vec4( this )
         return this
     }
 
@@ -2602,6 +2739,7 @@ export class vec4 {
         this[1] = Math.floor( this[1] )
         this[2] = Math.floor( this[2] )
         this[3] = Math.floor( this[3] )
+        tc_vec4( this )
         return this
     }
 
@@ -2611,6 +2749,7 @@ export class vec4 {
         this[1] = Math.ceil( this[1] )
         this[2] = Math.ceil( this[2] )
         this[3] = Math.ceil( this[3] )
+        tc_vec4( this )
         return this
     }
 
@@ -2622,6 +2761,8 @@ export class vec4 {
         target[1] = Math.abs( v[1] )
         target[2] = Math.abs( v[2] )
         target[3] = Math.abs( v[3] )
+        tc_vec4Like( v )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2633,6 +2774,8 @@ export class vec4 {
         target[1] = Math.acos( v[1] )
         target[2] = Math.acos( v[2] )
         target[3] = Math.acos( v[3] )
+        tc_vec4Like( v )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2644,6 +2787,8 @@ export class vec4 {
         target[1] = Math.acosh( v[1] )
         target[2] = Math.acosh( v[2] )
         target[3] = Math.acosh( v[3] )
+        tc_vec4Like( v )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2655,6 +2800,8 @@ export class vec4 {
         target[1] = Math.asin( v[1] )
         target[2] = Math.asin( v[2] )
         target[3] = Math.asin( v[3] )
+        tc_vec4Like( v )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2666,6 +2813,8 @@ export class vec4 {
         target[1] = Math.asinh( v[1] )
         target[2] = Math.asinh( v[2] )
         target[3] = Math.asinh( v[3] )
+        tc_vec4Like( v )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2677,6 +2826,8 @@ export class vec4 {
         target[1] = Math.atan( v[1] )
         target[2] = Math.atan( v[2] )
         target[3] = Math.atan( v[3] )
+        tc_vec4Like( v )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2688,6 +2839,8 @@ export class vec4 {
         target[1] = Math.atanh( v[1] )
         target[2] = Math.atanh( v[2] )
         target[3] = Math.atanh( v[3] )
+        tc_vec4Like( v )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2699,6 +2852,8 @@ export class vec4 {
         target[1] = Math.ceil( v[1] )
         target[2] = Math.ceil( v[2] )
         target[3] = Math.ceil( v[3] )
+        tc_vec4Like( v )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2710,6 +2865,8 @@ export class vec4 {
         target[1] = Math.cbrt( v[1] )
         target[2] = Math.cbrt( v[2] )
         target[3] = Math.cbrt( v[3] )
+        tc_vec4Like( v )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2721,6 +2878,8 @@ export class vec4 {
         target[1] = Math.expm1( v[1] )
         target[2] = Math.expm1( v[2] )
         target[3] = Math.expm1( v[3] )
+        tc_vec4Like( v )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2732,6 +2891,8 @@ export class vec4 {
         target[1] = Math.cos( v[1] )
         target[2] = Math.cos( v[2] )
         target[3] = Math.cos( v[3] )
+        tc_vec4Like( v )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2743,6 +2904,8 @@ export class vec4 {
         target[1] = Math.cosh( v[1] )
         target[2] = Math.cosh( v[2] )
         target[3] = Math.cosh( v[3] )
+        tc_vec4Like( v )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2754,6 +2917,8 @@ export class vec4 {
         target[1] = Math.exp( v[1] )
         target[2] = Math.exp( v[2] )
         target[3] = Math.exp( v[3] )
+        tc_vec4Like( v )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2765,6 +2930,8 @@ export class vec4 {
         target[1] = Math.floor( v[1] )
         target[2] = Math.floor( v[2] )
         target[3] = Math.floor( v[3] )
+        tc_vec4Like( v )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2776,6 +2943,8 @@ export class vec4 {
         target[1] = Math.log( v[1] )
         target[2] = Math.log( v[2] )
         target[3] = Math.log( v[3] )
+        tc_vec4Like( v )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2787,6 +2956,8 @@ export class vec4 {
         target[1] = Math.log1p( v[1] )
         target[2] = Math.log1p( v[2] )
         target[3] = Math.log1p( v[3] )
+        tc_vec4Like( v )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2798,6 +2969,8 @@ export class vec4 {
         target[1] = Math.log2( v[1] )
         target[2] = Math.log2( v[2] )
         target[3] = Math.log2( v[3] )
+        tc_vec4Like( v )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2809,6 +2982,8 @@ export class vec4 {
         target[1] = Math.log10( v[1] )
         target[2] = Math.log10( v[2] )
         target[3] = Math.log10( v[3] )
+        tc_vec4Like( v )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2820,6 +2995,8 @@ export class vec4 {
         target[1] = Math.round( v[1] )
         target[2] = Math.round( v[2] )
         target[3] = Math.round( v[3] )
+        tc_vec4Like( v )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2831,6 +3008,8 @@ export class vec4 {
         target[1] = Math.sign( v[1] )
         target[2] = Math.sign( v[2] )
         target[3] = Math.sign( v[3] )
+        tc_vec4Like( v )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2842,6 +3021,8 @@ export class vec4 {
         target[1] = Math.sin( v[1] )
         target[2] = Math.sin( v[2] )
         target[3] = Math.sin( v[3] )
+        tc_vec4Like( v )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2853,6 +3034,8 @@ export class vec4 {
         target[1] = Math.sinh( v[1] )
         target[2] = Math.sinh( v[2] )
         target[3] = Math.sinh( v[3] )
+        tc_vec4Like( v )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2864,6 +3047,8 @@ export class vec4 {
         target[1] = Math.sqrt( v[1] )
         target[2] = Math.sqrt( v[2] )
         target[3] = Math.sqrt( v[3] )
+        tc_vec4Like( v )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2875,6 +3060,8 @@ export class vec4 {
         target[1] = Math.tan( v[1] )
         target[2] = Math.tan( v[2] )
         target[3] = Math.tan( v[3] )
+        tc_vec4Like( v )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2886,6 +3073,8 @@ export class vec4 {
         target[1] = Math.tanh( v[1] )
         target[2] = Math.tanh( v[2] )
         target[3] = Math.tanh( v[3] )
+        tc_vec4Like( v )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2897,6 +3086,8 @@ export class vec4 {
         target[1] = Math.trunc( v[1] )
         target[2] = Math.trunc( v[2] )
         target[3] = Math.trunc( v[3] )
+        tc_vec4Like( v )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2937,6 +3128,8 @@ export class vec4 {
         this[1] = v[1] - this[1]
         this[2] = v[2] - this[2]
         this[3] = v[3] - this[3]
+        tc_vec4Like( v )
+        tc_vec4( this )
         return this
     }
 
@@ -2949,6 +3142,9 @@ export class vec4 {
         target[1] = to[1] - from[1]
         target[2] = to[2] - from[2]
         target[3] = to[3] - from[3]
+        tc_vec4Like( from )
+        tc_vec4Like( to )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2959,6 +3155,7 @@ export class vec4 {
         this[1] *= factor
         this[2] *= factor
         this[3] *= factor
+        tc_vec4( this )
         return this
     }
 
@@ -2971,6 +3168,8 @@ export class vec4 {
         target[1] = v[1] * factor
         target[2] = v[2] * factor
         target[3] = v[3] * factor
+        tc_vec4Like( v )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -2982,6 +3181,8 @@ export class vec4 {
         this[1] *= factor
         this[2] *= factor
         this[3] *= factor
+        tc_number( s )
+        tc_vec4( this )
         return this
     }
 
@@ -2995,6 +3196,9 @@ export class vec4 {
         target[1] = v[1] * factor
         target[2] = v[2] * factor
         target[3] = v[3] * factor
+        tc_vec4Like( v )
+        tc_number( s )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -3076,6 +3280,8 @@ export class vec4 {
         target[1] = Math.min( Math.max( v[1], min ), max  )
         target[2] = Math.min( Math.max( v[2], min ), max  )
         target[3] = Math.min( Math.max( v[3], min ), max  )
+        tc_vec4Like( v )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -3088,6 +3294,9 @@ export class vec4 {
         target[1] = Math.min( Math.max( v[1], min ), max[1]  )
         target[2] = Math.min( Math.max( v[2], min ), max[2]  )
         target[3] = Math.min( Math.max( v[3], min ), max[3]  )
+        tc_vec4Like( v )
+        tc_vec4Like( max )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -3100,6 +3309,9 @@ export class vec4 {
         target[1] = Math.min( Math.max( v[1], min[1] ), max  )
         target[2] = Math.min( Math.max( v[2], min[2] ), max  )
         target[3] = Math.min( Math.max( v[3], min[3] ), max  )
+        tc_vec4Like( v )
+        tc_vec4Like( min )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -3113,6 +3325,10 @@ export class vec4 {
         target[1] = Math.min( Math.max( v[1], min[1] ), max[1]  )
         target[2] = Math.min( Math.max( v[2], min[2] ), max[2]  )
         target[3] = Math.min( Math.max( v[3], min[3] ), max[3]  )
+        tc_vec4Like( v )
+        tc_vec4Like( min )
+        tc_vec4Like( max )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -3124,6 +3340,8 @@ export class vec4 {
         target[1] = Math.min( Math.max( v[1], 0 ), 1 )
         target[2] = Math.min( Math.max( v[2], 0 ), 1 )
         target[3] = Math.min( Math.max( v[3], 0 ), 1 )
+        tc_vec4Like( v )
+        tc_vec4undefined( target )
         return target
     }
 
@@ -3136,6 +3354,9 @@ export class vec4 {
         target[1] = v1[1] * ( 1 - t ) + v2[1] * t
         target[2] = v1[2] * ( 1 - t ) + v2[2] * t
         target[3] = v1[3] * ( 1 - t ) + v2[3] * t
+        tc_vec4Like( v1 )
+        tc_vec4Like( v2 )
+        tc_vec4undefined( target )
         return target
     }
 

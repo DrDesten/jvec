@@ -129,38 +129,55 @@ export class Fn {
         this.replace( new RegExp( `\\b${current}\\b`, "g" ), replacement )
     }
 
+    /** @param {string} identifier @param {Type} type */
+    #tcGenerateCheck( identifier, type ) {
+        return [
+            `function ${identifier}( x ) {`,
+            `    const result = ${type.check}`,
+            `    if ( !result ) throw new TypeError( \`Expected Type '${type}', got [\${x?.constructor?.name||typeof x}]: \${x}\` )`,
+            `}`
+        ].join( "\n" )
+    }
+    /** @param {Type} type @param {Set<string>} usedIdentifiers @param {Map<Type,string>} identifierMap @param {string[]} declarations */
+    #tcResolveId( type, usedIdentifiers, identifierMap, declarations ) {
+        if ( identifierMap.has( type ) ) return identifierMap.get( type )
+        let tcid = `tc_${type.toString().replace( /\W/g, "" )}`
+        while ( usedIdentifiers.has( tcid ) ) {
+            tcid += Math.floor( Math.random() * 36 ).toString( 36 )
+        }
+        usedIdentifiers.add( tcid )
+        identifierMap.set( type, tcid )
+        declarations.push( this.#tcGenerateCheck( tcid, type ) )
+        return tcid
+    }
     /** @param {Set<string>} usedIdentifiers @param {Map<Type,string>} identifierMap @param {string[]} declarations */
     tc( usedIdentifiers, identifierMap, declarations ) {
         this.tcMap = identifierMap
         this.tcInject = []
+        this.tcInjectEnd = []
 
-        const { params } = this
+        const { body, params, opts: { type } } = this
         for ( const { name, type } of params ) {
             if ( typeof type === "string" ) continue
-            let tcid = identifierMap.get( type )
-            if ( !tcid ) {
-                tcid = `tc_${type.toString().replace( /\W/g, "" )}`
-                while ( usedIdentifiers.has( tcid ) ) {
-                    tcid += Math.floor( Math.random() * 36 ).toString( 36 )
-                }
-                usedIdentifiers.add( tcid )
-                identifierMap.set( type, tcid )
-                declarations.push( [
-                    `function ${tcid}( x ) {`,
-                    `    const result = ${type.check}`,
-                    `    if ( !result ) throw new TypeError( \`Expected Type '${type}', got [\${x?.constructor?.name||typeof x}]: \${x}\` )`,
-                    `}`
-                ].join( "\n" ) )
-            }
+            const tcid = this.#tcResolveId( type, usedIdentifiers, identifierMap, declarations )
             this.tcInject.push( `${tcid}( ${name} )` )
+        }
+        if ( type instanceof Type && body.some( s => /return\s+this/g.test( s ) ) ) {
+            const tcid = this.#tcResolveId( type, usedIdentifiers, identifierMap, declarations )
+            this.tcInjectEnd.push( `${tcid}( this )` )
         }
     }
 
     /** @returns {string} */
     string() {
         const { name, params, body, opts: { prefix, compact, indentFn } } = this
+        if ( this.tcInject || this.tcInjectEnd ) {
+            body.unshift( ...this.tcInject )
+            if ( body.length > this.tcInject.length + 1 )
+                body.splice( -1, 0, ...this.tcInject )
+            body.splice( -1, 0, ...this.tcInjectEnd )
+        }
         const fnParams = params.map( p => p.string() ).join( ", " )
-        if ( this.tcInject ) body.unshift( ...this.tcInject )
         const fnBody = body.map( stmt =>
             stmt.split( "\n" ).map( l => l.trimEnd() ).filter( x => x ).join( "\n" ) )
             .join( compact ? "; " : "\n" )
