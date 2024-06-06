@@ -13,16 +13,16 @@ import { Range } from "./genlib.js"
 
 // Constants
 
-const NUMBER_TYPE = Type.number
+const NUMBER_TYPE = new Type( "number", x => typeof x === "number" && isFinite( x ) )
 const VECTOR_TYPES = {
-    "2": new Type( "vec2", x => x instanceof vec2 ),
-    "3": new Type( "vec3", x => x instanceof vec3 ),
-    "4": new Type( "vec4", x => x instanceof vec4 ),
+    "2": new Type( "vec2", x => x instanceof vec2 && !x.isnan().any() && !x.isinf().any() ),
+    "3": new Type( "vec3", x => x instanceof vec3 && !x.isnan().any() && !x.isinf().any() ),
+    "4": new Type( "vec4", x => x instanceof vec4 && !x.isnan().any() && !x.isinf().any() ),
 }
 const VECTORLIKE_TYPES = {
-    "2": new Type( "vec2Like", x => Array.from( { length: 2 } ).every( ( _, i ) => typeof x[i] === "number" ) ),
-    "3": new Type( "vec3Like", x => Array.from( { length: 3 } ).every( ( _, i ) => typeof x[i] === "number" ) ),
-    "4": new Type( "vec4Like", x => Array.from( { length: 4 } ).every( ( _, i ) => typeof x[i] === "number" ) ),
+    "2": new Type( "vec2Like", x => Array.from( { length: 2 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) ),
+    "3": new Type( "vec3Like", x => Array.from( { length: 3 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) ),
+    "4": new Type( "vec4Like", x => Array.from( { length: 4 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) ),
 }
 const VECTORLIKE_OR_NUMBER_TYPES = {
     "2": new Type( [NUMBER_TYPE, VECTORLIKE_TYPES[2]] ),
@@ -35,9 +35,9 @@ const MATRIX_TYPES = {
     "4": new Type( "mat4", x => x instanceof mat4 ),
 }
 const MATRIXLIKE_TYPES = {
-    "2": new Type( "mat2Like", x => Array.from( { length: 2 ** 2 } ).every( ( _, i ) => typeof x[i] === "number" ) ),
-    "3": new Type( "mat3Like", x => Array.from( { length: 3 ** 2 } ).every( ( _, i ) => typeof x[i] === "number" ) ),
-    "4": new Type( "mat4Like", x => Array.from( { length: 4 ** 2 } ).every( ( _, i ) => typeof x[i] === "number" ) ),
+    "2": new Type( "mat2Like", x => Array.from( { length: 2 ** 2 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) ),
+    "3": new Type( "mat3Like", x => Array.from( { length: 3 ** 2 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) ),
+    "4": new Type( "mat4Like", x => Array.from( { length: 4 ** 2 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) ),
 }
 const MATRIXLIKE_OR_NUMBER_TYPES = {
     "2": new Type( [NUMBER_TYPE, MATRIXLIKE_TYPES[2]] ),

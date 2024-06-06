@@ -1,25 +1,29 @@
 function tc_numberundefined( x ) {
-    const result = ( x => ( x => typeof x === "number" )(x)||( x => x === undefined )(x) )(x)
+    const result = ( x => ( x => typeof x === "number" && isFinite( x ) )(x)||( x => x === undefined )(x) )(x)
     if ( !result ) throw new TypeError( `Expected Type 'number|undefined', got [${x?.constructor?.name||typeof x}]: ${x}` )
 }
 function tc_number( x ) {
-    const result = ( x => typeof x === "number" )(x)
+    const result = ( x => typeof x === "number" && isFinite( x ) )(x)
     if ( !result ) throw new TypeError( `Expected Type 'number', got [${x?.constructor?.name||typeof x}]: ${x}` )
 }
-function tc_numbervec3Like( x ) {
-    const result = ( x => ( x => typeof x === "number" )(x)||( x => Array.from( { length: 3 } ).every( ( _, i ) => typeof x[i] === "number" ) )(x) )(x)
-    if ( !result ) throw new TypeError( `Expected Type 'number|vec3Like', got [${x?.constructor?.name||typeof x}]: ${x}` )
+function tc_vec2Like( x ) {
+    const result = ( x => Array.from( { length: 2 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) )(x)
+    if ( !result ) throw new TypeError( `Expected Type 'vec2Like', got [${x?.constructor?.name||typeof x}]: ${x}` )
 }
 function tc_vec3Like( x ) {
-    const result = ( x => Array.from( { length: 3 } ).every( ( _, i ) => typeof x[i] === "number" ) )(x)
+    const result = ( x => Array.from( { length: 3 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) )(x)
     if ( !result ) throw new TypeError( `Expected Type 'vec3Like', got [${x?.constructor?.name||typeof x}]: ${x}` )
 }
+function tc_numbervec3Like( x ) {
+    const result = ( x => ( x => typeof x === "number" && isFinite( x ) )(x)||( x => Array.from( { length: 3 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) )(x) )(x)
+    if ( !result ) throw new TypeError( `Expected Type 'number|vec3Like', got [${x?.constructor?.name||typeof x}]: ${x}` )
+}
 function tc_vec3undefined( x ) {
-    const result = ( x => ( x => x instanceof vec3 )(x)||( x => x === undefined )(x) )(x)
+    const result = ( x => ( x => x instanceof vec3 && !x.isnan().any() && !x.isinf().any() )(x)||( x => x === undefined )(x) )(x)
     if ( !result ) throw new TypeError( `Expected Type 'vec3|undefined', got [${x?.constructor?.name||typeof x}]: ${x}` )
 }
 function tc_mat3Like( x ) {
-    const result = ( x => Array.from( { length: 3 ** 2 } ).every( ( _, i ) => typeof x[i] === "number" ) )(x)
+    const result = ( x => Array.from( { length: 3 ** 2 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) )(x)
     if ( !result ) throw new TypeError( `Expected Type 'mat3Like', got [${x?.constructor?.name||typeof x}]: ${x}` )
 }
 
@@ -142,25 +146,25 @@ export class vec3 {
     /** @returns {vec2} */
     get rg() { return new vec2( this[0], this[1] ) }
     /** @param {vec2Like} v */
-    set xy( v ) { this[0] = v[0], this[1] = v[1] }
+    set xy( v ) { tc_vec2Like( v ); this[0] = v[0], this[1] = v[1] }
     /** @param {vec2Like} v */
-    set rg( v ) { this[0] = v[0], this[1] = v[1] }
+    set rg( v ) { tc_vec2Like( v ); this[0] = v[0], this[1] = v[1] }
     /** @returns {vec2} */
     get xz() { return new vec2( this[0], this[2] ) }
     /** @returns {vec2} */
     get rb() { return new vec2( this[0], this[2] ) }
     /** @param {vec2Like} v */
-    set xz( v ) { this[0] = v[0], this[2] = v[1] }
+    set xz( v ) { tc_vec2Like( v ); this[0] = v[0], this[2] = v[1] }
     /** @param {vec2Like} v */
-    set rb( v ) { this[0] = v[0], this[2] = v[1] }
+    set rb( v ) { tc_vec2Like( v ); this[0] = v[0], this[2] = v[1] }
     /** @returns {vec2} */
     get yx() { return new vec2( this[1], this[0] ) }
     /** @returns {vec2} */
     get gr() { return new vec2( this[1], this[0] ) }
     /** @param {vec2Like} v */
-    set yx( v ) { this[1] = v[0], this[0] = v[1] }
+    set yx( v ) { tc_vec2Like( v ); this[1] = v[0], this[0] = v[1] }
     /** @param {vec2Like} v */
-    set gr( v ) { this[1] = v[0], this[0] = v[1] }
+    set gr( v ) { tc_vec2Like( v ); this[1] = v[0], this[0] = v[1] }
     /** @returns {vec2} */
     get yy() { return new vec2( this[1], this[1] ) }
     /** @returns {vec2} */
@@ -170,25 +174,25 @@ export class vec3 {
     /** @returns {vec2} */
     get gb() { return new vec2( this[1], this[2] ) }
     /** @param {vec2Like} v */
-    set yz( v ) { this[1] = v[0], this[2] = v[1] }
+    set yz( v ) { tc_vec2Like( v ); this[1] = v[0], this[2] = v[1] }
     /** @param {vec2Like} v */
-    set gb( v ) { this[1] = v[0], this[2] = v[1] }
+    set gb( v ) { tc_vec2Like( v ); this[1] = v[0], this[2] = v[1] }
     /** @returns {vec2} */
     get zx() { return new vec2( this[2], this[0] ) }
     /** @returns {vec2} */
     get br() { return new vec2( this[2], this[0] ) }
     /** @param {vec2Like} v */
-    set zx( v ) { this[2] = v[0], this[0] = v[1] }
+    set zx( v ) { tc_vec2Like( v ); this[2] = v[0], this[0] = v[1] }
     /** @param {vec2Like} v */
-    set br( v ) { this[2] = v[0], this[0] = v[1] }
+    set br( v ) { tc_vec2Like( v ); this[2] = v[0], this[0] = v[1] }
     /** @returns {vec2} */
     get zy() { return new vec2( this[2], this[1] ) }
     /** @returns {vec2} */
     get bg() { return new vec2( this[2], this[1] ) }
     /** @param {vec2Like} v */
-    set zy( v ) { this[2] = v[0], this[1] = v[1] }
+    set zy( v ) { tc_vec2Like( v ); this[2] = v[0], this[1] = v[1] }
     /** @param {vec2Like} v */
-    set bg( v ) { this[2] = v[0], this[1] = v[1] }
+    set bg( v ) { tc_vec2Like( v ); this[2] = v[0], this[1] = v[1] }
     /** @returns {vec2} */
     get zz() { return new vec2( this[2], this[2] ) }
     /** @returns {vec2} */
@@ -218,9 +222,9 @@ export class vec3 {
     /** @returns {vec3} */
     get rgb() { return new vec3( this[0], this[1], this[2] ) }
     /** @param {vec3Like} v */
-    set xyz( v ) { this[0] = v[0], this[1] = v[1], this[2] = v[2] }
+    set xyz( v ) { tc_vec3Like( v ); this[0] = v[0], this[1] = v[1], this[2] = v[2] }
     /** @param {vec3Like} v */
-    set rgb( v ) { this[0] = v[0], this[1] = v[1], this[2] = v[2] }
+    set rgb( v ) { tc_vec3Like( v ); this[0] = v[0], this[1] = v[1], this[2] = v[2] }
     /** @returns {vec3} */
     get xzx() { return new vec3( this[0], this[2], this[0] ) }
     /** @returns {vec3} */
@@ -230,9 +234,9 @@ export class vec3 {
     /** @returns {vec3} */
     get rbg() { return new vec3( this[0], this[2], this[1] ) }
     /** @param {vec3Like} v */
-    set xzy( v ) { this[0] = v[0], this[2] = v[1], this[1] = v[2] }
+    set xzy( v ) { tc_vec3Like( v ); this[0] = v[0], this[2] = v[1], this[1] = v[2] }
     /** @param {vec3Like} v */
-    set rbg( v ) { this[0] = v[0], this[2] = v[1], this[1] = v[2] }
+    set rbg( v ) { tc_vec3Like( v ); this[0] = v[0], this[2] = v[1], this[1] = v[2] }
     /** @returns {vec3} */
     get xzz() { return new vec3( this[0], this[2], this[2] ) }
     /** @returns {vec3} */
@@ -250,9 +254,9 @@ export class vec3 {
     /** @returns {vec3} */
     get grb() { return new vec3( this[1], this[0], this[2] ) }
     /** @param {vec3Like} v */
-    set yxz( v ) { this[1] = v[0], this[0] = v[1], this[2] = v[2] }
+    set yxz( v ) { tc_vec3Like( v ); this[1] = v[0], this[0] = v[1], this[2] = v[2] }
     /** @param {vec3Like} v */
-    set grb( v ) { this[1] = v[0], this[0] = v[1], this[2] = v[2] }
+    set grb( v ) { tc_vec3Like( v ); this[1] = v[0], this[0] = v[1], this[2] = v[2] }
     /** @returns {vec3} */
     get yyx() { return new vec3( this[1], this[1], this[0] ) }
     /** @returns {vec3} */
@@ -270,9 +274,9 @@ export class vec3 {
     /** @returns {vec3} */
     get gbr() { return new vec3( this[1], this[2], this[0] ) }
     /** @param {vec3Like} v */
-    set yzx( v ) { this[1] = v[0], this[2] = v[1], this[0] = v[2] }
+    set yzx( v ) { tc_vec3Like( v ); this[1] = v[0], this[2] = v[1], this[0] = v[2] }
     /** @param {vec3Like} v */
-    set gbr( v ) { this[1] = v[0], this[2] = v[1], this[0] = v[2] }
+    set gbr( v ) { tc_vec3Like( v ); this[1] = v[0], this[2] = v[1], this[0] = v[2] }
     /** @returns {vec3} */
     get yzy() { return new vec3( this[1], this[2], this[1] ) }
     /** @returns {vec3} */
@@ -290,9 +294,9 @@ export class vec3 {
     /** @returns {vec3} */
     get brg() { return new vec3( this[2], this[0], this[1] ) }
     /** @param {vec3Like} v */
-    set zxy( v ) { this[2] = v[0], this[0] = v[1], this[1] = v[2] }
+    set zxy( v ) { tc_vec3Like( v ); this[2] = v[0], this[0] = v[1], this[1] = v[2] }
     /** @param {vec3Like} v */
-    set brg( v ) { this[2] = v[0], this[0] = v[1], this[1] = v[2] }
+    set brg( v ) { tc_vec3Like( v ); this[2] = v[0], this[0] = v[1], this[1] = v[2] }
     /** @returns {vec3} */
     get zxz() { return new vec3( this[2], this[0], this[2] ) }
     /** @returns {vec3} */
@@ -302,9 +306,9 @@ export class vec3 {
     /** @returns {vec3} */
     get bgr() { return new vec3( this[2], this[1], this[0] ) }
     /** @param {vec3Like} v */
-    set zyx( v ) { this[2] = v[0], this[1] = v[1], this[0] = v[2] }
+    set zyx( v ) { tc_vec3Like( v ); this[2] = v[0], this[1] = v[1], this[0] = v[2] }
     /** @param {vec3Like} v */
-    set bgr( v ) { this[2] = v[0], this[1] = v[1], this[0] = v[2] }
+    set bgr( v ) { tc_vec3Like( v ); this[2] = v[0], this[1] = v[1], this[0] = v[2] }
     /** @returns {vec3} */
     get zyy() { return new vec3( this[2], this[1], this[1] ) }
     /** @returns {vec3} */

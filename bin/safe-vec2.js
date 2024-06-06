@@ -1,25 +1,25 @@
 function tc_numberundefined( x ) {
-    const result = ( x => ( x => typeof x === "number" )(x)||( x => x === undefined )(x) )(x)
+    const result = ( x => ( x => typeof x === "number" && isFinite( x ) )(x)||( x => x === undefined )(x) )(x)
     if ( !result ) throw new TypeError( `Expected Type 'number|undefined', got [${x?.constructor?.name||typeof x}]: ${x}` )
 }
 function tc_number( x ) {
-    const result = ( x => typeof x === "number" )(x)
+    const result = ( x => typeof x === "number" && isFinite( x ) )(x)
     if ( !result ) throw new TypeError( `Expected Type 'number', got [${x?.constructor?.name||typeof x}]: ${x}` )
 }
-function tc_numbervec2Like( x ) {
-    const result = ( x => ( x => typeof x === "number" )(x)||( x => Array.from( { length: 2 } ).every( ( _, i ) => typeof x[i] === "number" ) )(x) )(x)
-    if ( !result ) throw new TypeError( `Expected Type 'number|vec2Like', got [${x?.constructor?.name||typeof x}]: ${x}` )
-}
 function tc_vec2Like( x ) {
-    const result = ( x => Array.from( { length: 2 } ).every( ( _, i ) => typeof x[i] === "number" ) )(x)
+    const result = ( x => Array.from( { length: 2 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) )(x)
     if ( !result ) throw new TypeError( `Expected Type 'vec2Like', got [${x?.constructor?.name||typeof x}]: ${x}` )
 }
+function tc_numbervec2Like( x ) {
+    const result = ( x => ( x => typeof x === "number" && isFinite( x ) )(x)||( x => Array.from( { length: 2 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) )(x) )(x)
+    if ( !result ) throw new TypeError( `Expected Type 'number|vec2Like', got [${x?.constructor?.name||typeof x}]: ${x}` )
+}
 function tc_vec2undefined( x ) {
-    const result = ( x => ( x => x instanceof vec2 )(x)||( x => x === undefined )(x) )(x)
+    const result = ( x => ( x => x instanceof vec2 && !x.isnan().any() && !x.isinf().any() )(x)||( x => x === undefined )(x) )(x)
     if ( !result ) throw new TypeError( `Expected Type 'vec2|undefined', got [${x?.constructor?.name||typeof x}]: ${x}` )
 }
 function tc_mat2Like( x ) {
-    const result = ( x => Array.from( { length: 2 ** 2 } ).every( ( _, i ) => typeof x[i] === "number" ) )(x)
+    const result = ( x => Array.from( { length: 2 ** 2 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) )(x)
     if ( !result ) throw new TypeError( `Expected Type 'mat2Like', got [${x?.constructor?.name||typeof x}]: ${x}` )
 }
 
@@ -82,6 +82,7 @@ export class vec2 {
 
     /** @param {number} angle @returns {vec2} */
     static fromAngle( angle ) {
+        tc_number( angle )
         return new vec2( Math.cos( angle ), Math.sin( angle ) )
     }
 
@@ -134,17 +135,17 @@ export class vec2 {
     /** @returns {vec2} */
     get rg() { return new vec2( this[0], this[1] ) }
     /** @param {vec2Like} v */
-    set xy( v ) { this[0] = v[0], this[1] = v[1] }
+    set xy( v ) { tc_vec2Like( v ); this[0] = v[0], this[1] = v[1] }
     /** @param {vec2Like} v */
-    set rg( v ) { this[0] = v[0], this[1] = v[1] }
+    set rg( v ) { tc_vec2Like( v ); this[0] = v[0], this[1] = v[1] }
     /** @returns {vec2} */
     get yx() { return new vec2( this[1], this[0] ) }
     /** @returns {vec2} */
     get gr() { return new vec2( this[1], this[0] ) }
     /** @param {vec2Like} v */
-    set yx( v ) { this[1] = v[0], this[0] = v[1] }
+    set yx( v ) { tc_vec2Like( v ); this[1] = v[0], this[0] = v[1] }
     /** @param {vec2Like} v */
-    set gr( v ) { this[1] = v[0], this[0] = v[1] }
+    set gr( v ) { tc_vec2Like( v ); this[1] = v[0], this[0] = v[1] }
     /** @returns {vec2} */
     get yy() { return new vec2( this[1], this[1] ) }
     /** @returns {vec2} */

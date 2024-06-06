@@ -1,25 +1,33 @@
 function tc_numberundefined( x ) {
-    const result = ( x => ( x => typeof x === "number" )(x)||( x => x === undefined )(x) )(x)
+    const result = ( x => ( x => typeof x === "number" && isFinite( x ) )(x)||( x => x === undefined )(x) )(x)
     if ( !result ) throw new TypeError( `Expected Type 'number|undefined', got [${x?.constructor?.name||typeof x}]: ${x}` )
 }
 function tc_number( x ) {
-    const result = ( x => typeof x === "number" )(x)
+    const result = ( x => typeof x === "number" && isFinite( x ) )(x)
     if ( !result ) throw new TypeError( `Expected Type 'number', got [${x?.constructor?.name||typeof x}]: ${x}` )
 }
-function tc_numbervec4Like( x ) {
-    const result = ( x => ( x => typeof x === "number" )(x)||( x => Array.from( { length: 4 } ).every( ( _, i ) => typeof x[i] === "number" ) )(x) )(x)
-    if ( !result ) throw new TypeError( `Expected Type 'number|vec4Like', got [${x?.constructor?.name||typeof x}]: ${x}` )
+function tc_vec2Like( x ) {
+    const result = ( x => Array.from( { length: 2 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) )(x)
+    if ( !result ) throw new TypeError( `Expected Type 'vec2Like', got [${x?.constructor?.name||typeof x}]: ${x}` )
+}
+function tc_vec3Like( x ) {
+    const result = ( x => Array.from( { length: 3 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) )(x)
+    if ( !result ) throw new TypeError( `Expected Type 'vec3Like', got [${x?.constructor?.name||typeof x}]: ${x}` )
 }
 function tc_vec4Like( x ) {
-    const result = ( x => Array.from( { length: 4 } ).every( ( _, i ) => typeof x[i] === "number" ) )(x)
+    const result = ( x => Array.from( { length: 4 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) )(x)
     if ( !result ) throw new TypeError( `Expected Type 'vec4Like', got [${x?.constructor?.name||typeof x}]: ${x}` )
 }
+function tc_numbervec4Like( x ) {
+    const result = ( x => ( x => typeof x === "number" && isFinite( x ) )(x)||( x => Array.from( { length: 4 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) )(x) )(x)
+    if ( !result ) throw new TypeError( `Expected Type 'number|vec4Like', got [${x?.constructor?.name||typeof x}]: ${x}` )
+}
 function tc_vec4undefined( x ) {
-    const result = ( x => ( x => x instanceof vec4 )(x)||( x => x === undefined )(x) )(x)
+    const result = ( x => ( x => x instanceof vec4 && !x.isnan().any() && !x.isinf().any() )(x)||( x => x === undefined )(x) )(x)
     if ( !result ) throw new TypeError( `Expected Type 'vec4|undefined', got [${x?.constructor?.name||typeof x}]: ${x}` )
 }
 function tc_mat4Like( x ) {
-    const result = ( x => Array.from( { length: 4 ** 2 } ).every( ( _, i ) => typeof x[i] === "number" ) )(x)
+    const result = ( x => Array.from( { length: 4 ** 2 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) )(x)
     if ( !result ) throw new TypeError( `Expected Type 'mat4Like', got [${x?.constructor?.name||typeof x}]: ${x}` )
 }
 
@@ -155,33 +163,33 @@ export class vec4 {
     /** @returns {vec2} */
     get rg() { return new vec2( this[0], this[1] ) }
     /** @param {vec2Like} v */
-    set xy( v ) { this[0] = v[0], this[1] = v[1] }
+    set xy( v ) { tc_vec2Like( v ); this[0] = v[0], this[1] = v[1] }
     /** @param {vec2Like} v */
-    set rg( v ) { this[0] = v[0], this[1] = v[1] }
+    set rg( v ) { tc_vec2Like( v ); this[0] = v[0], this[1] = v[1] }
     /** @returns {vec2} */
     get xz() { return new vec2( this[0], this[2] ) }
     /** @returns {vec2} */
     get rb() { return new vec2( this[0], this[2] ) }
     /** @param {vec2Like} v */
-    set xz( v ) { this[0] = v[0], this[2] = v[1] }
+    set xz( v ) { tc_vec2Like( v ); this[0] = v[0], this[2] = v[1] }
     /** @param {vec2Like} v */
-    set rb( v ) { this[0] = v[0], this[2] = v[1] }
+    set rb( v ) { tc_vec2Like( v ); this[0] = v[0], this[2] = v[1] }
     /** @returns {vec2} */
     get xw() { return new vec2( this[0], this[3] ) }
     /** @returns {vec2} */
     get ra() { return new vec2( this[0], this[3] ) }
     /** @param {vec2Like} v */
-    set xw( v ) { this[0] = v[0], this[3] = v[1] }
+    set xw( v ) { tc_vec2Like( v ); this[0] = v[0], this[3] = v[1] }
     /** @param {vec2Like} v */
-    set ra( v ) { this[0] = v[0], this[3] = v[1] }
+    set ra( v ) { tc_vec2Like( v ); this[0] = v[0], this[3] = v[1] }
     /** @returns {vec2} */
     get yx() { return new vec2( this[1], this[0] ) }
     /** @returns {vec2} */
     get gr() { return new vec2( this[1], this[0] ) }
     /** @param {vec2Like} v */
-    set yx( v ) { this[1] = v[0], this[0] = v[1] }
+    set yx( v ) { tc_vec2Like( v ); this[1] = v[0], this[0] = v[1] }
     /** @param {vec2Like} v */
-    set gr( v ) { this[1] = v[0], this[0] = v[1] }
+    set gr( v ) { tc_vec2Like( v ); this[1] = v[0], this[0] = v[1] }
     /** @returns {vec2} */
     get yy() { return new vec2( this[1], this[1] ) }
     /** @returns {vec2} */
@@ -191,33 +199,33 @@ export class vec4 {
     /** @returns {vec2} */
     get gb() { return new vec2( this[1], this[2] ) }
     /** @param {vec2Like} v */
-    set yz( v ) { this[1] = v[0], this[2] = v[1] }
+    set yz( v ) { tc_vec2Like( v ); this[1] = v[0], this[2] = v[1] }
     /** @param {vec2Like} v */
-    set gb( v ) { this[1] = v[0], this[2] = v[1] }
+    set gb( v ) { tc_vec2Like( v ); this[1] = v[0], this[2] = v[1] }
     /** @returns {vec2} */
     get yw() { return new vec2( this[1], this[3] ) }
     /** @returns {vec2} */
     get ga() { return new vec2( this[1], this[3] ) }
     /** @param {vec2Like} v */
-    set yw( v ) { this[1] = v[0], this[3] = v[1] }
+    set yw( v ) { tc_vec2Like( v ); this[1] = v[0], this[3] = v[1] }
     /** @param {vec2Like} v */
-    set ga( v ) { this[1] = v[0], this[3] = v[1] }
+    set ga( v ) { tc_vec2Like( v ); this[1] = v[0], this[3] = v[1] }
     /** @returns {vec2} */
     get zx() { return new vec2( this[2], this[0] ) }
     /** @returns {vec2} */
     get br() { return new vec2( this[2], this[0] ) }
     /** @param {vec2Like} v */
-    set zx( v ) { this[2] = v[0], this[0] = v[1] }
+    set zx( v ) { tc_vec2Like( v ); this[2] = v[0], this[0] = v[1] }
     /** @param {vec2Like} v */
-    set br( v ) { this[2] = v[0], this[0] = v[1] }
+    set br( v ) { tc_vec2Like( v ); this[2] = v[0], this[0] = v[1] }
     /** @returns {vec2} */
     get zy() { return new vec2( this[2], this[1] ) }
     /** @returns {vec2} */
     get bg() { return new vec2( this[2], this[1] ) }
     /** @param {vec2Like} v */
-    set zy( v ) { this[2] = v[0], this[1] = v[1] }
+    set zy( v ) { tc_vec2Like( v ); this[2] = v[0], this[1] = v[1] }
     /** @param {vec2Like} v */
-    set bg( v ) { this[2] = v[0], this[1] = v[1] }
+    set bg( v ) { tc_vec2Like( v ); this[2] = v[0], this[1] = v[1] }
     /** @returns {vec2} */
     get zz() { return new vec2( this[2], this[2] ) }
     /** @returns {vec2} */
@@ -227,33 +235,33 @@ export class vec4 {
     /** @returns {vec2} */
     get ba() { return new vec2( this[2], this[3] ) }
     /** @param {vec2Like} v */
-    set zw( v ) { this[2] = v[0], this[3] = v[1] }
+    set zw( v ) { tc_vec2Like( v ); this[2] = v[0], this[3] = v[1] }
     /** @param {vec2Like} v */
-    set ba( v ) { this[2] = v[0], this[3] = v[1] }
+    set ba( v ) { tc_vec2Like( v ); this[2] = v[0], this[3] = v[1] }
     /** @returns {vec2} */
     get wx() { return new vec2( this[3], this[0] ) }
     /** @returns {vec2} */
     get ar() { return new vec2( this[3], this[0] ) }
     /** @param {vec2Like} v */
-    set wx( v ) { this[3] = v[0], this[0] = v[1] }
+    set wx( v ) { tc_vec2Like( v ); this[3] = v[0], this[0] = v[1] }
     /** @param {vec2Like} v */
-    set ar( v ) { this[3] = v[0], this[0] = v[1] }
+    set ar( v ) { tc_vec2Like( v ); this[3] = v[0], this[0] = v[1] }
     /** @returns {vec2} */
     get wy() { return new vec2( this[3], this[1] ) }
     /** @returns {vec2} */
     get ag() { return new vec2( this[3], this[1] ) }
     /** @param {vec2Like} v */
-    set wy( v ) { this[3] = v[0], this[1] = v[1] }
+    set wy( v ) { tc_vec2Like( v ); this[3] = v[0], this[1] = v[1] }
     /** @param {vec2Like} v */
-    set ag( v ) { this[3] = v[0], this[1] = v[1] }
+    set ag( v ) { tc_vec2Like( v ); this[3] = v[0], this[1] = v[1] }
     /** @returns {vec2} */
     get wz() { return new vec2( this[3], this[2] ) }
     /** @returns {vec2} */
     get ab() { return new vec2( this[3], this[2] ) }
     /** @param {vec2Like} v */
-    set wz( v ) { this[3] = v[0], this[2] = v[1] }
+    set wz( v ) { tc_vec2Like( v ); this[3] = v[0], this[2] = v[1] }
     /** @param {vec2Like} v */
-    set ab( v ) { this[3] = v[0], this[2] = v[1] }
+    set ab( v ) { tc_vec2Like( v ); this[3] = v[0], this[2] = v[1] }
     /** @returns {vec2} */
     get ww() { return new vec2( this[3], this[3] ) }
     /** @returns {vec2} */
@@ -287,17 +295,17 @@ export class vec4 {
     /** @returns {vec3} */
     get rgb() { return new vec3( this[0], this[1], this[2] ) }
     /** @param {vec3Like} v */
-    set xyz( v ) { this[0] = v[0], this[1] = v[1], this[2] = v[2] }
+    set xyz( v ) { tc_vec3Like( v ); this[0] = v[0], this[1] = v[1], this[2] = v[2] }
     /** @param {vec3Like} v */
-    set rgb( v ) { this[0] = v[0], this[1] = v[1], this[2] = v[2] }
+    set rgb( v ) { tc_vec3Like( v ); this[0] = v[0], this[1] = v[1], this[2] = v[2] }
     /** @returns {vec3} */
     get xyw() { return new vec3( this[0], this[1], this[3] ) }
     /** @returns {vec3} */
     get rga() { return new vec3( this[0], this[1], this[3] ) }
     /** @param {vec3Like} v */
-    set xyw( v ) { this[0] = v[0], this[1] = v[1], this[3] = v[2] }
+    set xyw( v ) { tc_vec3Like( v ); this[0] = v[0], this[1] = v[1], this[3] = v[2] }
     /** @param {vec3Like} v */
-    set rga( v ) { this[0] = v[0], this[1] = v[1], this[3] = v[2] }
+    set rga( v ) { tc_vec3Like( v ); this[0] = v[0], this[1] = v[1], this[3] = v[2] }
     /** @returns {vec3} */
     get xzx() { return new vec3( this[0], this[2], this[0] ) }
     /** @returns {vec3} */
@@ -307,9 +315,9 @@ export class vec4 {
     /** @returns {vec3} */
     get rbg() { return new vec3( this[0], this[2], this[1] ) }
     /** @param {vec3Like} v */
-    set xzy( v ) { this[0] = v[0], this[2] = v[1], this[1] = v[2] }
+    set xzy( v ) { tc_vec3Like( v ); this[0] = v[0], this[2] = v[1], this[1] = v[2] }
     /** @param {vec3Like} v */
-    set rbg( v ) { this[0] = v[0], this[2] = v[1], this[1] = v[2] }
+    set rbg( v ) { tc_vec3Like( v ); this[0] = v[0], this[2] = v[1], this[1] = v[2] }
     /** @returns {vec3} */
     get xzz() { return new vec3( this[0], this[2], this[2] ) }
     /** @returns {vec3} */
@@ -319,9 +327,9 @@ export class vec4 {
     /** @returns {vec3} */
     get rba() { return new vec3( this[0], this[2], this[3] ) }
     /** @param {vec3Like} v */
-    set xzw( v ) { this[0] = v[0], this[2] = v[1], this[3] = v[2] }
+    set xzw( v ) { tc_vec3Like( v ); this[0] = v[0], this[2] = v[1], this[3] = v[2] }
     /** @param {vec3Like} v */
-    set rba( v ) { this[0] = v[0], this[2] = v[1], this[3] = v[2] }
+    set rba( v ) { tc_vec3Like( v ); this[0] = v[0], this[2] = v[1], this[3] = v[2] }
     /** @returns {vec3} */
     get xwx() { return new vec3( this[0], this[3], this[0] ) }
     /** @returns {vec3} */
@@ -331,17 +339,17 @@ export class vec4 {
     /** @returns {vec3} */
     get rag() { return new vec3( this[0], this[3], this[1] ) }
     /** @param {vec3Like} v */
-    set xwy( v ) { this[0] = v[0], this[3] = v[1], this[1] = v[2] }
+    set xwy( v ) { tc_vec3Like( v ); this[0] = v[0], this[3] = v[1], this[1] = v[2] }
     /** @param {vec3Like} v */
-    set rag( v ) { this[0] = v[0], this[3] = v[1], this[1] = v[2] }
+    set rag( v ) { tc_vec3Like( v ); this[0] = v[0], this[3] = v[1], this[1] = v[2] }
     /** @returns {vec3} */
     get xwz() { return new vec3( this[0], this[3], this[2] ) }
     /** @returns {vec3} */
     get rab() { return new vec3( this[0], this[3], this[2] ) }
     /** @param {vec3Like} v */
-    set xwz( v ) { this[0] = v[0], this[3] = v[1], this[2] = v[2] }
+    set xwz( v ) { tc_vec3Like( v ); this[0] = v[0], this[3] = v[1], this[2] = v[2] }
     /** @param {vec3Like} v */
-    set rab( v ) { this[0] = v[0], this[3] = v[1], this[2] = v[2] }
+    set rab( v ) { tc_vec3Like( v ); this[0] = v[0], this[3] = v[1], this[2] = v[2] }
     /** @returns {vec3} */
     get xww() { return new vec3( this[0], this[3], this[3] ) }
     /** @returns {vec3} */
@@ -359,17 +367,17 @@ export class vec4 {
     /** @returns {vec3} */
     get grb() { return new vec3( this[1], this[0], this[2] ) }
     /** @param {vec3Like} v */
-    set yxz( v ) { this[1] = v[0], this[0] = v[1], this[2] = v[2] }
+    set yxz( v ) { tc_vec3Like( v ); this[1] = v[0], this[0] = v[1], this[2] = v[2] }
     /** @param {vec3Like} v */
-    set grb( v ) { this[1] = v[0], this[0] = v[1], this[2] = v[2] }
+    set grb( v ) { tc_vec3Like( v ); this[1] = v[0], this[0] = v[1], this[2] = v[2] }
     /** @returns {vec3} */
     get yxw() { return new vec3( this[1], this[0], this[3] ) }
     /** @returns {vec3} */
     get gra() { return new vec3( this[1], this[0], this[3] ) }
     /** @param {vec3Like} v */
-    set yxw( v ) { this[1] = v[0], this[0] = v[1], this[3] = v[2] }
+    set yxw( v ) { tc_vec3Like( v ); this[1] = v[0], this[0] = v[1], this[3] = v[2] }
     /** @param {vec3Like} v */
-    set gra( v ) { this[1] = v[0], this[0] = v[1], this[3] = v[2] }
+    set gra( v ) { tc_vec3Like( v ); this[1] = v[0], this[0] = v[1], this[3] = v[2] }
     /** @returns {vec3} */
     get yyx() { return new vec3( this[1], this[1], this[0] ) }
     /** @returns {vec3} */
@@ -391,9 +399,9 @@ export class vec4 {
     /** @returns {vec3} */
     get gbr() { return new vec3( this[1], this[2], this[0] ) }
     /** @param {vec3Like} v */
-    set yzx( v ) { this[1] = v[0], this[2] = v[1], this[0] = v[2] }
+    set yzx( v ) { tc_vec3Like( v ); this[1] = v[0], this[2] = v[1], this[0] = v[2] }
     /** @param {vec3Like} v */
-    set gbr( v ) { this[1] = v[0], this[2] = v[1], this[0] = v[2] }
+    set gbr( v ) { tc_vec3Like( v ); this[1] = v[0], this[2] = v[1], this[0] = v[2] }
     /** @returns {vec3} */
     get yzy() { return new vec3( this[1], this[2], this[1] ) }
     /** @returns {vec3} */
@@ -407,17 +415,17 @@ export class vec4 {
     /** @returns {vec3} */
     get gba() { return new vec3( this[1], this[2], this[3] ) }
     /** @param {vec3Like} v */
-    set yzw( v ) { this[1] = v[0], this[2] = v[1], this[3] = v[2] }
+    set yzw( v ) { tc_vec3Like( v ); this[1] = v[0], this[2] = v[1], this[3] = v[2] }
     /** @param {vec3Like} v */
-    set gba( v ) { this[1] = v[0], this[2] = v[1], this[3] = v[2] }
+    set gba( v ) { tc_vec3Like( v ); this[1] = v[0], this[2] = v[1], this[3] = v[2] }
     /** @returns {vec3} */
     get ywx() { return new vec3( this[1], this[3], this[0] ) }
     /** @returns {vec3} */
     get gar() { return new vec3( this[1], this[3], this[0] ) }
     /** @param {vec3Like} v */
-    set ywx( v ) { this[1] = v[0], this[3] = v[1], this[0] = v[2] }
+    set ywx( v ) { tc_vec3Like( v ); this[1] = v[0], this[3] = v[1], this[0] = v[2] }
     /** @param {vec3Like} v */
-    set gar( v ) { this[1] = v[0], this[3] = v[1], this[0] = v[2] }
+    set gar( v ) { tc_vec3Like( v ); this[1] = v[0], this[3] = v[1], this[0] = v[2] }
     /** @returns {vec3} */
     get ywy() { return new vec3( this[1], this[3], this[1] ) }
     /** @returns {vec3} */
@@ -427,9 +435,9 @@ export class vec4 {
     /** @returns {vec3} */
     get gab() { return new vec3( this[1], this[3], this[2] ) }
     /** @param {vec3Like} v */
-    set ywz( v ) { this[1] = v[0], this[3] = v[1], this[2] = v[2] }
+    set ywz( v ) { tc_vec3Like( v ); this[1] = v[0], this[3] = v[1], this[2] = v[2] }
     /** @param {vec3Like} v */
-    set gab( v ) { this[1] = v[0], this[3] = v[1], this[2] = v[2] }
+    set gab( v ) { tc_vec3Like( v ); this[1] = v[0], this[3] = v[1], this[2] = v[2] }
     /** @returns {vec3} */
     get yww() { return new vec3( this[1], this[3], this[3] ) }
     /** @returns {vec3} */
@@ -443,9 +451,9 @@ export class vec4 {
     /** @returns {vec3} */
     get brg() { return new vec3( this[2], this[0], this[1] ) }
     /** @param {vec3Like} v */
-    set zxy( v ) { this[2] = v[0], this[0] = v[1], this[1] = v[2] }
+    set zxy( v ) { tc_vec3Like( v ); this[2] = v[0], this[0] = v[1], this[1] = v[2] }
     /** @param {vec3Like} v */
-    set brg( v ) { this[2] = v[0], this[0] = v[1], this[1] = v[2] }
+    set brg( v ) { tc_vec3Like( v ); this[2] = v[0], this[0] = v[1], this[1] = v[2] }
     /** @returns {vec3} */
     get zxz() { return new vec3( this[2], this[0], this[2] ) }
     /** @returns {vec3} */
@@ -455,17 +463,17 @@ export class vec4 {
     /** @returns {vec3} */
     get bra() { return new vec3( this[2], this[0], this[3] ) }
     /** @param {vec3Like} v */
-    set zxw( v ) { this[2] = v[0], this[0] = v[1], this[3] = v[2] }
+    set zxw( v ) { tc_vec3Like( v ); this[2] = v[0], this[0] = v[1], this[3] = v[2] }
     /** @param {vec3Like} v */
-    set bra( v ) { this[2] = v[0], this[0] = v[1], this[3] = v[2] }
+    set bra( v ) { tc_vec3Like( v ); this[2] = v[0], this[0] = v[1], this[3] = v[2] }
     /** @returns {vec3} */
     get zyx() { return new vec3( this[2], this[1], this[0] ) }
     /** @returns {vec3} */
     get bgr() { return new vec3( this[2], this[1], this[0] ) }
     /** @param {vec3Like} v */
-    set zyx( v ) { this[2] = v[0], this[1] = v[1], this[0] = v[2] }
+    set zyx( v ) { tc_vec3Like( v ); this[2] = v[0], this[1] = v[1], this[0] = v[2] }
     /** @param {vec3Like} v */
-    set bgr( v ) { this[2] = v[0], this[1] = v[1], this[0] = v[2] }
+    set bgr( v ) { tc_vec3Like( v ); this[2] = v[0], this[1] = v[1], this[0] = v[2] }
     /** @returns {vec3} */
     get zyy() { return new vec3( this[2], this[1], this[1] ) }
     /** @returns {vec3} */
@@ -479,9 +487,9 @@ export class vec4 {
     /** @returns {vec3} */
     get bga() { return new vec3( this[2], this[1], this[3] ) }
     /** @param {vec3Like} v */
-    set zyw( v ) { this[2] = v[0], this[1] = v[1], this[3] = v[2] }
+    set zyw( v ) { tc_vec3Like( v ); this[2] = v[0], this[1] = v[1], this[3] = v[2] }
     /** @param {vec3Like} v */
-    set bga( v ) { this[2] = v[0], this[1] = v[1], this[3] = v[2] }
+    set bga( v ) { tc_vec3Like( v ); this[2] = v[0], this[1] = v[1], this[3] = v[2] }
     /** @returns {vec3} */
     get zzx() { return new vec3( this[2], this[2], this[0] ) }
     /** @returns {vec3} */
@@ -503,17 +511,17 @@ export class vec4 {
     /** @returns {vec3} */
     get bar() { return new vec3( this[2], this[3], this[0] ) }
     /** @param {vec3Like} v */
-    set zwx( v ) { this[2] = v[0], this[3] = v[1], this[0] = v[2] }
+    set zwx( v ) { tc_vec3Like( v ); this[2] = v[0], this[3] = v[1], this[0] = v[2] }
     /** @param {vec3Like} v */
-    set bar( v ) { this[2] = v[0], this[3] = v[1], this[0] = v[2] }
+    set bar( v ) { tc_vec3Like( v ); this[2] = v[0], this[3] = v[1], this[0] = v[2] }
     /** @returns {vec3} */
     get zwy() { return new vec3( this[2], this[3], this[1] ) }
     /** @returns {vec3} */
     get bag() { return new vec3( this[2], this[3], this[1] ) }
     /** @param {vec3Like} v */
-    set zwy( v ) { this[2] = v[0], this[3] = v[1], this[1] = v[2] }
+    set zwy( v ) { tc_vec3Like( v ); this[2] = v[0], this[3] = v[1], this[1] = v[2] }
     /** @param {vec3Like} v */
-    set bag( v ) { this[2] = v[0], this[3] = v[1], this[1] = v[2] }
+    set bag( v ) { tc_vec3Like( v ); this[2] = v[0], this[3] = v[1], this[1] = v[2] }
     /** @returns {vec3} */
     get zwz() { return new vec3( this[2], this[3], this[2] ) }
     /** @returns {vec3} */
@@ -531,17 +539,17 @@ export class vec4 {
     /** @returns {vec3} */
     get arg() { return new vec3( this[3], this[0], this[1] ) }
     /** @param {vec3Like} v */
-    set wxy( v ) { this[3] = v[0], this[0] = v[1], this[1] = v[2] }
+    set wxy( v ) { tc_vec3Like( v ); this[3] = v[0], this[0] = v[1], this[1] = v[2] }
     /** @param {vec3Like} v */
-    set arg( v ) { this[3] = v[0], this[0] = v[1], this[1] = v[2] }
+    set arg( v ) { tc_vec3Like( v ); this[3] = v[0], this[0] = v[1], this[1] = v[2] }
     /** @returns {vec3} */
     get wxz() { return new vec3( this[3], this[0], this[2] ) }
     /** @returns {vec3} */
     get arb() { return new vec3( this[3], this[0], this[2] ) }
     /** @param {vec3Like} v */
-    set wxz( v ) { this[3] = v[0], this[0] = v[1], this[2] = v[2] }
+    set wxz( v ) { tc_vec3Like( v ); this[3] = v[0], this[0] = v[1], this[2] = v[2] }
     /** @param {vec3Like} v */
-    set arb( v ) { this[3] = v[0], this[0] = v[1], this[2] = v[2] }
+    set arb( v ) { tc_vec3Like( v ); this[3] = v[0], this[0] = v[1], this[2] = v[2] }
     /** @returns {vec3} */
     get wxw() { return new vec3( this[3], this[0], this[3] ) }
     /** @returns {vec3} */
@@ -551,9 +559,9 @@ export class vec4 {
     /** @returns {vec3} */
     get agr() { return new vec3( this[3], this[1], this[0] ) }
     /** @param {vec3Like} v */
-    set wyx( v ) { this[3] = v[0], this[1] = v[1], this[0] = v[2] }
+    set wyx( v ) { tc_vec3Like( v ); this[3] = v[0], this[1] = v[1], this[0] = v[2] }
     /** @param {vec3Like} v */
-    set agr( v ) { this[3] = v[0], this[1] = v[1], this[0] = v[2] }
+    set agr( v ) { tc_vec3Like( v ); this[3] = v[0], this[1] = v[1], this[0] = v[2] }
     /** @returns {vec3} */
     get wyy() { return new vec3( this[3], this[1], this[1] ) }
     /** @returns {vec3} */
@@ -563,9 +571,9 @@ export class vec4 {
     /** @returns {vec3} */
     get agb() { return new vec3( this[3], this[1], this[2] ) }
     /** @param {vec3Like} v */
-    set wyz( v ) { this[3] = v[0], this[1] = v[1], this[2] = v[2] }
+    set wyz( v ) { tc_vec3Like( v ); this[3] = v[0], this[1] = v[1], this[2] = v[2] }
     /** @param {vec3Like} v */
-    set agb( v ) { this[3] = v[0], this[1] = v[1], this[2] = v[2] }
+    set agb( v ) { tc_vec3Like( v ); this[3] = v[0], this[1] = v[1], this[2] = v[2] }
     /** @returns {vec3} */
     get wyw() { return new vec3( this[3], this[1], this[3] ) }
     /** @returns {vec3} */
@@ -575,17 +583,17 @@ export class vec4 {
     /** @returns {vec3} */
     get abr() { return new vec3( this[3], this[2], this[0] ) }
     /** @param {vec3Like} v */
-    set wzx( v ) { this[3] = v[0], this[2] = v[1], this[0] = v[2] }
+    set wzx( v ) { tc_vec3Like( v ); this[3] = v[0], this[2] = v[1], this[0] = v[2] }
     /** @param {vec3Like} v */
-    set abr( v ) { this[3] = v[0], this[2] = v[1], this[0] = v[2] }
+    set abr( v ) { tc_vec3Like( v ); this[3] = v[0], this[2] = v[1], this[0] = v[2] }
     /** @returns {vec3} */
     get wzy() { return new vec3( this[3], this[2], this[1] ) }
     /** @returns {vec3} */
     get abg() { return new vec3( this[3], this[2], this[1] ) }
     /** @param {vec3Like} v */
-    set wzy( v ) { this[3] = v[0], this[2] = v[1], this[1] = v[2] }
+    set wzy( v ) { tc_vec3Like( v ); this[3] = v[0], this[2] = v[1], this[1] = v[2] }
     /** @param {vec3Like} v */
-    set abg( v ) { this[3] = v[0], this[2] = v[1], this[1] = v[2] }
+    set abg( v ) { tc_vec3Like( v ); this[3] = v[0], this[2] = v[1], this[1] = v[2] }
     /** @returns {vec3} */
     get wzz() { return new vec3( this[3], this[2], this[2] ) }
     /** @returns {vec3} */
@@ -723,9 +731,9 @@ export class vec4 {
     /** @returns {vec4} */
     get rgba() { return new vec4( this[0], this[1], this[2], this[3] ) }
     /** @param {vec4Like} v */
-    set xyzw( v ) { this[0] = v[0], this[1] = v[1], this[2] = v[2], this[3] = v[3] }
+    set xyzw( v ) { tc_vec4Like( v ); this[0] = v[0], this[1] = v[1], this[2] = v[2], this[3] = v[3] }
     /** @param {vec4Like} v */
-    set rgba( v ) { this[0] = v[0], this[1] = v[1], this[2] = v[2], this[3] = v[3] }
+    set rgba( v ) { tc_vec4Like( v ); this[0] = v[0], this[1] = v[1], this[2] = v[2], this[3] = v[3] }
     /** @returns {vec4} */
     get xywx() { return new vec4( this[0], this[1], this[3], this[0] ) }
     /** @returns {vec4} */
@@ -739,9 +747,9 @@ export class vec4 {
     /** @returns {vec4} */
     get rgab() { return new vec4( this[0], this[1], this[3], this[2] ) }
     /** @param {vec4Like} v */
-    set xywz( v ) { this[0] = v[0], this[1] = v[1], this[3] = v[2], this[2] = v[3] }
+    set xywz( v ) { tc_vec4Like( v ); this[0] = v[0], this[1] = v[1], this[3] = v[2], this[2] = v[3] }
     /** @param {vec4Like} v */
-    set rgab( v ) { this[0] = v[0], this[1] = v[1], this[3] = v[2], this[2] = v[3] }
+    set rgab( v ) { tc_vec4Like( v ); this[0] = v[0], this[1] = v[1], this[3] = v[2], this[2] = v[3] }
     /** @returns {vec4} */
     get xyww() { return new vec4( this[0], this[1], this[3], this[3] ) }
     /** @returns {vec4} */
@@ -779,9 +787,9 @@ export class vec4 {
     /** @returns {vec4} */
     get rbga() { return new vec4( this[0], this[2], this[1], this[3] ) }
     /** @param {vec4Like} v */
-    set xzyw( v ) { this[0] = v[0], this[2] = v[1], this[1] = v[2], this[3] = v[3] }
+    set xzyw( v ) { tc_vec4Like( v ); this[0] = v[0], this[2] = v[1], this[1] = v[2], this[3] = v[3] }
     /** @param {vec4Like} v */
-    set rbga( v ) { this[0] = v[0], this[2] = v[1], this[1] = v[2], this[3] = v[3] }
+    set rbga( v ) { tc_vec4Like( v ); this[0] = v[0], this[2] = v[1], this[1] = v[2], this[3] = v[3] }
     /** @returns {vec4} */
     get xzzx() { return new vec4( this[0], this[2], this[2], this[0] ) }
     /** @returns {vec4} */
@@ -807,9 +815,9 @@ export class vec4 {
     /** @returns {vec4} */
     get rbag() { return new vec4( this[0], this[2], this[3], this[1] ) }
     /** @param {vec4Like} v */
-    set xzwy( v ) { this[0] = v[0], this[2] = v[1], this[3] = v[2], this[1] = v[3] }
+    set xzwy( v ) { tc_vec4Like( v ); this[0] = v[0], this[2] = v[1], this[3] = v[2], this[1] = v[3] }
     /** @param {vec4Like} v */
-    set rbag( v ) { this[0] = v[0], this[2] = v[1], this[3] = v[2], this[1] = v[3] }
+    set rbag( v ) { tc_vec4Like( v ); this[0] = v[0], this[2] = v[1], this[3] = v[2], this[1] = v[3] }
     /** @returns {vec4} */
     get xzwz() { return new vec4( this[0], this[2], this[3], this[2] ) }
     /** @returns {vec4} */
@@ -847,9 +855,9 @@ export class vec4 {
     /** @returns {vec4} */
     get ragb() { return new vec4( this[0], this[3], this[1], this[2] ) }
     /** @param {vec4Like} v */
-    set xwyz( v ) { this[0] = v[0], this[3] = v[1], this[1] = v[2], this[2] = v[3] }
+    set xwyz( v ) { tc_vec4Like( v ); this[0] = v[0], this[3] = v[1], this[1] = v[2], this[2] = v[3] }
     /** @param {vec4Like} v */
-    set ragb( v ) { this[0] = v[0], this[3] = v[1], this[1] = v[2], this[2] = v[3] }
+    set ragb( v ) { tc_vec4Like( v ); this[0] = v[0], this[3] = v[1], this[1] = v[2], this[2] = v[3] }
     /** @returns {vec4} */
     get xwyw() { return new vec4( this[0], this[3], this[1], this[3] ) }
     /** @returns {vec4} */
@@ -863,9 +871,9 @@ export class vec4 {
     /** @returns {vec4} */
     get rabg() { return new vec4( this[0], this[3], this[2], this[1] ) }
     /** @param {vec4Like} v */
-    set xwzy( v ) { this[0] = v[0], this[3] = v[1], this[2] = v[2], this[1] = v[3] }
+    set xwzy( v ) { tc_vec4Like( v ); this[0] = v[0], this[3] = v[1], this[2] = v[2], this[1] = v[3] }
     /** @param {vec4Like} v */
-    set rabg( v ) { this[0] = v[0], this[3] = v[1], this[2] = v[2], this[1] = v[3] }
+    set rabg( v ) { tc_vec4Like( v ); this[0] = v[0], this[3] = v[1], this[2] = v[2], this[1] = v[3] }
     /** @returns {vec4} */
     get xwzz() { return new vec4( this[0], this[3], this[2], this[2] ) }
     /** @returns {vec4} */
@@ -939,9 +947,9 @@ export class vec4 {
     /** @returns {vec4} */
     get grba() { return new vec4( this[1], this[0], this[2], this[3] ) }
     /** @param {vec4Like} v */
-    set yxzw( v ) { this[1] = v[0], this[0] = v[1], this[2] = v[2], this[3] = v[3] }
+    set yxzw( v ) { tc_vec4Like( v ); this[1] = v[0], this[0] = v[1], this[2] = v[2], this[3] = v[3] }
     /** @param {vec4Like} v */
-    set grba( v ) { this[1] = v[0], this[0] = v[1], this[2] = v[2], this[3] = v[3] }
+    set grba( v ) { tc_vec4Like( v ); this[1] = v[0], this[0] = v[1], this[2] = v[2], this[3] = v[3] }
     /** @returns {vec4} */
     get yxwx() { return new vec4( this[1], this[0], this[3], this[0] ) }
     /** @returns {vec4} */
@@ -955,9 +963,9 @@ export class vec4 {
     /** @returns {vec4} */
     get grab() { return new vec4( this[1], this[0], this[3], this[2] ) }
     /** @param {vec4Like} v */
-    set yxwz( v ) { this[1] = v[0], this[0] = v[1], this[3] = v[2], this[2] = v[3] }
+    set yxwz( v ) { tc_vec4Like( v ); this[1] = v[0], this[0] = v[1], this[3] = v[2], this[2] = v[3] }
     /** @param {vec4Like} v */
-    set grab( v ) { this[1] = v[0], this[0] = v[1], this[3] = v[2], this[2] = v[3] }
+    set grab( v ) { tc_vec4Like( v ); this[1] = v[0], this[0] = v[1], this[3] = v[2], this[2] = v[3] }
     /** @returns {vec4} */
     get yxww() { return new vec4( this[1], this[0], this[3], this[3] ) }
     /** @returns {vec4} */
@@ -1043,9 +1051,9 @@ export class vec4 {
     /** @returns {vec4} */
     get gbra() { return new vec4( this[1], this[2], this[0], this[3] ) }
     /** @param {vec4Like} v */
-    set yzxw( v ) { this[1] = v[0], this[2] = v[1], this[0] = v[2], this[3] = v[3] }
+    set yzxw( v ) { tc_vec4Like( v ); this[1] = v[0], this[2] = v[1], this[0] = v[2], this[3] = v[3] }
     /** @param {vec4Like} v */
-    set gbra( v ) { this[1] = v[0], this[2] = v[1], this[0] = v[2], this[3] = v[3] }
+    set gbra( v ) { tc_vec4Like( v ); this[1] = v[0], this[2] = v[1], this[0] = v[2], this[3] = v[3] }
     /** @returns {vec4} */
     get yzyx() { return new vec4( this[1], this[2], this[1], this[0] ) }
     /** @returns {vec4} */
@@ -1083,9 +1091,9 @@ export class vec4 {
     /** @returns {vec4} */
     get gbar() { return new vec4( this[1], this[2], this[3], this[0] ) }
     /** @param {vec4Like} v */
-    set yzwx( v ) { this[1] = v[0], this[2] = v[1], this[3] = v[2], this[0] = v[3] }
+    set yzwx( v ) { tc_vec4Like( v ); this[1] = v[0], this[2] = v[1], this[3] = v[2], this[0] = v[3] }
     /** @param {vec4Like} v */
-    set gbar( v ) { this[1] = v[0], this[2] = v[1], this[3] = v[2], this[0] = v[3] }
+    set gbar( v ) { tc_vec4Like( v ); this[1] = v[0], this[2] = v[1], this[3] = v[2], this[0] = v[3] }
     /** @returns {vec4} */
     get yzwy() { return new vec4( this[1], this[2], this[3], this[1] ) }
     /** @returns {vec4} */
@@ -1111,9 +1119,9 @@ export class vec4 {
     /** @returns {vec4} */
     get garb() { return new vec4( this[1], this[3], this[0], this[2] ) }
     /** @param {vec4Like} v */
-    set ywxz( v ) { this[1] = v[0], this[3] = v[1], this[0] = v[2], this[2] = v[3] }
+    set ywxz( v ) { tc_vec4Like( v ); this[1] = v[0], this[3] = v[1], this[0] = v[2], this[2] = v[3] }
     /** @param {vec4Like} v */
-    set garb( v ) { this[1] = v[0], this[3] = v[1], this[0] = v[2], this[2] = v[3] }
+    set garb( v ) { tc_vec4Like( v ); this[1] = v[0], this[3] = v[1], this[0] = v[2], this[2] = v[3] }
     /** @returns {vec4} */
     get ywxw() { return new vec4( this[1], this[3], this[0], this[3] ) }
     /** @returns {vec4} */
@@ -1139,9 +1147,9 @@ export class vec4 {
     /** @returns {vec4} */
     get gabr() { return new vec4( this[1], this[3], this[2], this[0] ) }
     /** @param {vec4Like} v */
-    set ywzx( v ) { this[1] = v[0], this[3] = v[1], this[2] = v[2], this[0] = v[3] }
+    set ywzx( v ) { tc_vec4Like( v ); this[1] = v[0], this[3] = v[1], this[2] = v[2], this[0] = v[3] }
     /** @param {vec4Like} v */
-    set gabr( v ) { this[1] = v[0], this[3] = v[1], this[2] = v[2], this[0] = v[3] }
+    set gabr( v ) { tc_vec4Like( v ); this[1] = v[0], this[3] = v[1], this[2] = v[2], this[0] = v[3] }
     /** @returns {vec4} */
     get ywzy() { return new vec4( this[1], this[3], this[2], this[1] ) }
     /** @returns {vec4} */
@@ -1203,9 +1211,9 @@ export class vec4 {
     /** @returns {vec4} */
     get brga() { return new vec4( this[2], this[0], this[1], this[3] ) }
     /** @param {vec4Like} v */
-    set zxyw( v ) { this[2] = v[0], this[0] = v[1], this[1] = v[2], this[3] = v[3] }
+    set zxyw( v ) { tc_vec4Like( v ); this[2] = v[0], this[0] = v[1], this[1] = v[2], this[3] = v[3] }
     /** @param {vec4Like} v */
-    set brga( v ) { this[2] = v[0], this[0] = v[1], this[1] = v[2], this[3] = v[3] }
+    set brga( v ) { tc_vec4Like( v ); this[2] = v[0], this[0] = v[1], this[1] = v[2], this[3] = v[3] }
     /** @returns {vec4} */
     get zxzx() { return new vec4( this[2], this[0], this[2], this[0] ) }
     /** @returns {vec4} */
@@ -1231,9 +1239,9 @@ export class vec4 {
     /** @returns {vec4} */
     get brag() { return new vec4( this[2], this[0], this[3], this[1] ) }
     /** @param {vec4Like} v */
-    set zxwy( v ) { this[2] = v[0], this[0] = v[1], this[3] = v[2], this[1] = v[3] }
+    set zxwy( v ) { tc_vec4Like( v ); this[2] = v[0], this[0] = v[1], this[3] = v[2], this[1] = v[3] }
     /** @param {vec4Like} v */
-    set brag( v ) { this[2] = v[0], this[0] = v[1], this[3] = v[2], this[1] = v[3] }
+    set brag( v ) { tc_vec4Like( v ); this[2] = v[0], this[0] = v[1], this[3] = v[2], this[1] = v[3] }
     /** @returns {vec4} */
     get zxwz() { return new vec4( this[2], this[0], this[3], this[2] ) }
     /** @returns {vec4} */
@@ -1259,9 +1267,9 @@ export class vec4 {
     /** @returns {vec4} */
     get bgra() { return new vec4( this[2], this[1], this[0], this[3] ) }
     /** @param {vec4Like} v */
-    set zyxw( v ) { this[2] = v[0], this[1] = v[1], this[0] = v[2], this[3] = v[3] }
+    set zyxw( v ) { tc_vec4Like( v ); this[2] = v[0], this[1] = v[1], this[0] = v[2], this[3] = v[3] }
     /** @param {vec4Like} v */
-    set bgra( v ) { this[2] = v[0], this[1] = v[1], this[0] = v[2], this[3] = v[3] }
+    set bgra( v ) { tc_vec4Like( v ); this[2] = v[0], this[1] = v[1], this[0] = v[2], this[3] = v[3] }
     /** @returns {vec4} */
     get zyyx() { return new vec4( this[2], this[1], this[1], this[0] ) }
     /** @returns {vec4} */
@@ -1299,9 +1307,9 @@ export class vec4 {
     /** @returns {vec4} */
     get bgar() { return new vec4( this[2], this[1], this[3], this[0] ) }
     /** @param {vec4Like} v */
-    set zywx( v ) { this[2] = v[0], this[1] = v[1], this[3] = v[2], this[0] = v[3] }
+    set zywx( v ) { tc_vec4Like( v ); this[2] = v[0], this[1] = v[1], this[3] = v[2], this[0] = v[3] }
     /** @param {vec4Like} v */
-    set bgar( v ) { this[2] = v[0], this[1] = v[1], this[3] = v[2], this[0] = v[3] }
+    set bgar( v ) { tc_vec4Like( v ); this[2] = v[0], this[1] = v[1], this[3] = v[2], this[0] = v[3] }
     /** @returns {vec4} */
     get zywy() { return new vec4( this[2], this[1], this[3], this[1] ) }
     /** @returns {vec4} */
@@ -1387,9 +1395,9 @@ export class vec4 {
     /** @returns {vec4} */
     get barg() { return new vec4( this[2], this[3], this[0], this[1] ) }
     /** @param {vec4Like} v */
-    set zwxy( v ) { this[2] = v[0], this[3] = v[1], this[0] = v[2], this[1] = v[3] }
+    set zwxy( v ) { tc_vec4Like( v ); this[2] = v[0], this[3] = v[1], this[0] = v[2], this[1] = v[3] }
     /** @param {vec4Like} v */
-    set barg( v ) { this[2] = v[0], this[3] = v[1], this[0] = v[2], this[1] = v[3] }
+    set barg( v ) { tc_vec4Like( v ); this[2] = v[0], this[3] = v[1], this[0] = v[2], this[1] = v[3] }
     /** @returns {vec4} */
     get zwxz() { return new vec4( this[2], this[3], this[0], this[2] ) }
     /** @returns {vec4} */
@@ -1403,9 +1411,9 @@ export class vec4 {
     /** @returns {vec4} */
     get bagr() { return new vec4( this[2], this[3], this[1], this[0] ) }
     /** @param {vec4Like} v */
-    set zwyx( v ) { this[2] = v[0], this[3] = v[1], this[1] = v[2], this[0] = v[3] }
+    set zwyx( v ) { tc_vec4Like( v ); this[2] = v[0], this[3] = v[1], this[1] = v[2], this[0] = v[3] }
     /** @param {vec4Like} v */
-    set bagr( v ) { this[2] = v[0], this[3] = v[1], this[1] = v[2], this[0] = v[3] }
+    set bagr( v ) { tc_vec4Like( v ); this[2] = v[0], this[3] = v[1], this[1] = v[2], this[0] = v[3] }
     /** @returns {vec4} */
     get zwyy() { return new vec4( this[2], this[3], this[1], this[1] ) }
     /** @returns {vec4} */
@@ -1479,9 +1487,9 @@ export class vec4 {
     /** @returns {vec4} */
     get argb() { return new vec4( this[3], this[0], this[1], this[2] ) }
     /** @param {vec4Like} v */
-    set wxyz( v ) { this[3] = v[0], this[0] = v[1], this[1] = v[2], this[2] = v[3] }
+    set wxyz( v ) { tc_vec4Like( v ); this[3] = v[0], this[0] = v[1], this[1] = v[2], this[2] = v[3] }
     /** @param {vec4Like} v */
-    set argb( v ) { this[3] = v[0], this[0] = v[1], this[1] = v[2], this[2] = v[3] }
+    set argb( v ) { tc_vec4Like( v ); this[3] = v[0], this[0] = v[1], this[1] = v[2], this[2] = v[3] }
     /** @returns {vec4} */
     get wxyw() { return new vec4( this[3], this[0], this[1], this[3] ) }
     /** @returns {vec4} */
@@ -1495,9 +1503,9 @@ export class vec4 {
     /** @returns {vec4} */
     get arbg() { return new vec4( this[3], this[0], this[2], this[1] ) }
     /** @param {vec4Like} v */
-    set wxzy( v ) { this[3] = v[0], this[0] = v[1], this[2] = v[2], this[1] = v[3] }
+    set wxzy( v ) { tc_vec4Like( v ); this[3] = v[0], this[0] = v[1], this[2] = v[2], this[1] = v[3] }
     /** @param {vec4Like} v */
-    set arbg( v ) { this[3] = v[0], this[0] = v[1], this[2] = v[2], this[1] = v[3] }
+    set arbg( v ) { tc_vec4Like( v ); this[3] = v[0], this[0] = v[1], this[2] = v[2], this[1] = v[3] }
     /** @returns {vec4} */
     get wxzz() { return new vec4( this[3], this[0], this[2], this[2] ) }
     /** @returns {vec4} */
@@ -1535,9 +1543,9 @@ export class vec4 {
     /** @returns {vec4} */
     get agrb() { return new vec4( this[3], this[1], this[0], this[2] ) }
     /** @param {vec4Like} v */
-    set wyxz( v ) { this[3] = v[0], this[1] = v[1], this[0] = v[2], this[2] = v[3] }
+    set wyxz( v ) { tc_vec4Like( v ); this[3] = v[0], this[1] = v[1], this[0] = v[2], this[2] = v[3] }
     /** @param {vec4Like} v */
-    set agrb( v ) { this[3] = v[0], this[1] = v[1], this[0] = v[2], this[2] = v[3] }
+    set agrb( v ) { tc_vec4Like( v ); this[3] = v[0], this[1] = v[1], this[0] = v[2], this[2] = v[3] }
     /** @returns {vec4} */
     get wyxw() { return new vec4( this[3], this[1], this[0], this[3] ) }
     /** @returns {vec4} */
@@ -1563,9 +1571,9 @@ export class vec4 {
     /** @returns {vec4} */
     get agbr() { return new vec4( this[3], this[1], this[2], this[0] ) }
     /** @param {vec4Like} v */
-    set wyzx( v ) { this[3] = v[0], this[1] = v[1], this[2] = v[2], this[0] = v[3] }
+    set wyzx( v ) { tc_vec4Like( v ); this[3] = v[0], this[1] = v[1], this[2] = v[2], this[0] = v[3] }
     /** @param {vec4Like} v */
-    set agbr( v ) { this[3] = v[0], this[1] = v[1], this[2] = v[2], this[0] = v[3] }
+    set agbr( v ) { tc_vec4Like( v ); this[3] = v[0], this[1] = v[1], this[2] = v[2], this[0] = v[3] }
     /** @returns {vec4} */
     get wyzy() { return new vec4( this[3], this[1], this[2], this[1] ) }
     /** @returns {vec4} */
@@ -1603,9 +1611,9 @@ export class vec4 {
     /** @returns {vec4} */
     get abrg() { return new vec4( this[3], this[2], this[0], this[1] ) }
     /** @param {vec4Like} v */
-    set wzxy( v ) { this[3] = v[0], this[2] = v[1], this[0] = v[2], this[1] = v[3] }
+    set wzxy( v ) { tc_vec4Like( v ); this[3] = v[0], this[2] = v[1], this[0] = v[2], this[1] = v[3] }
     /** @param {vec4Like} v */
-    set abrg( v ) { this[3] = v[0], this[2] = v[1], this[0] = v[2], this[1] = v[3] }
+    set abrg( v ) { tc_vec4Like( v ); this[3] = v[0], this[2] = v[1], this[0] = v[2], this[1] = v[3] }
     /** @returns {vec4} */
     get wzxz() { return new vec4( this[3], this[2], this[0], this[2] ) }
     /** @returns {vec4} */
@@ -1619,9 +1627,9 @@ export class vec4 {
     /** @returns {vec4} */
     get abgr() { return new vec4( this[3], this[2], this[1], this[0] ) }
     /** @param {vec4Like} v */
-    set wzyx( v ) { this[3] = v[0], this[2] = v[1], this[1] = v[2], this[0] = v[3] }
+    set wzyx( v ) { tc_vec4Like( v ); this[3] = v[0], this[2] = v[1], this[1] = v[2], this[0] = v[3] }
     /** @param {vec4Like} v */
-    set abgr( v ) { this[3] = v[0], this[2] = v[1], this[1] = v[2], this[0] = v[3] }
+    set abgr( v ) { tc_vec4Like( v ); this[3] = v[0], this[2] = v[1], this[1] = v[2], this[0] = v[3] }
     /** @returns {vec4} */
     get wzyy() { return new vec4( this[3], this[2], this[1], this[1] ) }
     /** @returns {vec4} */
