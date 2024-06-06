@@ -341,8 +341,8 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
             const pM = new Fn.Param( "m", TYPELIKE_OR_NUM )
             const pA = new Fn.Param( "a", TYPELIKE_OR_NUM )
             const bodyNonstatic = `return ${IFNUM(
-                `(${IFNUM( `this.sfma( m, a )`, `this.svfma( m, a )`, "a" )})`,
-                `(${IFNUM( `this.vsfma( m, a )`, `this.vfma( m, a )`, "a" )})`,
+                `( ${IFNUM( `this.sfma( m, a )`, `this.svfma( m, a )`, "a" )} )`,
+                `( ${IFNUM( `this.vsfma( m, a )`, `this.vfma( m, a )`, "a" )} )`,
                 "m", true
             )}`
             const bodyStatic = `return ${IFNUM(

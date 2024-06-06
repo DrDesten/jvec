@@ -1131,8 +1131,8 @@ export class vec3 {
     /** @param {number|vec3Like} m @param {number|vec3Like} a @returns {vec3} */
     fma( m, a ) {
         return typeof m === "number"
-            ? (typeof a === "number" ? this.sfma( m, a ) : this.svfma( m, a ))
-            : (typeof a === "number" ? this.vsfma( m, a ) : this.vfma( m, a ))
+            ? ( typeof a === "number" ? this.sfma( m, a ) : this.svfma( m, a ) )
+            : ( typeof a === "number" ? this.vsfma( m, a ) : this.vfma( m, a ) )
     }
 
     /** @param {vec3Like} v @param {number|vec3Like} m @param {number|vec3Like} a @param {vec3} [target=new vec3] @returns {vec3} */
