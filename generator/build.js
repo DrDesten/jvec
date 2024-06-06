@@ -391,7 +391,7 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
             return new Fn( name, [Param_v, Param_target], body, { prefix: "static", type: TYPE } )
         }
         const mathFunctions = Object.getOwnPropertyNames( Math ).filter( name => typeof Math[name] === "function" && Math[name].length === 1 )
-        const mathCandidates = ["abs", "trunc", "round", "floor", "ceil"]
+        const mathCandidates = ["abs", "sign", "trunc", "round", "floor", "ceil"]
         const staticMathCandidates = mathFunctions.filter( name => !/fround|clz32/.test( name ) ) // filter misc
 
         const functions = operations.map( ( [name, op] ) => [

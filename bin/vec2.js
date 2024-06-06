@@ -777,6 +777,13 @@ export class vec2 {
     }
 
     /** @returns {vec2} */
+    sign() {
+        this[0] = Math.sign( this[0] )
+        this[1] = Math.sign( this[1] )
+        return this
+    }
+
+    /** @returns {vec2} */
     trunc() {
         this[0] = Math.trunc( this[0] )
         this[1] = Math.trunc( this[1] )

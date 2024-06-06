@@ -1253,6 +1253,14 @@ export class vec3 {
     }
 
     /** @returns {vec3} */
+    sign() {
+        this[0] = Math.sign( this[0] )
+        this[1] = Math.sign( this[1] )
+        this[2] = Math.sign( this[2] )
+        return this
+    }
+
+    /** @returns {vec3} */
     trunc() {
         this[0] = Math.trunc( this[0] )
         this[1] = Math.trunc( this[1] )
