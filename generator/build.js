@@ -6,10 +6,48 @@ import { join } from "path"
 const __dirname = path.dirname( url.fileURLToPath( import.meta.url ) )
 
 // Custom includes
-import { setIndent, forceIndent, fnParameter, fnDeclaration, Fn } from "./codegen.js"
+import { setIndent, forceIndent, Type, Fn } from "./codegen.js"
 import { JSDoc } from "./docgen.js"
 /** @typedef {import("./docgen.js").JSDocStatement} JSDocStatement @typedef {import("./docgen.js").JSDocOptions} JSDocOptions */
 import { Range } from "./genlib.js"
+
+// Constants
+
+const NUMBER_TYPE = new Type( "number", x => typeof x === "number" )
+const VECTOR_TYPES = {
+    "2": new Type( "vec2", x => x instanceof vec2 ),
+    "3": new Type( "vec3", x => x instanceof vec3 ),
+    "4": new Type( "vec4", x => x instanceof vec4 ),
+}
+const VECTORLIKE_TYPES = {
+    "2": new Type( "vec2Like", x => Array.from( { length: 2 } ).every( ( _, i ) => typeof x[i] === "number" ) ),
+    "3": new Type( "vec3Like", x => Array.from( { length: 3 } ).every( ( _, i ) => typeof x[i] === "number" ) ),
+    "4": new Type( "vec4Like", x => Array.from( { length: 4 } ).every( ( _, i ) => typeof x[i] === "number" ) ),
+}
+const VECTORLIKE_OR_NUMBER_TYPES = {
+    "2": new Type( [NUMBER_TYPE, VECTORLIKE_TYPES[2]] ),
+    "3": new Type( [NUMBER_TYPE, VECTORLIKE_TYPES[3]] ),
+    "4": new Type( [NUMBER_TYPE, VECTORLIKE_TYPES[4]] ),
+}
+const MATRIX_TYPES = {
+    "2": new Type( "mat2", x => x instanceof mat2 ),
+    "3": new Type( "mat3", x => x instanceof mat3 ),
+    "4": new Type( "mat4", x => x instanceof mat4 ),
+}
+const MATRIXLIKE_TYPES = {
+    "2": new Type( "mat2Like", x => Array.from( { length: 2 ** 2 } ).every( ( _, i ) => typeof x[i] === "number" ) ),
+    "3": new Type( "mat3Like", x => Array.from( { length: 3 ** 2 } ).every( ( _, i ) => typeof x[i] === "number" ) ),
+    "4": new Type( "mat4Like", x => Array.from( { length: 4 ** 2 } ).every( ( _, i ) => typeof x[i] === "number" ) ),
+}
+const MATRIXLIKE_OR_NUMBER_TYPES = {
+    "2": new Type( [NUMBER_TYPE, MATRIXLIKE_TYPES[2]] ),
+    "3": new Type( [NUMBER_TYPE, MATRIXLIKE_TYPES[3]] ),
+    "4": new Type( [NUMBER_TYPE, MATRIXLIKE_TYPES[4]] ),
+}
+
+// ------------------------------
+// build()
+// ------------------------------
 
 const MIN_DIMENSION = 2
 const MAX_DIMENSION = 4
@@ -37,17 +75,16 @@ writeFileSync( join( __dirname, OUTPUT_DIR, `mat.js` ), mat, { encoding: "utf8" 
 // generate()
 // ------------------------------
 
-/** @param {number} dimension vector dimension */
-function generateVector( dimension ) {
+/** @param {number} dimension vector dimension @param {boolean} typecheck add runtime type checking */
+function generateVector( dimension, typecheck ) {
 
-    const MATTYPE = `mat${dimension}`
-    const MATTYPELIKE = `${MATTYPE}Like`
-    const MATTYPELIKE_OR_NUM = `number|${MATTYPELIKE}`
+    const MATTYPE = MATRIX_TYPES[dimension]
+    const MATTYPELIKE = MATRIXLIKE_TYPES[dimension]
+    const MATTYPELIKE_OR_NUM = MATRIXLIKE_OR_NUMBER_TYPES[dimension]
 
-    const TYPE = `vec${dimension}`
-    const TYPELIKE = `${TYPE}Like`
-    const TYPELIKE_OR_NUM = `number|${TYPELIKE}`
-
+    const TYPE = VECTOR_TYPES[dimension]
+    const TYPELIKE = VECTORLIKE_TYPES[dimension]
+    const TYPELIKE_OR_NUM = VECTORLIKE_OR_NUMBER_TYPES[dimension]
 
     const IFNUM = ( isnum, notnum, varname = "x", indent = false ) => `typeof ${varname} === "number"${indent ? "\n    " : " "}? ${isnum}${indent ? "\n    " : " "}: ${notnum}`
     const iMapXYZW = "xyzw"
@@ -59,7 +96,7 @@ function generateVector( dimension ) {
         return DRANGE.map( callback ).join( join )
     }
 
-    const Param_s = new Fn.Param( "s", "number" )
+    const Param_s = new Fn.Param( "s", NUMBER_TYPE )
     const Param_v = new Fn.Param( "v", TYPELIKE )
     const Param_x = new Fn.Param( "x", TYPELIKE_OR_NUM )
     const Param_v1 = new Fn.Param( "v1", TYPELIKE )
@@ -96,7 +133,7 @@ function generateVector( dimension ) {
             const objectParamType = `${TYPELIKE_OR_NUM}|{${DMAP( i => `${iMapXYZW[i]}: number` )}}|{${DMAP( i => `${iMapRGBA[i]}: number` )}}`
             const params = [
                 new Fn.Param( "object", objectParamType, { expr: "0" } ),
-                ...DRANGE.slice( 1 ).map( i => new Fn.Param( iMapXYZW[i], "number", { optional: true } ) ),
+                ...DRANGE.slice( 1 ).map( i => new Fn.Param( iMapXYZW[i], NUMBER_TYPE, { optional: true } ) ),
             ]
             const body = `
 if ( typeof object === "number" )
@@ -110,7 +147,7 @@ ${DMAP( i => `/** @type {number} ${iMapXYZW[i]}-coordinate of the vector */\nthi
             return new Fn( "constructor", params, body, { indentFn: setIndent, jsdocOpts: { multiline: true } } )
         }
         function fromArray() {
-            const params = [new Fn.Param( "array", "ArrayLike<number>" ), new Fn.Param( "index", "number", { expr: "0" } ), new Fn.Param( "stride", "number", { expr: "1" } )]
+            const params = [new Fn.Param( "array", "ArrayLike<number>" ), new Fn.Param( "index", NUMBER_TYPE, { expr: "0" } ), new Fn.Param( "stride", NUMBER_TYPE, { expr: "1" } )]
             const body = `return new ${TYPE}( ${DMAP( i => `array[${i} * stride + index]` )} )`
             return new Fn( `fromArray`, params, body, { prefix: "static", type: TYPE } )
         }
@@ -144,7 +181,7 @@ ${DMAP( i => `/** @type {number} ${iMapXYZW[i]}-coordinate of the vector */\nthi
         const functions = [constructor(), fromArray(), fromFunction()]
         if ( dimension === 2 ) functions.push( fromAngle2() )
         functions.push( random(), randomNorm(), randomDir(), randomSphere() )
-        return functions.join( "\n\n" )
+        return functions
     }
 
     function fields() {
@@ -191,7 +228,7 @@ ${DMAP( i => `/** @type {number} ${iMapXYZW[i]}-coordinate of the vector */\nthi
             return out
         } )
 
-        return getset.flat().join( "\n" )
+        return getset
     }
 
     function set() {
@@ -222,20 +259,18 @@ ${DMAP( i => `                yield this[${i}]`, "\n" )}
     function conversion() {
         const arrayExpr = `[${DMAP( i => `this[${i}]` )}]`
         const conversions = [
-            [
-                new Fn( "[Symbol.toStringTag]", [], `return "${TYPE}"`, { type: "string", compact: true } ),
-                new Fn( "toString", [], `return \`(${DMAP( i => `\${this[${i}]}` )})\``, { type: "string", compact: true } ),
-                new Fn( "toArray", [], `return ${arrayExpr}`, { type: "number[]", compact: true } ),
-                new Fn( "toInt8Array", [], `return new Int8Array( ${arrayExpr} )`, { type: "Int8Array", compact: true } ),
-                new Fn( "toUint8Array", [], `return new Uint8Array( ${arrayExpr} )`, { type: "Uint8Array", compact: true } ),
-                new Fn( "toUint8ClampedArray", [], `return new Uint8ClampedArray( ${arrayExpr} )`, { type: "Uint8ClampedArray", compact: true } ),
-                new Fn( "toInt16Array", [], `return new Int16Array( ${arrayExpr} )`, { type: "Int16Array", compact: true } ),
-                new Fn( "toUint16Array", [], `return new Uint16Array( ${arrayExpr} )`, { type: "Uint16Array", compact: true } ),
-                new Fn( "toInt32Array", [], `return new Int32Array( ${arrayExpr} )`, { type: "Int32Array", compact: true } ),
-                new Fn( "toUint32Array", [], `return new Uint32Array( ${arrayExpr} )`, { type: "Uint32Array", compact: true } ),
-                new Fn( "toFloat32Array", [], `return new Float32Array( ${arrayExpr} )`, { type: "Float32Array", compact: true } ),
-                new Fn( "toFloat64Array", [], `return new Float64Array( ${arrayExpr} )`, { type: "Float64Array", compact: true } ),
-            ].join( "\n" )
+            new Fn( "[Symbol.toStringTag]", [], `return "${TYPE}"`, { type: "string", compact: true } ),
+            new Fn( "toString", [], `return \`(${DMAP( i => `\${this[${i}]}` )})\``, { type: "string", compact: true } ),
+            new Fn( "toArray", [], `return ${arrayExpr}`, { type: "number[]", compact: true } ),
+            new Fn( "toInt8Array", [], `return new Int8Array( ${arrayExpr} )`, { type: "Int8Array", compact: true } ),
+            new Fn( "toUint8Array", [], `return new Uint8Array( ${arrayExpr} )`, { type: "Uint8Array", compact: true } ),
+            new Fn( "toUint8ClampedArray", [], `return new Uint8ClampedArray( ${arrayExpr} )`, { type: "Uint8ClampedArray", compact: true } ),
+            new Fn( "toInt16Array", [], `return new Int16Array( ${arrayExpr} )`, { type: "Int16Array", compact: true } ),
+            new Fn( "toUint16Array", [], `return new Uint16Array( ${arrayExpr} )`, { type: "Uint16Array", compact: true } ),
+            new Fn( "toInt32Array", [], `return new Int32Array( ${arrayExpr} )`, { type: "Int32Array", compact: true } ),
+            new Fn( "toUint32Array", [], `return new Uint32Array( ${arrayExpr} )`, { type: "Uint32Array", compact: true } ),
+            new Fn( "toFloat32Array", [], `return new Float32Array( ${arrayExpr} )`, { type: "Float32Array", compact: true } ),
+            new Fn( "toFloat64Array", [], `return new Float64Array( ${arrayExpr} )`, { type: "Float64Array", compact: true } ),
         ]
 
         function cssColor() {
@@ -251,7 +286,7 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
             return new Fn( "toCSSColor", params, body, { type: "string", indentFn: setIndent } )
         }
         if ( dimension >= 3 ) conversions.push( cssColor() )
-        return conversions.join( "\n\n" )
+        return conversions
     }
 
     function boolean() {
@@ -307,8 +342,8 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
             operations.flatMap( ( [name, op] ) => operation( name, op ) ),
             not(),
             isinf(), isnan()
-        ].flat( 1 )
-        return functions.join( "\n\n" )
+        ]
+        return functions
     }
 
     function arithmetic() {
@@ -405,7 +440,7 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
             mathCandidates.map( name => builtinMath( name ) ),
             staticMathCandidates.map( name => staticBuiltinMath( name ) )
         )
-        return functions.flat( Infinity ).join( "\n\n" )
+        return functions
     }
 
     function properties() {
@@ -417,7 +452,7 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
             const body = `return ${DMAP( i => `this[${i}] * this[${i}]`, " + " )}`
             return Fn.autoStatic( `lengthSq`, [[], Param_v], body, { type: "number" }, [/\bthis\b/g, "v"] )
         }
-        return [...length(), ...lengthSq()].join( "\n\n" )
+        return [length(), lengthSq()]
     }
 
     function vectorOperations() {
@@ -456,8 +491,8 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
                 `this[1] = t1`,
             ]
             return [
-                ...Fn.autoStatic( `rotate`, [Param_angle, [Param_v, Param_angle]], body, { type: TYPE }, [/\bthis\b(?=.*=)/g, "target"], [/\bthis\b/g, "v"] ),
-                ...Fn.autoStatic( `rotate90`, [[], Param_v], body90, { type: TYPE }, [/\bthis\b(?=.*=)/g, "target"], [/\bthis\b/g, "v"] )
+                Fn.autoStatic( `rotate`, [Param_angle, [Param_v, Param_angle]], body, { type: TYPE }, [/\bthis\b(?=.*=)/g, "target"], [/\bthis\b/g, "v"] ),
+                Fn.autoStatic( `rotate90`, [[], Param_v], body90, { type: TYPE }, [/\bthis\b(?=.*=)/g, "target"], [/\bthis\b/g, "v"] )
             ]
         }
 
@@ -478,14 +513,14 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
         }
 
         const functions = [
-            ...pointTo(),
-            ...normalize(),
-            ...setLength(),
-            ...dot(),
+            pointTo(),
+            normalize(),
+            setLength(),
+            dot(),
         ]
-        if ( dimension === 2 ) functions.push( ...rotate2() )
-        if ( dimension === 3 ) functions.push( ...cross3() )
-        return functions.join( "\n\n" )
+        if ( dimension === 2 ) functions.push( rotate2() )
+        if ( dimension === 3 ) functions.push( cross3() )
+        return functions
     }
 
     function utilityFunctions() {
@@ -566,7 +601,7 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
             saturate(),
             mix(),
         ]
-        return functions.flat( Infinity ).join( "\n\n" )
+        return functions
     }
 
     const segments = [
@@ -604,7 +639,7 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
         utilityFunctions(),
         `}`
     ]
-    return segments.join( "\n\n" )
+    return Fn.buildClass( segments )
 }
 
 /** @param {number} dimension matrix dimension */

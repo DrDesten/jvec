@@ -8,6 +8,29 @@ import { JSDoc } from "./docgen.js"
  * @typedef {{prefix?: string, type?: string, description?: string, compact?: boolean, indentFn?: (text:string, indent:number) => string, jsdocOpts?: JSDocOptions}} FunctionOptions
  */
 
+export class Type {
+    /**
+     * @param {string|Type[]} name 
+     * @param {(x: any) => boolean} check
+     */
+    constructor( name, check ) {
+        if ( typeof name === "string" ) {
+            this.name = name
+            this.check = [check]
+        } else {
+            this.name = name.map( ( { name } ) => /[^\w\s]/.test( name ) ? `(${name})` : name ).join( "|" )
+            this.check = name.map( ( { check } ) => check )
+        }
+        /** @type {string} */
+        this.name
+        /** @type {((x: any) => boolean)[]} */
+        this.check
+    }
+
+    toString() {
+        return this.name
+    }
+}
 
 /** @param {string} string @param {number} [indent] */
 export function forceIndent( string, indent = 0 ) {
@@ -23,48 +46,15 @@ export function setIndent( string, indent = 0 ) {
     return string
 }
 
-/** @param {string} name @param {string} type @param {ParameterOptions} [options] @returns {Parameter} */
-export function fnParameter( name, type, options = {} ) {
-    options = { default: "", optional: !!options.default, rest: false, ...options }
-    const { default: expr, optional, rest } = options
-    return {
-        name, type, expr, optional,
-        string: ( rest ? "..." : "" ) + name + ( expr ? " = " + expr : "" ),
-        jsdoc: ["param", type, name, { optional, default: expr }]
-    }
-}
-
-/** @param {string[]} body @param {boolean} [compact]  */
-function formatBody( body, compact = false ) {
-    return body.map( statement =>
-        statement.trim().split( "\n" ).map( line => "    " + line.trim() ).join( compact ? " " : "\n" )
-    ).join( compact ? "; " : "\n" )
-}
-
-/** @param {string} name @param {Parameter[]} params @param {string|string[]} body  @param {FunctionOptions} [opts] @returns {string} */
-export function fnDeclaration( name, params, body, opts = {} ) {
-    opts = { compact: false, indentFn: forceIndent, ...opts }
-    const fnJsdocStmts = []
-    opts.description && fnJsdocStmts.push( [opts.description] )
-    fnJsdocStmts.push( ...params.map( p => p.jsdoc ) )
-    opts.type && fnJsdocStmts.push( ["returns", opts.type] )
-    const fnJsdoc = JSDoc( fnJsdocStmts, opts.jsdocOpts )
-    const fnBody = typeof body === "string" ? opts.indentFn( body, opts.compact ? 0 : 4 ) : formatBody( body, opts.compact )
-    const fnParams = params.map( p => p.string ).join( ", " )
-    const fnHead = `${opts.prefix ? `${opts.prefix} ` : ""}${name}(${fnParams ? ` ${fnParams} ` : ""})`
-    const fnDecl = opts.compact ? `${fnHead} { ${fnBody} }` : `${fnHead} {\n${fnBody}\n}`
-    return setIndent( `${fnJsdoc}\n${fnDecl}`, 4 )
-}
-
 /**
  * @typedef {{expr?: string, optional?: boolean, rest?: boolean}} FnParamOpts
- * @typedef {{prefix?: string, type?: string, description?: string, compact?: boolean, indentFn?: (text:string, indent:number) => string, jsdocOpts?: JSDocOptions}} FnOpts
+ * @typedef {{prefix?: string, type?: string|Type, description?: string, compact?: boolean, indentFn?: (text:string, indent:number) => string, jsdocOpts?: JSDocOptions}} FnOpts
  */
 
 class FnParam {
     /** @type {FnParamOpts} */
     static DefaultOpts = { expr: undefined, optional: false, rest: false }
-    /** @param {string} name @param {string} type @param {FnParamOpts} [opts] */
+    /** @param {string} name @param {Type|string} type @param {FnParamOpts} [opts] */
     constructor( name, type, opts = {} ) {
         this.name = name
         this.type = type
@@ -80,7 +70,7 @@ class FnParam {
     /** @returns {JSDocStatement} */
     jsdoc() {
         const { type, name, opts: { optional, expr } } = this
-        return ["param", type, name, { optional: optional, default: expr }]
+        return ["param", type.toString(), name, { optional: optional, default: expr }]
     }
 }
 
@@ -110,10 +100,38 @@ export class Fn {
         this.replace( new RegExp( `\\b${current}\\b`, "g" ), replacement )
     }
 
+    /** @param {Set<string>} usedIdentifiers @param {Map<Type,string>} identifierMap @param {string[]} declarations */
+    tc( usedIdentifiers, identifierMap, declarations ) {
+        this.tcMap = identifierMap
+        this.tcInject = []
+
+        const { params } = this
+        for ( const { name, type } of params ) {
+            if ( typeof type === "string" ) continue
+            let tcid = identifierMap.get( type )
+            if ( !tcid ) {
+                tcid = `tc_${type.toString().replace( /\W/, "" )}`
+                while ( usedIdentifiers.has( tcid ) ) {
+                    tcid += Math.floor( Math.random() * 36 ).toString( 36 )
+                }
+                usedIdentifiers.add( tcid )
+                identifierMap.set( type, tcid )
+                declarations.push( [
+                    `function ${tcid}( x ) {`,
+                    `    const result = ${type.check.map( f => `(${f})(x)` ).join( " || " )}`,
+                    `    if ( !result ) throw new TypeError( \`Expected Type '${type}', got [\${x?.constructor.name||x?.[Symbol.toStringTag]||typeof x}]: \${x}\` )`,
+                    `}`
+                ].join( "\n" ) )
+            }
+            this.tcInject.push( `${tcid}( ${name} )` )
+        }
+    }
+
     /** @returns {string} */
     string() {
         const { name, params, body, opts: { prefix, compact, indentFn } } = this
         const fnParams = params.map( p => p.string() ).join( ", " )
+        if ( this.tcInject ) body.unshift( ...this.tcInject )
         const fnBody = body.map( stmt =>
             stmt.split( "\n" ).map( l => l.trimEnd() ).filter( x => x ).join( "\n" ) )
             .join( compact ? "; " : "\n" )
@@ -127,7 +145,7 @@ export class Fn {
         return JSDoc( [].concat(
             description ? [description] : [],
             params.map( p => p.jsdoc() ),
-            type ? [["returns", type]] : [],
+            type ? [["returns", type + ""]] : [],
         ), jsdocOpts )
     }
     /** @returns {string} */
@@ -160,5 +178,36 @@ export class Fn {
         variableReplacers.forEach( ( [regex, replacement] ) => fnStatic.replace( regex, replacement ) )
 
         return [fnNonstatic, fnStatic]
+    }
+
+    /** @param {(string|Fn)[]} elements @param {boolean} [typecheck=false] */
+    static buildClass( elements, typecheck = false ) {
+        elements = elements.flat( Infinity )
+        let classDecl = ""
+
+        if ( typecheck ) {
+            const tcUsedIdentifiers = new Set
+            const tcIdentifiers = new Map
+            const tcDeclarations = []
+
+            for ( const element of elements ) {
+                if ( element instanceof Fn ) {
+                    element.tc( tcUsedIdentifiers, tcIdentifiers, tcDeclarations )
+                }
+            }
+            classDecl += tcDeclarations.join( "\n" ) + "\n\n"
+        }
+
+        for ( const [i, element] of elements.entries() ) {
+            if ( element instanceof Fn ) {
+                classDecl += element.decl()
+                element.opts.compact && elements[i + 1]?.opts?.compact
+                    ? classDecl += "\n" : classDecl += "\n\n"
+            } else {
+                classDecl += element + "\n\n"
+            }
+        }
+
+        return classDecl.trimEnd()
     }
 }
