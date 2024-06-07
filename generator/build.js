@@ -54,35 +54,51 @@ const MATRIXLIKE_OR_NUMBER_TYPES = {
 
 const MIN_DIMENSION = 2
 const MAX_DIMENSION = 4
-const OUTPUT_DIR = "../bin"
+const OUTPUT_DIR = filename => join( __dirname, "..", "bin", filename )
+const WRITE_OPTS = { encoding: "utf8" }
 
-for ( let dim = MIN_DIMENSION; dim <= MAX_DIMENSION; dim++ ) {
-    const file = generateVector( dim )
-    const tc_file = generateVector( dim, true )
-    writeFileSync( join( __dirname, OUTPUT_DIR, `vec${dim}.js` ), file, { encoding: "utf8" } )
-    writeFileSync( join( __dirname, OUTPUT_DIR, `safe-vec${dim}.js` ), tc_file, { encoding: "utf8" } )
-}
-for ( let dim = MIN_DIMENSION; dim <= MAX_DIMENSION; dim++ ) {
-    const file = generateMatrix( dim )
-    const tc_file = generateMatrix( dim, true )
-    writeFileSync( join( __dirname, OUTPUT_DIR, `mat${dim}.js` ), file, { encoding: "utf8" } )
-    writeFileSync( join( __dirname, OUTPUT_DIR, `safe-mat${dim}.js` ), tc_file, { encoding: "utf8" } )
+function write( filename, content ) {
+    return writeFileSync( OUTPUT_DIR( filename ), content, WRITE_OPTS )
 }
 
-const vec = Range( MIN_DIMENSION, MAX_DIMENSION + 1 )
-    .map( dim => `export { vec${dim} } from "./vec${dim}.js"` ).join( "\n" )
-writeFileSync( join( __dirname, OUTPUT_DIR, `vec.js` ), vec, { encoding: "utf8" } )
-const mat = Range( MIN_DIMENSION, MAX_DIMENSION + 1 )
-    .map( dim => `export { mat${dim} } from "./mat${dim}.js"` ).join( "\n" )
-writeFileSync( join( __dirname, OUTPUT_DIR, `mat.js` ), mat, { encoding: "utf8" } )
+// ------------------------------
 
-const safeVec = Range( MIN_DIMENSION, MAX_DIMENSION + 1 )
-    .map( dim => `export { vec${dim} } from "./safe-vec${dim}.js"` ).join( "\n" )
-writeFileSync( join( __dirname, OUTPUT_DIR, `safe-vec.js` ), safeVec, { encoding: "utf8" } )
+buildVector()
+buildMatrix()
 
-const safemat = Range( MIN_DIMENSION, MAX_DIMENSION + 1 )
-    .map( dim => `export { mat${dim} } from "./safe-mat${dim}.js"` ).join( "\n" )
-writeFileSync( join( __dirname, OUTPUT_DIR, `safe-mat.js` ), safemat, { encoding: "utf8" } )
+// ------------------------------
+
+function buildVector() {
+    for ( let dim = MIN_DIMENSION; dim <= MAX_DIMENSION; dim++ ) {
+        const file = generateVector( dim )
+        const tc_file = generateVector( dim, true )
+        write( `vec${dim}.js`, file )
+        write( `safe-vec${dim}.js`, tc_file )
+    }
+
+    const vec = Range( MIN_DIMENSION, MAX_DIMENSION + 1 )
+        .map( dim => `export { vec${dim} } from "./vec${dim}.js"` ).join( "\n" )
+    write( `vec.js`, vec )
+    const safeVec = Range( MIN_DIMENSION, MAX_DIMENSION + 1 )
+        .map( dim => `export { vec${dim} } from "./safe-vec${dim}.js"` ).join( "\n" )
+    write( `safe-vec.js`, safeVec )
+}
+
+function buildMatrix() {
+    for ( let dim = MIN_DIMENSION; dim <= MAX_DIMENSION; dim++ ) {
+        const file = generateMatrix( dim )
+        const tc_file = generateMatrix( dim, true )
+        write( `mat${dim}.js`, file )
+        write( `safe-mat${dim}.js`, tc_file )
+    }
+
+    const mat = Range( MIN_DIMENSION, MAX_DIMENSION + 1 )
+        .map( dim => `export { mat${dim} } from "./mat${dim}.js"` ).join( "\n" )
+    write( `mat.js`, mat )
+    const safemat = Range( MIN_DIMENSION, MAX_DIMENSION + 1 )
+        .map( dim => `export { mat${dim} } from "./safe-mat${dim}.js"` ).join( "\n" )
+    write( `safe-mat.js`, safemat )
+}
 
 // ------------------------------
 // generate()
