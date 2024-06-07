@@ -35,9 +35,12 @@ const MATRIX_TYPES = {
     "4": new Type( "mat4", x => x instanceof mat4 ),
 }
 const MATRIXLIKE_TYPES = {
-    "2": new Type( "mat2Like", x => Array.from( { length: 2 ** 2 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) ),
-    "3": new Type( "mat3Like", x => Array.from( { length: 3 ** 2 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) ),
-    "4": new Type( "mat4Like", x => Array.from( { length: 4 ** 2 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) ),
+    "2": new Type( "mat2Like", x => Array.from( { length: 2 ** 2 } ).every( ( _, i ) => typeof x[i] === "number" ),
+        { FINITE: x => Array.from( { length: 2 ** 2 } ).every( ( _, i ) => isFinite( x[i] ) ) } ),
+    "3": new Type( "mat3Like", x => Array.from( { length: 3 ** 2 } ).every( ( _, i ) => typeof x[i] === "number" ),
+        { FINITE: x => Array.from( { length: 3 ** 2 } ).every( ( _, i ) => isFinite( x[i] ) ) } ),
+    "4": new Type( "mat4Like", x => Array.from( { length: 4 ** 2 } ).every( ( _, i ) => typeof x[i] === "number" ),
+        { FINITE: x => Array.from( { length: 4 ** 2 } ).every( ( _, i ) => isFinite( x[i] ) ) } ),
 }
 const MATRIXLIKE_OR_NUMBER_TYPES = {
     "2": new Type( [NUMBER_TYPE, MATRIXLIKE_TYPES[2]] ),

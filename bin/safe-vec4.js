@@ -1,12 +1,12 @@
-const tc_number = function number( x ) {
-    const result = ((x => typeof x === "number")(x) || (x => x === undefined)(x))(x)
+const tc_number = function( x ) {
+    const result = (x => (x => typeof x === "number")(x) || (x => x === undefined)(x))(x)
     if ( !result ) throw new TypeError( `Expected Type 'number', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
 const tc_FINITE = function( x ) {
     const result = (x => [...x].every( isFinite ))(x)
     if ( !result ) throw new Error( `Failed optional check 'FINITE'. Got [${x?.constructor.name||typeof x}]: ${x}` )
 }
-const tc_vec4 = function vec4( x ) {
+const tc_vec4 = function( x ) {
     tc_FINITE( x )
     const result = (x => x instanceof vec4)(x)
     if ( !result ) throw new TypeError( `Expected Type 'vec4', got [${x?.constructor.name||typeof x}]: ${x}` )
@@ -19,7 +19,7 @@ const tc_FINITE0 = function( x ) {
     const result = (x => isFinite( x ))(x)
     if ( !result ) throw new Error( `Failed optional check 'FINITE'. Got [${x?.constructor.name||typeof x}]: ${x}` )
 }
-const tc_number0 = function number( x ) {
+const tc_number0 = function( x ) {
     tc_NAN( x )
     tc_FINITE0( x )
     const result = (x => typeof x === "number")(x)
@@ -29,7 +29,7 @@ const tc_FINITE1 = function( x ) {
     const result = (x => [0, 1].every( i => isFinite( x[i] ) ))(x)
     if ( !result ) throw new Error( `Failed optional check 'FINITE'. Got [${x?.constructor.name||typeof x}]: ${x}` )
 }
-const tc_vec2Like = function vec2Like( x ) {
+const tc_vec2Like = function( x ) {
     tc_FINITE1( x )
     const result = (x => [0, 1].every( i => typeof x[i] === "number" ))(x)
     if ( !result ) throw new TypeError( `Expected Type 'vec2Like', got [${x?.constructor.name||typeof x}]: ${x}` )
@@ -38,7 +38,7 @@ const tc_FINITE2 = function( x ) {
     const result = (x => [0, 1, 2].every( i => isFinite( x[i] ) ))(x)
     if ( !result ) throw new Error( `Failed optional check 'FINITE'. Got [${x?.constructor.name||typeof x}]: ${x}` )
 }
-const tc_vec3Like = function vec3Like( x ) {
+const tc_vec3Like = function( x ) {
     tc_FINITE2( x )
     const result = (x => [0, 1, 2].every( i => typeof x[i] === "number" ))(x)
     if ( !result ) throw new TypeError( `Expected Type 'vec3Like', got [${x?.constructor.name||typeof x}]: ${x}` )
@@ -47,21 +47,26 @@ const tc_FINITE3 = function( x ) {
     const result = (x => [0, 1, 2, 3].every( i => isFinite( x[i] ) ))(x)
     if ( !result ) throw new Error( `Failed optional check 'FINITE'. Got [${x?.constructor.name||typeof x}]: ${x}` )
 }
-const tc_vec4Like = function vec4Like( x ) {
+const tc_vec4Like = function( x ) {
     tc_FINITE3( x )
     const result = (x => [0, 1, 2, 3].every( i => typeof x[i] === "number" ))(x)
     if ( !result ) throw new TypeError( `Expected Type 'vec4Like', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
-const tc_numbervec4Like = function numbervec4Like( x ) {
-    const result = ((x => typeof x === "number")(x) || (x => [0, 1, 2, 3].every( i => typeof x[i] === "number" ))(x))(x)
+const tc_numbervec4Like = function( x ) {
+    const result = (x => (x => typeof x === "number")(x) || (x => [0, 1, 2, 3].every( i => typeof x[i] === "number" ))(x))(x)
     if ( !result ) throw new TypeError( `Expected Type 'number|vec4Like', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
-const tc_vec43 = function vec4( x ) {
-    const result = ((x => x instanceof vec4)(x) || (x => x === undefined)(x))(x)
+const tc_vec43 = function( x ) {
+    const result = (x => (x => x instanceof vec4)(x) || (x => x === undefined)(x))(x)
     if ( !result ) throw new TypeError( `Expected Type 'vec4', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
-const tc_mat4Like = function mat4Like( x ) {
-    const result = (x => Array.from( { length: 4 ** 2 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ))(x)
+const tc_FINITE4 = function( x ) {
+    const result = (x => Array.from( { length: 4 ** 2 } ).every( ( _, i ) => isFinite( x[i] ) ))(x)
+    if ( !result ) throw new Error( `Failed optional check 'FINITE'. Got [${x?.constructor.name||typeof x}]: ${x}` )
+}
+const tc_mat4Like = function( x ) {
+    tc_FINITE4( x )
+    const result = (x => Array.from( { length: 4 ** 2 } ).every( ( _, i ) => typeof x[i] === "number" ))(x)
     if ( !result ) throw new TypeError( `Expected Type 'mat4Like', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
 

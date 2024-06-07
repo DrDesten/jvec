@@ -78,7 +78,7 @@ export class Type {
             return this._generatedChecks = checks
         } else if ( this.subtypes ) {
             const checks = {}
-            const typeCheck = `(${this.subtypes.map( t => t.generateChecks().type[0] ).join( " || " )})(x)`
+            const typeCheck = `(x => ${this.subtypes.map( t => t.generateChecks().type[0] ).join( " || " )})(x)`
             checks.type = [typeCheck, this.generateTypeError()]
             return this._generatedChecks = checks
         }
@@ -87,7 +87,7 @@ export class Type {
     generateTypeCheckFunction( injections ) {
         const checks = this.generateChecks()
         return [
-            `function ${this.name.replace( /\W+/g, "" )}( x ) {`,
+            `function( x ) {`,
             ...injections.map( injection => "    " + injection ),
             `    const result = ${checks.type[0]}`,
             `    if ( !result ) throw ${checks.type[1]}`,
