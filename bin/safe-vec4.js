@@ -15,33 +15,48 @@ const tc_NAN = function( x ) {
     const result = (x => !isNaN( x ))(x)
     if ( !result ) throw new Error( `Failed optional check 'NAN'. Got [${x?.constructor.name||typeof x}]: ${x}` )
 }
-const tc_FINITEz = function( x ) {
+const tc_FINITE0 = function( x ) {
     const result = (x => isFinite( x ))(x)
     if ( !result ) throw new Error( `Failed optional check 'FINITE'. Got [${x?.constructor.name||typeof x}]: ${x}` )
 }
-const tc_numberf = function number( x ) {
+const tc_number0 = function number( x ) {
     tc_NAN( x )
-    tc_FINITEz( x )
+    tc_FINITE0( x )
     const result = (x => typeof x === "number")(x)
     if ( !result ) throw new TypeError( `Expected Type 'number', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
+const tc_FINITE1 = function( x ) {
+    const result = (x => [0, 1].every( i => isFinite( x[i] ) ))(x)
+    if ( !result ) throw new Error( `Failed optional check 'FINITE'. Got [${x?.constructor.name||typeof x}]: ${x}` )
+}
 const tc_vec2Like = function vec2Like( x ) {
-    const result = (x => Array.from( { length: 2 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ))(x)
+    tc_FINITE1( x )
+    const result = (x => [0, 1].every( i => typeof x[i] === "number" ))(x)
     if ( !result ) throw new TypeError( `Expected Type 'vec2Like', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
+const tc_FINITE2 = function( x ) {
+    const result = (x => [0, 1, 2].every( i => isFinite( x[i] ) ))(x)
+    if ( !result ) throw new Error( `Failed optional check 'FINITE'. Got [${x?.constructor.name||typeof x}]: ${x}` )
+}
 const tc_vec3Like = function vec3Like( x ) {
-    const result = (x => Array.from( { length: 3 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ))(x)
+    tc_FINITE2( x )
+    const result = (x => [0, 1, 2].every( i => typeof x[i] === "number" ))(x)
     if ( !result ) throw new TypeError( `Expected Type 'vec3Like', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
+const tc_FINITE3 = function( x ) {
+    const result = (x => [0, 1, 2, 3].every( i => isFinite( x[i] ) ))(x)
+    if ( !result ) throw new Error( `Failed optional check 'FINITE'. Got [${x?.constructor.name||typeof x}]: ${x}` )
+}
 const tc_vec4Like = function vec4Like( x ) {
-    const result = (x => Array.from( { length: 4 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ))(x)
+    tc_FINITE3( x )
+    const result = (x => [0, 1, 2, 3].every( i => typeof x[i] === "number" ))(x)
     if ( !result ) throw new TypeError( `Expected Type 'vec4Like', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
 const tc_numbervec4Like = function numbervec4Like( x ) {
-    const result = ((x => typeof x === "number")(x) || (x => Array.from( { length: 4 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ))(x))(x)
+    const result = ((x => typeof x === "number")(x) || (x => [0, 1, 2, 3].every( i => typeof x[i] === "number" ))(x))(x)
     if ( !result ) throw new TypeError( `Expected Type 'number|vec4Like', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
-const tc_vec4b = function vec4( x ) {
+const tc_vec43 = function vec4( x ) {
     const result = ((x => x instanceof vec4)(x) || (x => x === undefined)(x))(x)
     if ( !result ) throw new TypeError( `Expected Type 'vec4', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
@@ -164,35 +179,35 @@ export class vec4 {
     /** @returns {number} */
     get x() { let tc_return; tc_return = this[0]; return tc_return }
     /** @param {number} s */
-    set x( s ) { let tc_return; tc_numberf( s ); this[0] = s; return tc_return }
+    set x( s ) { let tc_return; tc_number0( s ); this[0] = s; return tc_return }
     /** @returns {number} */
     get r() { let tc_return; tc_return = this[0]; return tc_return }
     /** @param {number} s */
-    set r( s ) { let tc_return; tc_numberf( s ); this[0] = s; return tc_return }
+    set r( s ) { let tc_return; tc_number0( s ); this[0] = s; return tc_return }
     /** @returns {number} */
     get y() { let tc_return; tc_return = this[1]; return tc_return }
     /** @param {number} s */
-    set y( s ) { let tc_return; tc_numberf( s ); this[1] = s; return tc_return }
+    set y( s ) { let tc_return; tc_number0( s ); this[1] = s; return tc_return }
     /** @returns {number} */
     get g() { let tc_return; tc_return = this[1]; return tc_return }
     /** @param {number} s */
-    set g( s ) { let tc_return; tc_numberf( s ); this[1] = s; return tc_return }
+    set g( s ) { let tc_return; tc_number0( s ); this[1] = s; return tc_return }
     /** @returns {number} */
     get z() { let tc_return; tc_return = this[2]; return tc_return }
     /** @param {number} s */
-    set z( s ) { let tc_return; tc_numberf( s ); this[2] = s; return tc_return }
+    set z( s ) { let tc_return; tc_number0( s ); this[2] = s; return tc_return }
     /** @returns {number} */
     get b() { let tc_return; tc_return = this[2]; return tc_return }
     /** @param {number} s */
-    set b( s ) { let tc_return; tc_numberf( s ); this[2] = s; return tc_return }
+    set b( s ) { let tc_return; tc_number0( s ); this[2] = s; return tc_return }
     /** @returns {number} */
     get w() { let tc_return; tc_return = this[3]; return tc_return }
     /** @param {number} s */
-    set w( s ) { let tc_return; tc_numberf( s ); this[3] = s; return tc_return }
+    set w( s ) { let tc_return; tc_number0( s ); this[3] = s; return tc_return }
     /** @returns {number} */
     get a() { let tc_return; tc_return = this[3]; return tc_return }
     /** @param {number} s */
-    set a( s ) { let tc_return; tc_numberf( s ); this[3] = s; return tc_return }
+    set a( s ) { let tc_return; tc_number0( s ); this[3] = s; return tc_return }
     /** @returns {vec2} */
     get xx() { let tc_return; tc_return = new vec2( this[0], this[0] ); return tc_return }
     /** @returns {vec2} */
@@ -1939,7 +1954,7 @@ export class vec4 {
         let tc_return
         tc_vec4Like( v1 )
         tc_vec4Like( v2 )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = +( v1[0] > v2[0] )
         target[1] = +( v1[1] > v2[1] )
         target[2] = +( v1[2] > v2[2] )
@@ -1967,7 +1982,7 @@ export class vec4 {
         let tc_return
         tc_vec4Like( v1 )
         tc_vec4Like( v2 )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = +( v1[0] >= v2[0] )
         target[1] = +( v1[1] >= v2[1] )
         target[2] = +( v1[2] >= v2[2] )
@@ -1995,7 +2010,7 @@ export class vec4 {
         let tc_return
         tc_vec4Like( v1 )
         tc_vec4Like( v2 )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = +( v1[0] < v2[0] )
         target[1] = +( v1[1] < v2[1] )
         target[2] = +( v1[2] < v2[2] )
@@ -2023,7 +2038,7 @@ export class vec4 {
         let tc_return
         tc_vec4Like( v1 )
         tc_vec4Like( v2 )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = +( v1[0] <= v2[0] )
         target[1] = +( v1[1] <= v2[1] )
         target[2] = +( v1[2] <= v2[2] )
@@ -2051,7 +2066,7 @@ export class vec4 {
         let tc_return
         tc_vec4Like( v1 )
         tc_vec4Like( v2 )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = +( v1[0] === v2[0] )
         target[1] = +( v1[1] === v2[1] )
         target[2] = +( v1[2] === v2[2] )
@@ -2079,7 +2094,7 @@ export class vec4 {
         let tc_return
         tc_vec4Like( v1 )
         tc_vec4Like( v2 )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = +( v1[0] !== v2[0] )
         target[1] = +( v1[1] !== v2[1] )
         target[2] = +( v1[2] !== v2[2] )
@@ -2105,7 +2120,7 @@ export class vec4 {
     static not( v, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = +!v[0]
         target[1] = +!v[1]
         target[2] = +!v[2]
@@ -2131,7 +2146,7 @@ export class vec4 {
     static isinf( v, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = +( v[0] === -Infinity || v[0] === Infinity )
         target[1] = +( v[1] === -Infinity || v[1] === Infinity )
         target[2] = +( v[2] === -Infinity || v[2] === Infinity )
@@ -2157,7 +2172,7 @@ export class vec4 {
     static isnan( v, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = +( v[0] !== v[0] )
         target[1] = +( v[1] !== v[1] )
         target[2] = +( v[2] !== v[2] )
@@ -2185,7 +2200,7 @@ export class vec4 {
         let tc_return
         tc_vec4Like( v )
         tc_numbervec4Like( x )
-        tc_vec4b( target )
+        tc_vec43( target )
         tc_return = typeof x === "number" ? vec4.sadd( v, x, target ) : vec4.vadd( v, x, target )
         tc_vec4( tc_return )
         return tc_return
@@ -2194,7 +2209,7 @@ export class vec4 {
     /** @param {number} s @returns {vec4} */
     sadd( s ) {
         let tc_return
-        tc_numberf( s )
+        tc_number0( s )
         this[0] += s
         this[1] += s
         this[2] += s
@@ -2208,8 +2223,8 @@ export class vec4 {
     static sadd( v, s, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_numberf( s )
-        tc_vec4b( target )
+        tc_number0( s )
+        tc_vec43( target )
         target[0] = v[0] + s
         target[1] = v[1] + s
         target[2] = v[2] + s
@@ -2237,7 +2252,7 @@ export class vec4 {
         let tc_return
         tc_vec4Like( v1 )
         tc_vec4Like( v2 )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = v1[0] + v2[0]
         target[1] = v1[1] + v2[1]
         target[2] = v1[2] + v2[2]
@@ -2261,7 +2276,7 @@ export class vec4 {
         let tc_return
         tc_vec4Like( v )
         tc_numbervec4Like( x )
-        tc_vec4b( target )
+        tc_vec43( target )
         tc_return = typeof x === "number" ? vec4.ssub( v, x, target ) : vec4.vsub( v, x, target )
         tc_vec4( tc_return )
         return tc_return
@@ -2270,7 +2285,7 @@ export class vec4 {
     /** @param {number} s @returns {vec4} */
     ssub( s ) {
         let tc_return
-        tc_numberf( s )
+        tc_number0( s )
         this[0] -= s
         this[1] -= s
         this[2] -= s
@@ -2284,8 +2299,8 @@ export class vec4 {
     static ssub( v, s, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_numberf( s )
-        tc_vec4b( target )
+        tc_number0( s )
+        tc_vec43( target )
         target[0] = v[0] - s
         target[1] = v[1] - s
         target[2] = v[2] - s
@@ -2313,7 +2328,7 @@ export class vec4 {
         let tc_return
         tc_vec4Like( v1 )
         tc_vec4Like( v2 )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = v1[0] - v2[0]
         target[1] = v1[1] - v2[1]
         target[2] = v1[2] - v2[2]
@@ -2337,7 +2352,7 @@ export class vec4 {
         let tc_return
         tc_vec4Like( v )
         tc_numbervec4Like( x )
-        tc_vec4b( target )
+        tc_vec43( target )
         tc_return = typeof x === "number" ? vec4.smul( v, x, target ) : vec4.vmul( v, x, target )
         tc_vec4( tc_return )
         return tc_return
@@ -2346,7 +2361,7 @@ export class vec4 {
     /** @param {number} s @returns {vec4} */
     smul( s ) {
         let tc_return
-        tc_numberf( s )
+        tc_number0( s )
         this[0] *= s
         this[1] *= s
         this[2] *= s
@@ -2360,8 +2375,8 @@ export class vec4 {
     static smul( v, s, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_numberf( s )
-        tc_vec4b( target )
+        tc_number0( s )
+        tc_vec43( target )
         target[0] = v[0] * s
         target[1] = v[1] * s
         target[2] = v[2] * s
@@ -2389,7 +2404,7 @@ export class vec4 {
         let tc_return
         tc_vec4Like( v1 )
         tc_vec4Like( v2 )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = v1[0] * v2[0]
         target[1] = v1[1] * v2[1]
         target[2] = v1[2] * v2[2]
@@ -2413,7 +2428,7 @@ export class vec4 {
         let tc_return
         tc_vec4Like( v )
         tc_numbervec4Like( x )
-        tc_vec4b( target )
+        tc_vec43( target )
         tc_return = typeof x === "number" ? vec4.sdiv( v, x, target ) : vec4.vdiv( v, x, target )
         tc_vec4( tc_return )
         return tc_return
@@ -2422,7 +2437,7 @@ export class vec4 {
     /** @param {number} s @returns {vec4} */
     sdiv( s ) {
         let tc_return
-        tc_numberf( s )
+        tc_number0( s )
         this[0] /= s
         this[1] /= s
         this[2] /= s
@@ -2436,8 +2451,8 @@ export class vec4 {
     static sdiv( v, s, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_numberf( s )
-        tc_vec4b( target )
+        tc_number0( s )
+        tc_vec43( target )
         target[0] = v[0] / s
         target[1] = v[1] / s
         target[2] = v[2] / s
@@ -2465,7 +2480,7 @@ export class vec4 {
         let tc_return
         tc_vec4Like( v1 )
         tc_vec4Like( v2 )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = v1[0] / v2[0]
         target[1] = v1[1] / v2[1]
         target[2] = v1[2] / v2[2]
@@ -2489,7 +2504,7 @@ export class vec4 {
         let tc_return
         tc_vec4Like( v )
         tc_numbervec4Like( x )
-        tc_vec4b( target )
+        tc_vec43( target )
         tc_return = typeof x === "number" ? vec4.srem( v, x, target ) : vec4.vrem( v, x, target )
         tc_vec4( tc_return )
         return tc_return
@@ -2498,7 +2513,7 @@ export class vec4 {
     /** @param {number} s @returns {vec4} */
     srem( s ) {
         let tc_return
-        tc_numberf( s )
+        tc_number0( s )
         this[0] %= s
         this[1] %= s
         this[2] %= s
@@ -2512,8 +2527,8 @@ export class vec4 {
     static srem( v, s, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_numberf( s )
-        tc_vec4b( target )
+        tc_number0( s )
+        tc_vec43( target )
         target[0] = v[0] % s
         target[1] = v[1] % s
         target[2] = v[2] % s
@@ -2541,7 +2556,7 @@ export class vec4 {
         let tc_return
         tc_vec4Like( v1 )
         tc_vec4Like( v2 )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = v1[0] % v2[0]
         target[1] = v1[1] % v2[1]
         target[2] = v1[2] % v2[2]
@@ -2565,7 +2580,7 @@ export class vec4 {
         let tc_return
         tc_vec4Like( v )
         tc_numbervec4Like( x )
-        tc_vec4b( target )
+        tc_vec43( target )
         tc_return = typeof x === "number" ? vec4.spow( v, x, target ) : vec4.vpow( v, x, target )
         tc_vec4( tc_return )
         return tc_return
@@ -2574,7 +2589,7 @@ export class vec4 {
     /** @param {number} s @returns {vec4} */
     spow( s ) {
         let tc_return
-        tc_numberf( s )
+        tc_number0( s )
         this[0] **= s
         this[1] **= s
         this[2] **= s
@@ -2588,8 +2603,8 @@ export class vec4 {
     static spow( v, s, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_numberf( s )
-        tc_vec4b( target )
+        tc_number0( s )
+        tc_vec43( target )
         target[0] = v[0] ** s
         target[1] = v[1] ** s
         target[2] = v[2] ** s
@@ -2617,7 +2632,7 @@ export class vec4 {
         let tc_return
         tc_vec4Like( v1 )
         tc_vec4Like( v2 )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = v1[0] ** v2[0]
         target[1] = v1[1] ** v2[1]
         target[2] = v1[2] ** v2[2]
@@ -2645,7 +2660,7 @@ export class vec4 {
         tc_vec4Like( v )
         tc_numbervec4Like( m )
         tc_numbervec4Like( a )
-        tc_vec4b( target )
+        tc_vec43( target )
         tc_return = typeof m === "number"
             ? ( typeof a === "number" ? vec4.sfma( v, m, a, target ) : vec4.svfma( v, m, a, target ) )
             : ( typeof a === "number" ? vec4.vsfma( v, m, a, target ) : vec4.vfma( v, m, a, target ) )
@@ -2669,7 +2684,7 @@ export class vec4 {
     static sfma( v, m, a, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = v[0] * m + a
         target[1] = v[1] * m + a
         target[2] = v[2] * m + a
@@ -2697,7 +2712,7 @@ export class vec4 {
         let tc_return
         tc_vec4Like( v )
         tc_vec4Like( a )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = v[0] * m + a[0]
         target[1] = v[1] * m + a[1]
         target[2] = v[2] * m + a[2]
@@ -2725,7 +2740,7 @@ export class vec4 {
         let tc_return
         tc_vec4Like( v )
         tc_vec4Like( m )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = v[0] * m[0] + a
         target[1] = v[1] * m[1] + a
         target[2] = v[2] * m[2] + a
@@ -2755,7 +2770,7 @@ export class vec4 {
         tc_vec4Like( v )
         tc_vec4Like( m )
         tc_vec4Like( a )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = v[0] * m[0] + a[0]
         target[1] = v[1] * m[1] + a[1]
         target[2] = v[2] * m[2] + a[2]
@@ -2787,7 +2802,7 @@ export class vec4 {
         let tc_return
         tc_vec4Like( v )
         tc_mat4Like( m )
-        tc_vec4b( target )
+        tc_vec43( target )
         const c0 = v[0]
         const c1 = v[1]
         const c2 = v[2]
@@ -2817,7 +2832,7 @@ export class vec4 {
     static apply( v, fn, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = fn( v[0], 0 )
         target[1] = fn( v[1], 1 )
         target[2] = fn( v[2], 2 )
@@ -2903,7 +2918,7 @@ export class vec4 {
     static abs( v, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = Math.abs( v[0] )
         target[1] = Math.abs( v[1] )
         target[2] = Math.abs( v[2] )
@@ -2917,7 +2932,7 @@ export class vec4 {
     static acos( v, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = Math.acos( v[0] )
         target[1] = Math.acos( v[1] )
         target[2] = Math.acos( v[2] )
@@ -2931,7 +2946,7 @@ export class vec4 {
     static acosh( v, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = Math.acosh( v[0] )
         target[1] = Math.acosh( v[1] )
         target[2] = Math.acosh( v[2] )
@@ -2945,7 +2960,7 @@ export class vec4 {
     static asin( v, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = Math.asin( v[0] )
         target[1] = Math.asin( v[1] )
         target[2] = Math.asin( v[2] )
@@ -2959,7 +2974,7 @@ export class vec4 {
     static asinh( v, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = Math.asinh( v[0] )
         target[1] = Math.asinh( v[1] )
         target[2] = Math.asinh( v[2] )
@@ -2973,7 +2988,7 @@ export class vec4 {
     static atan( v, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = Math.atan( v[0] )
         target[1] = Math.atan( v[1] )
         target[2] = Math.atan( v[2] )
@@ -2987,7 +3002,7 @@ export class vec4 {
     static atanh( v, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = Math.atanh( v[0] )
         target[1] = Math.atanh( v[1] )
         target[2] = Math.atanh( v[2] )
@@ -3001,7 +3016,7 @@ export class vec4 {
     static ceil( v, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = Math.ceil( v[0] )
         target[1] = Math.ceil( v[1] )
         target[2] = Math.ceil( v[2] )
@@ -3015,7 +3030,7 @@ export class vec4 {
     static cbrt( v, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = Math.cbrt( v[0] )
         target[1] = Math.cbrt( v[1] )
         target[2] = Math.cbrt( v[2] )
@@ -3029,7 +3044,7 @@ export class vec4 {
     static expm1( v, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = Math.expm1( v[0] )
         target[1] = Math.expm1( v[1] )
         target[2] = Math.expm1( v[2] )
@@ -3043,7 +3058,7 @@ export class vec4 {
     static cos( v, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = Math.cos( v[0] )
         target[1] = Math.cos( v[1] )
         target[2] = Math.cos( v[2] )
@@ -3057,7 +3072,7 @@ export class vec4 {
     static cosh( v, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = Math.cosh( v[0] )
         target[1] = Math.cosh( v[1] )
         target[2] = Math.cosh( v[2] )
@@ -3071,7 +3086,7 @@ export class vec4 {
     static exp( v, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = Math.exp( v[0] )
         target[1] = Math.exp( v[1] )
         target[2] = Math.exp( v[2] )
@@ -3085,7 +3100,7 @@ export class vec4 {
     static floor( v, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = Math.floor( v[0] )
         target[1] = Math.floor( v[1] )
         target[2] = Math.floor( v[2] )
@@ -3099,7 +3114,7 @@ export class vec4 {
     static log( v, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = Math.log( v[0] )
         target[1] = Math.log( v[1] )
         target[2] = Math.log( v[2] )
@@ -3113,7 +3128,7 @@ export class vec4 {
     static log1p( v, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = Math.log1p( v[0] )
         target[1] = Math.log1p( v[1] )
         target[2] = Math.log1p( v[2] )
@@ -3127,7 +3142,7 @@ export class vec4 {
     static log2( v, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = Math.log2( v[0] )
         target[1] = Math.log2( v[1] )
         target[2] = Math.log2( v[2] )
@@ -3141,7 +3156,7 @@ export class vec4 {
     static log10( v, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = Math.log10( v[0] )
         target[1] = Math.log10( v[1] )
         target[2] = Math.log10( v[2] )
@@ -3155,7 +3170,7 @@ export class vec4 {
     static round( v, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = Math.round( v[0] )
         target[1] = Math.round( v[1] )
         target[2] = Math.round( v[2] )
@@ -3169,7 +3184,7 @@ export class vec4 {
     static sign( v, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = Math.sign( v[0] )
         target[1] = Math.sign( v[1] )
         target[2] = Math.sign( v[2] )
@@ -3183,7 +3198,7 @@ export class vec4 {
     static sin( v, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = Math.sin( v[0] )
         target[1] = Math.sin( v[1] )
         target[2] = Math.sin( v[2] )
@@ -3197,7 +3212,7 @@ export class vec4 {
     static sinh( v, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = Math.sinh( v[0] )
         target[1] = Math.sinh( v[1] )
         target[2] = Math.sinh( v[2] )
@@ -3211,7 +3226,7 @@ export class vec4 {
     static sqrt( v, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = Math.sqrt( v[0] )
         target[1] = Math.sqrt( v[1] )
         target[2] = Math.sqrt( v[2] )
@@ -3225,7 +3240,7 @@ export class vec4 {
     static tan( v, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = Math.tan( v[0] )
         target[1] = Math.tan( v[1] )
         target[2] = Math.tan( v[2] )
@@ -3239,7 +3254,7 @@ export class vec4 {
     static tanh( v, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = Math.tanh( v[0] )
         target[1] = Math.tanh( v[1] )
         target[2] = Math.tanh( v[2] )
@@ -3253,7 +3268,7 @@ export class vec4 {
     static trunc( v, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = Math.trunc( v[0] )
         target[1] = Math.trunc( v[1] )
         target[2] = Math.trunc( v[2] )
@@ -3319,7 +3334,7 @@ export class vec4 {
         let tc_return
         tc_vec4Like( from )
         tc_vec4Like( to )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = to[0] - from[0]
         target[1] = to[1] - from[1]
         target[2] = to[2] - from[2]
@@ -3346,7 +3361,7 @@ export class vec4 {
     static normalize( v, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_vec4b( target )
+        tc_vec43( target )
         const factor = 1 / Math.sqrt( v[0] * v[0] + v[1] * v[1] + v[2] * v[2] + v[3] * v[3] )
         target[0] = v[0] * factor
         target[1] = v[1] * factor
@@ -3360,7 +3375,7 @@ export class vec4 {
     /** @param {number} s @returns {vec4} */
     setLength( s ) {
         let tc_return
-        tc_numberf( s )
+        tc_number0( s )
         const factor = s / Math.sqrt( this[0] * this[0] + this[1] * this[1] + this[2] * this[2] + this[3] * this[3] )
         this[0] *= factor
         this[1] *= factor
@@ -3375,8 +3390,8 @@ export class vec4 {
     static setLength( v, s, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_numberf( s )
-        tc_vec4b( target )
+        tc_number0( s )
+        tc_vec43( target )
         const factor = s / Math.sqrt( v[0] * v[0] + v[1] * v[1] + v[2] * v[2] + v[3] * v[3] )
         target[0] = v[0] * factor
         target[1] = v[1] * factor
@@ -3466,7 +3481,7 @@ export class vec4 {
         tc_vec4Like( v )
         tc_numbervec4Like( min )
         tc_numbervec4Like( max )
-        tc_vec4b( target )
+        tc_vec43( target )
         tc_return = typeof min === "number"
             ? ( typeof max === "number" ? vec4.sclamp( v, min, max, target ) : vec4.svclamp( v, min, max, target ) )
             : ( typeof max === "number" ? vec4.vsclamp( v, min, max, target ) : vec4.vclamp( v, min, max, target ) )
@@ -3478,9 +3493,9 @@ export class vec4 {
     static sclamp( v, min, max, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_numberf( min )
-        tc_numberf( max )
-        tc_vec4b( target )
+        tc_number0( min )
+        tc_number0( max )
+        tc_vec43( target )
         target[0] = Math.min( Math.max( v[0], min ), max )
         target[1] = Math.min( Math.max( v[1], min ), max )
         target[2] = Math.min( Math.max( v[2], min ), max )
@@ -3494,9 +3509,9 @@ export class vec4 {
     static svclamp( v, min, max, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_numberf( min )
+        tc_number0( min )
         tc_vec4Like( max )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = Math.min( Math.max( v[0], min ), max[0] )
         target[1] = Math.min( Math.max( v[1], min ), max[1] )
         target[2] = Math.min( Math.max( v[2], min ), max[2] )
@@ -3511,8 +3526,8 @@ export class vec4 {
         let tc_return
         tc_vec4Like( v )
         tc_vec4Like( min )
-        tc_numberf( max )
-        tc_vec4b( target )
+        tc_number0( max )
+        tc_vec43( target )
         target[0] = Math.min( Math.max( v[0], min[0] ), max )
         target[1] = Math.min( Math.max( v[1], min[1] ), max )
         target[2] = Math.min( Math.max( v[2], min[2] ), max )
@@ -3528,7 +3543,7 @@ export class vec4 {
         tc_vec4Like( v )
         tc_vec4Like( min )
         tc_vec4Like( max )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = Math.min( Math.max( v[0], min[0] ), max[0] )
         target[1] = Math.min( Math.max( v[1], min[1] ), max[1] )
         target[2] = Math.min( Math.max( v[2], min[2] ), max[2] )
@@ -3542,7 +3557,7 @@ export class vec4 {
     static saturate( v, target = new vec4 ) {
         let tc_return
         tc_vec4Like( v )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = Math.min( Math.max( v[0], 0 ), 1 )
         target[1] = Math.min( Math.max( v[1], 0 ), 1 )
         target[2] = Math.min( Math.max( v[2], 0 ), 1 )
@@ -3557,7 +3572,7 @@ export class vec4 {
         let tc_return
         tc_vec4Like( v1 )
         tc_vec4Like( v2 )
-        tc_vec4b( target )
+        tc_vec43( target )
         target[0] = v1[0] * ( 1 - t ) + v2[0] * t
         target[1] = v1[1] * ( 1 - t ) + v2[1] * t
         target[2] = v1[2] * ( 1 - t ) + v2[2] * t

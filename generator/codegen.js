@@ -303,6 +303,8 @@ export class FileBuilder {
         this.identifierMap = new Map
         /** @type {string[]} */
         this.declarations = []
+
+        this.appendix = 0
     }
 
 
@@ -313,8 +315,12 @@ export class FileBuilder {
             used: true,
         }
         let identifier = proposedIdentifier
+        if ( this.identifiers.has( identifier ) ) {
+            identifier = proposedIdentifier + this.appendix.toString( 36 )
+        }
         while ( this.identifiers.has( identifier ) ) {
-            identifier += Math.floor( Math.random() * 36 ).toString( 36 )
+            this.appendix++
+            identifier = proposedIdentifier + this.appendix.toString( 36 )
         }
         this.identifiers.add( identifier )
         this.identifierMap.set( key, identifier )
@@ -340,7 +346,7 @@ export class FileBuilder {
     /** @param {(string|Fn)[]} elements @param {boolean} [typecheck=false] */
     buildFile( elements, typecheck = false ) {
         elements = elements.flat( Infinity )
-        let classDecl = ""
+        let file = ""
 
         if ( typecheck ) {
             for ( const element of elements ) {
@@ -348,19 +354,19 @@ export class FileBuilder {
                     element.tc( this )
                 }
             }
-            classDecl += this.declarations.join( "\n" ) + "\n\n"
+            file += this.declarations.join( "\n" ) + "\n\n"
         }
 
         for ( const [i, element] of elements.entries() ) {
             if ( element instanceof Fn ) {
-                classDecl += element.decl()
+                file += element.decl()
                 element.opts.compact && elements[i + 1]?.opts?.compact
-                    ? classDecl += "\n" : classDecl += "\n\n"
+                    ? file += "\n" : file += "\n\n"
             } else {
-                classDecl += element + "\n\n"
+                file += element + "\n\n"
             }
         }
 
-        return classDecl.trimEnd()
+        return file.trimEnd()
     }
 }

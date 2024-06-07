@@ -20,9 +20,9 @@ const VECTOR_TYPES = {
     "4": new Type( "vec4", x => x instanceof vec4, { FINITE: x => [...x].every( isFinite ) } ),
 }
 const VECTORLIKE_TYPES = {
-    "2": new Type( "vec2Like", x => Array.from( { length: 2 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) ),
-    "3": new Type( "vec3Like", x => Array.from( { length: 3 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) ),
-    "4": new Type( "vec4Like", x => Array.from( { length: 4 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) ),
+    "2": new Type( "vec2Like", x => [0, 1].every( i => typeof x[i] === "number" ), { FINITE: x => [0, 1].every( i => isFinite( x[i] ) ) } ),
+    "3": new Type( "vec3Like", x => [0, 1, 2].every( i => typeof x[i] === "number" ), { FINITE: x => [0, 1, 2].every( i => isFinite( x[i] ) ) } ),
+    "4": new Type( "vec4Like", x => [0, 1, 2, 3].every( i => typeof x[i] === "number" ), { FINITE: x => [0, 1, 2, 3].every( i => isFinite( x[i] ) ) } ),
 }
 const VECTORLIKE_OR_NUMBER_TYPES = {
     "2": new Type( [NUMBER_TYPE, VECTORLIKE_TYPES[2]] ),
