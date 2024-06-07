@@ -568,8 +568,8 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
         function clamp() {
             const pMin = new Fn.Param( "min", TYPELIKE_OR_NUM )
             const pMax = new Fn.Param( "max", TYPELIKE_OR_NUM )
-            const pSMin = new Fn.Param( "min", "number" )
-            const pSMax = new Fn.Param( "max", "number" )
+            const pSMin = new Fn.Param( "min", NUMBER_TYPE )
+            const pSMax = new Fn.Param( "max", NUMBER_TYPE )
             const pVMin = new Fn.Param( "min", TYPELIKE )
             const pVMax = new Fn.Param( "max", TYPELIKE )
 

@@ -26,9 +26,9 @@ export class vec4 {
 
     /**
      * @param {number|vec4Like|{x: number, y: number, z: number, w: number}|{r: number, g: number, b: number, a: number}} [object=0]
-     * @param {number|undefined} [y]
-     * @param {number|undefined} [z]
-     * @param {number|undefined} [w]
+     * @param {number} [y]
+     * @param {number} [z]
+     * @param {number} [w]
      */
     constructor( object = 0, y, z, w ) {
         if ( typeof object === "number" )
@@ -50,7 +50,7 @@ export class vec4 {
         this[3]
     }
 
-    /** @param {ArrayLike<number>} array @param {number|undefined} [index=0] @param {number|undefined} [stride=1] @returns {vec4} */
+    /** @param {ArrayLike<number>} array @param {number} [index=0] @param {number} [stride=1] @returns {vec4} */
     static fromArray( array, index = 0, stride = 1 ) {
         return new vec4( array[0 * stride + index], array[1 * stride + index], array[2 * stride + index], array[3 * stride + index] )
     }
@@ -1820,7 +1820,7 @@ export class vec4 {
         return this
     }
 
-    /** @param {vec4Like} v1 @param {vec4Like} v2 @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v1 @param {vec4Like} v2 @param {vec4} [target=new vec4] @returns {vec4} */
     static greaterThan( v1, v2, target = new vec4 ) {
         target[0] = +( v1[0] > v2[0] )
         target[1] = +( v1[1] > v2[1] )
@@ -1838,7 +1838,7 @@ export class vec4 {
         return this
     }
 
-    /** @param {vec4Like} v1 @param {vec4Like} v2 @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v1 @param {vec4Like} v2 @param {vec4} [target=new vec4] @returns {vec4} */
     static greaterThanEqual( v1, v2, target = new vec4 ) {
         target[0] = +( v1[0] >= v2[0] )
         target[1] = +( v1[1] >= v2[1] )
@@ -1856,7 +1856,7 @@ export class vec4 {
         return this
     }
 
-    /** @param {vec4Like} v1 @param {vec4Like} v2 @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v1 @param {vec4Like} v2 @param {vec4} [target=new vec4] @returns {vec4} */
     static lessThan( v1, v2, target = new vec4 ) {
         target[0] = +( v1[0] < v2[0] )
         target[1] = +( v1[1] < v2[1] )
@@ -1874,7 +1874,7 @@ export class vec4 {
         return this
     }
 
-    /** @param {vec4Like} v1 @param {vec4Like} v2 @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v1 @param {vec4Like} v2 @param {vec4} [target=new vec4] @returns {vec4} */
     static lessThanEqual( v1, v2, target = new vec4 ) {
         target[0] = +( v1[0] <= v2[0] )
         target[1] = +( v1[1] <= v2[1] )
@@ -1892,7 +1892,7 @@ export class vec4 {
         return this
     }
 
-    /** @param {vec4Like} v1 @param {vec4Like} v2 @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v1 @param {vec4Like} v2 @param {vec4} [target=new vec4] @returns {vec4} */
     static equal( v1, v2, target = new vec4 ) {
         target[0] = +( v1[0] === v2[0] )
         target[1] = +( v1[1] === v2[1] )
@@ -1910,7 +1910,7 @@ export class vec4 {
         return this
     }
 
-    /** @param {vec4Like} v1 @param {vec4Like} v2 @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v1 @param {vec4Like} v2 @param {vec4} [target=new vec4] @returns {vec4} */
     static notEqual( v1, v2, target = new vec4 ) {
         target[0] = +( v1[0] !== v2[0] )
         target[1] = +( v1[1] !== v2[1] )
@@ -1928,7 +1928,7 @@ export class vec4 {
         return this
     }
 
-    /** @param {vec4Like} v @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {vec4} [target=new vec4] @returns {vec4} */
     static not( v, target = new vec4 ) {
         target[0] = +!v[0]
         target[1] = +!v[1]
@@ -1946,7 +1946,7 @@ export class vec4 {
         return this
     }
 
-    /** @param {vec4Like} v @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {vec4} [target=new vec4] @returns {vec4} */
     static isinf( v, target = new vec4 ) {
         target[0] = +( v[0] === -Infinity || v[0] === Infinity )
         target[1] = +( v[1] === -Infinity || v[1] === Infinity )
@@ -1964,7 +1964,7 @@ export class vec4 {
         return this
     }
 
-    /** @param {vec4Like} v @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {vec4} [target=new vec4] @returns {vec4} */
     static isnan( v, target = new vec4 ) {
         target[0] = +( v[0] !== v[0] )
         target[1] = +( v[1] !== v[1] )
@@ -1982,7 +1982,7 @@ export class vec4 {
         return typeof x === "number" ? this.sadd( x ) : this.vadd( x )
     }
 
-    /** @param {vec4Like} v @param {number|vec4Like} x @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {number|vec4Like} x @param {vec4} [target=new vec4] @returns {vec4} */
     static add( v, x, target = new vec4 ) {
         return typeof x === "number" ? vec4.sadd( v, x, target ) : vec4.vadd( v, x, target )
     }
@@ -1996,7 +1996,7 @@ export class vec4 {
         return this
     }
 
-    /** @param {vec4Like} v @param {number} s @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {number} s @param {vec4} [target=new vec4] @returns {vec4} */
     static sadd( v, s, target = new vec4 ) {
         target[0] = v[0] + s
         target[1] = v[1] + s
@@ -2014,7 +2014,7 @@ export class vec4 {
         return this
     }
 
-    /** @param {vec4Like} v1 @param {vec4Like} v2 @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v1 @param {vec4Like} v2 @param {vec4} [target=new vec4] @returns {vec4} */
     static vadd( v1, v2, target = new vec4 ) {
         target[0] = v1[0] + v2[0]
         target[1] = v1[1] + v2[1]
@@ -2028,7 +2028,7 @@ export class vec4 {
         return typeof x === "number" ? this.ssub( x ) : this.vsub( x )
     }
 
-    /** @param {vec4Like} v @param {number|vec4Like} x @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {number|vec4Like} x @param {vec4} [target=new vec4] @returns {vec4} */
     static sub( v, x, target = new vec4 ) {
         return typeof x === "number" ? vec4.ssub( v, x, target ) : vec4.vsub( v, x, target )
     }
@@ -2042,7 +2042,7 @@ export class vec4 {
         return this
     }
 
-    /** @param {vec4Like} v @param {number} s @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {number} s @param {vec4} [target=new vec4] @returns {vec4} */
     static ssub( v, s, target = new vec4 ) {
         target[0] = v[0] - s
         target[1] = v[1] - s
@@ -2060,7 +2060,7 @@ export class vec4 {
         return this
     }
 
-    /** @param {vec4Like} v1 @param {vec4Like} v2 @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v1 @param {vec4Like} v2 @param {vec4} [target=new vec4] @returns {vec4} */
     static vsub( v1, v2, target = new vec4 ) {
         target[0] = v1[0] - v2[0]
         target[1] = v1[1] - v2[1]
@@ -2074,7 +2074,7 @@ export class vec4 {
         return typeof x === "number" ? this.smul( x ) : this.vmul( x )
     }
 
-    /** @param {vec4Like} v @param {number|vec4Like} x @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {number|vec4Like} x @param {vec4} [target=new vec4] @returns {vec4} */
     static mul( v, x, target = new vec4 ) {
         return typeof x === "number" ? vec4.smul( v, x, target ) : vec4.vmul( v, x, target )
     }
@@ -2088,7 +2088,7 @@ export class vec4 {
         return this
     }
 
-    /** @param {vec4Like} v @param {number} s @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {number} s @param {vec4} [target=new vec4] @returns {vec4} */
     static smul( v, s, target = new vec4 ) {
         target[0] = v[0] * s
         target[1] = v[1] * s
@@ -2106,7 +2106,7 @@ export class vec4 {
         return this
     }
 
-    /** @param {vec4Like} v1 @param {vec4Like} v2 @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v1 @param {vec4Like} v2 @param {vec4} [target=new vec4] @returns {vec4} */
     static vmul( v1, v2, target = new vec4 ) {
         target[0] = v1[0] * v2[0]
         target[1] = v1[1] * v2[1]
@@ -2120,7 +2120,7 @@ export class vec4 {
         return typeof x === "number" ? this.sdiv( x ) : this.vdiv( x )
     }
 
-    /** @param {vec4Like} v @param {number|vec4Like} x @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {number|vec4Like} x @param {vec4} [target=new vec4] @returns {vec4} */
     static div( v, x, target = new vec4 ) {
         return typeof x === "number" ? vec4.sdiv( v, x, target ) : vec4.vdiv( v, x, target )
     }
@@ -2134,7 +2134,7 @@ export class vec4 {
         return this
     }
 
-    /** @param {vec4Like} v @param {number} s @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {number} s @param {vec4} [target=new vec4] @returns {vec4} */
     static sdiv( v, s, target = new vec4 ) {
         target[0] = v[0] / s
         target[1] = v[1] / s
@@ -2152,7 +2152,7 @@ export class vec4 {
         return this
     }
 
-    /** @param {vec4Like} v1 @param {vec4Like} v2 @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v1 @param {vec4Like} v2 @param {vec4} [target=new vec4] @returns {vec4} */
     static vdiv( v1, v2, target = new vec4 ) {
         target[0] = v1[0] / v2[0]
         target[1] = v1[1] / v2[1]
@@ -2166,7 +2166,7 @@ export class vec4 {
         return typeof x === "number" ? this.srem( x ) : this.vrem( x )
     }
 
-    /** @param {vec4Like} v @param {number|vec4Like} x @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {number|vec4Like} x @param {vec4} [target=new vec4] @returns {vec4} */
     static rem( v, x, target = new vec4 ) {
         return typeof x === "number" ? vec4.srem( v, x, target ) : vec4.vrem( v, x, target )
     }
@@ -2180,7 +2180,7 @@ export class vec4 {
         return this
     }
 
-    /** @param {vec4Like} v @param {number} s @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {number} s @param {vec4} [target=new vec4] @returns {vec4} */
     static srem( v, s, target = new vec4 ) {
         target[0] = v[0] % s
         target[1] = v[1] % s
@@ -2198,7 +2198,7 @@ export class vec4 {
         return this
     }
 
-    /** @param {vec4Like} v1 @param {vec4Like} v2 @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v1 @param {vec4Like} v2 @param {vec4} [target=new vec4] @returns {vec4} */
     static vrem( v1, v2, target = new vec4 ) {
         target[0] = v1[0] % v2[0]
         target[1] = v1[1] % v2[1]
@@ -2212,7 +2212,7 @@ export class vec4 {
         return typeof x === "number" ? this.spow( x ) : this.vpow( x )
     }
 
-    /** @param {vec4Like} v @param {number|vec4Like} x @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {number|vec4Like} x @param {vec4} [target=new vec4] @returns {vec4} */
     static pow( v, x, target = new vec4 ) {
         return typeof x === "number" ? vec4.spow( v, x, target ) : vec4.vpow( v, x, target )
     }
@@ -2226,7 +2226,7 @@ export class vec4 {
         return this
     }
 
-    /** @param {vec4Like} v @param {number} s @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {number} s @param {vec4} [target=new vec4] @returns {vec4} */
     static spow( v, s, target = new vec4 ) {
         target[0] = v[0] ** s
         target[1] = v[1] ** s
@@ -2244,7 +2244,7 @@ export class vec4 {
         return this
     }
 
-    /** @param {vec4Like} v1 @param {vec4Like} v2 @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v1 @param {vec4Like} v2 @param {vec4} [target=new vec4] @returns {vec4} */
     static vpow( v1, v2, target = new vec4 ) {
         target[0] = v1[0] ** v2[0]
         target[1] = v1[1] ** v2[1]
@@ -2260,7 +2260,7 @@ export class vec4 {
             : ( typeof a === "number" ? this.vsfma( m, a ) : this.vfma( m, a ) )
     }
 
-    /** @param {vec4Like} v @param {number|vec4Like} m @param {number|vec4Like} a @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {number|vec4Like} m @param {number|vec4Like} a @param {vec4} [target=new vec4] @returns {vec4} */
     static fma( v, m, a, target = new vec4 ) {
         return typeof m === "number"
             ? ( typeof a === "number" ? vec4.sfma( v, m, a, target ) : vec4.svfma( v, m, a, target ) )
@@ -2276,7 +2276,7 @@ export class vec4 {
         return this
     }
 
-    /** @param {vec4Like} v @param {number} m @param {number} a @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {number} m @param {number} a @param {vec4} [target=new vec4] @returns {vec4} */
     static sfma( v, m, a, target = new vec4 ) {
         target[0] = v[0] * m + a
         target[1] = v[1] * m + a
@@ -2294,7 +2294,7 @@ export class vec4 {
         return this
     }
 
-    /** @param {vec4Like} v @param {number} m @param {vec4Like} a @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {number} m @param {vec4Like} a @param {vec4} [target=new vec4] @returns {vec4} */
     static svfma( v, m, a, target = new vec4 ) {
         target[0] = v[0] * m + a[0]
         target[1] = v[1] * m + a[1]
@@ -2312,7 +2312,7 @@ export class vec4 {
         return this
     }
 
-    /** @param {vec4Like} v @param {vec4Like} m @param {number} a @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {vec4Like} m @param {number} a @param {vec4} [target=new vec4] @returns {vec4} */
     static vsfma( v, m, a, target = new vec4 ) {
         target[0] = v[0] * m[0] + a
         target[1] = v[1] * m[1] + a
@@ -2330,7 +2330,7 @@ export class vec4 {
         return this
     }
 
-    /** @param {vec4Like} v @param {vec4Like} m @param {vec4Like} a @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {vec4Like} m @param {vec4Like} a @param {vec4} [target=new vec4] @returns {vec4} */
     static vfma( v, m, a, target = new vec4 ) {
         target[0] = v[0] * m[0] + a[0]
         target[1] = v[1] * m[1] + a[1]
@@ -2352,7 +2352,7 @@ export class vec4 {
         return this
     }
 
-    /** @param {vec4Like} v @param {mat4Like} m @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {mat4Like} m @param {vec4} [target=new vec4] @returns {vec4} */
     static mmul( v, m, target = new vec4 ) {
         const c0 = v[0]
         const c1 = v[1]
@@ -2374,7 +2374,7 @@ export class vec4 {
         return this
     }
 
-    /** @param {vec4Like} v @param {(value: number, index: number) => number} fn @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {(value: number, index: number) => number} fn @param {vec4} [target=new vec4] @returns {vec4} */
     static apply( v, fn, target = new vec4 ) {
         target[0] = fn( v[0], 0 )
         target[1] = fn( v[1], 1 )
@@ -2437,7 +2437,7 @@ export class vec4 {
         return this
     }
 
-    /** @param {vec4Like} v @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {vec4} [target=new vec4] @returns {vec4} */
     static abs( v, target = new vec4 ) {
         target[0] = Math.abs( v[0] )
         target[1] = Math.abs( v[1] )
@@ -2446,7 +2446,7 @@ export class vec4 {
         return target
     }
 
-    /** @param {vec4Like} v @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {vec4} [target=new vec4] @returns {vec4} */
     static acos( v, target = new vec4 ) {
         target[0] = Math.acos( v[0] )
         target[1] = Math.acos( v[1] )
@@ -2455,7 +2455,7 @@ export class vec4 {
         return target
     }
 
-    /** @param {vec4Like} v @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {vec4} [target=new vec4] @returns {vec4} */
     static acosh( v, target = new vec4 ) {
         target[0] = Math.acosh( v[0] )
         target[1] = Math.acosh( v[1] )
@@ -2464,7 +2464,7 @@ export class vec4 {
         return target
     }
 
-    /** @param {vec4Like} v @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {vec4} [target=new vec4] @returns {vec4} */
     static asin( v, target = new vec4 ) {
         target[0] = Math.asin( v[0] )
         target[1] = Math.asin( v[1] )
@@ -2473,7 +2473,7 @@ export class vec4 {
         return target
     }
 
-    /** @param {vec4Like} v @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {vec4} [target=new vec4] @returns {vec4} */
     static asinh( v, target = new vec4 ) {
         target[0] = Math.asinh( v[0] )
         target[1] = Math.asinh( v[1] )
@@ -2482,7 +2482,7 @@ export class vec4 {
         return target
     }
 
-    /** @param {vec4Like} v @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {vec4} [target=new vec4] @returns {vec4} */
     static atan( v, target = new vec4 ) {
         target[0] = Math.atan( v[0] )
         target[1] = Math.atan( v[1] )
@@ -2491,7 +2491,7 @@ export class vec4 {
         return target
     }
 
-    /** @param {vec4Like} v @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {vec4} [target=new vec4] @returns {vec4} */
     static atanh( v, target = new vec4 ) {
         target[0] = Math.atanh( v[0] )
         target[1] = Math.atanh( v[1] )
@@ -2500,7 +2500,7 @@ export class vec4 {
         return target
     }
 
-    /** @param {vec4Like} v @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {vec4} [target=new vec4] @returns {vec4} */
     static ceil( v, target = new vec4 ) {
         target[0] = Math.ceil( v[0] )
         target[1] = Math.ceil( v[1] )
@@ -2509,7 +2509,7 @@ export class vec4 {
         return target
     }
 
-    /** @param {vec4Like} v @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {vec4} [target=new vec4] @returns {vec4} */
     static cbrt( v, target = new vec4 ) {
         target[0] = Math.cbrt( v[0] )
         target[1] = Math.cbrt( v[1] )
@@ -2518,7 +2518,7 @@ export class vec4 {
         return target
     }
 
-    /** @param {vec4Like} v @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {vec4} [target=new vec4] @returns {vec4} */
     static expm1( v, target = new vec4 ) {
         target[0] = Math.expm1( v[0] )
         target[1] = Math.expm1( v[1] )
@@ -2527,7 +2527,7 @@ export class vec4 {
         return target
     }
 
-    /** @param {vec4Like} v @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {vec4} [target=new vec4] @returns {vec4} */
     static cos( v, target = new vec4 ) {
         target[0] = Math.cos( v[0] )
         target[1] = Math.cos( v[1] )
@@ -2536,7 +2536,7 @@ export class vec4 {
         return target
     }
 
-    /** @param {vec4Like} v @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {vec4} [target=new vec4] @returns {vec4} */
     static cosh( v, target = new vec4 ) {
         target[0] = Math.cosh( v[0] )
         target[1] = Math.cosh( v[1] )
@@ -2545,7 +2545,7 @@ export class vec4 {
         return target
     }
 
-    /** @param {vec4Like} v @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {vec4} [target=new vec4] @returns {vec4} */
     static exp( v, target = new vec4 ) {
         target[0] = Math.exp( v[0] )
         target[1] = Math.exp( v[1] )
@@ -2554,7 +2554,7 @@ export class vec4 {
         return target
     }
 
-    /** @param {vec4Like} v @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {vec4} [target=new vec4] @returns {vec4} */
     static floor( v, target = new vec4 ) {
         target[0] = Math.floor( v[0] )
         target[1] = Math.floor( v[1] )
@@ -2563,7 +2563,7 @@ export class vec4 {
         return target
     }
 
-    /** @param {vec4Like} v @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {vec4} [target=new vec4] @returns {vec4} */
     static log( v, target = new vec4 ) {
         target[0] = Math.log( v[0] )
         target[1] = Math.log( v[1] )
@@ -2572,7 +2572,7 @@ export class vec4 {
         return target
     }
 
-    /** @param {vec4Like} v @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {vec4} [target=new vec4] @returns {vec4} */
     static log1p( v, target = new vec4 ) {
         target[0] = Math.log1p( v[0] )
         target[1] = Math.log1p( v[1] )
@@ -2581,7 +2581,7 @@ export class vec4 {
         return target
     }
 
-    /** @param {vec4Like} v @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {vec4} [target=new vec4] @returns {vec4} */
     static log2( v, target = new vec4 ) {
         target[0] = Math.log2( v[0] )
         target[1] = Math.log2( v[1] )
@@ -2590,7 +2590,7 @@ export class vec4 {
         return target
     }
 
-    /** @param {vec4Like} v @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {vec4} [target=new vec4] @returns {vec4} */
     static log10( v, target = new vec4 ) {
         target[0] = Math.log10( v[0] )
         target[1] = Math.log10( v[1] )
@@ -2599,7 +2599,7 @@ export class vec4 {
         return target
     }
 
-    /** @param {vec4Like} v @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {vec4} [target=new vec4] @returns {vec4} */
     static round( v, target = new vec4 ) {
         target[0] = Math.round( v[0] )
         target[1] = Math.round( v[1] )
@@ -2608,7 +2608,7 @@ export class vec4 {
         return target
     }
 
-    /** @param {vec4Like} v @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {vec4} [target=new vec4] @returns {vec4} */
     static sign( v, target = new vec4 ) {
         target[0] = Math.sign( v[0] )
         target[1] = Math.sign( v[1] )
@@ -2617,7 +2617,7 @@ export class vec4 {
         return target
     }
 
-    /** @param {vec4Like} v @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {vec4} [target=new vec4] @returns {vec4} */
     static sin( v, target = new vec4 ) {
         target[0] = Math.sin( v[0] )
         target[1] = Math.sin( v[1] )
@@ -2626,7 +2626,7 @@ export class vec4 {
         return target
     }
 
-    /** @param {vec4Like} v @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {vec4} [target=new vec4] @returns {vec4} */
     static sinh( v, target = new vec4 ) {
         target[0] = Math.sinh( v[0] )
         target[1] = Math.sinh( v[1] )
@@ -2635,7 +2635,7 @@ export class vec4 {
         return target
     }
 
-    /** @param {vec4Like} v @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {vec4} [target=new vec4] @returns {vec4} */
     static sqrt( v, target = new vec4 ) {
         target[0] = Math.sqrt( v[0] )
         target[1] = Math.sqrt( v[1] )
@@ -2644,7 +2644,7 @@ export class vec4 {
         return target
     }
 
-    /** @param {vec4Like} v @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {vec4} [target=new vec4] @returns {vec4} */
     static tan( v, target = new vec4 ) {
         target[0] = Math.tan( v[0] )
         target[1] = Math.tan( v[1] )
@@ -2653,7 +2653,7 @@ export class vec4 {
         return target
     }
 
-    /** @param {vec4Like} v @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {vec4} [target=new vec4] @returns {vec4} */
     static tanh( v, target = new vec4 ) {
         target[0] = Math.tanh( v[0] )
         target[1] = Math.tanh( v[1] )
@@ -2662,7 +2662,7 @@ export class vec4 {
         return target
     }
 
-    /** @param {vec4Like} v @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {vec4} [target=new vec4] @returns {vec4} */
     static trunc( v, target = new vec4 ) {
         target[0] = Math.trunc( v[0] )
         target[1] = Math.trunc( v[1] )
@@ -2708,7 +2708,7 @@ export class vec4 {
         return this
     }
 
-    /** @param {vec4Like} from @param {vec4Like} to @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} from @param {vec4Like} to @param {vec4} [target=new vec4] @returns {vec4} */
     static pointTo( from, to, target = new vec4 ) {
         target[0] = to[0] - from[0]
         target[1] = to[1] - from[1]
@@ -2727,7 +2727,7 @@ export class vec4 {
         return this
     }
 
-    /** @param {vec4Like} v @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {vec4} [target=new vec4] @returns {vec4} */
     static normalize( v, target = new vec4 ) {
         const factor = 1 / Math.sqrt( v[0] * v[0] + v[1] * v[1] + v[2] * v[2] + v[3] * v[3] )
         target[0] = v[0] * factor
@@ -2747,7 +2747,7 @@ export class vec4 {
         return this
     }
 
-    /** @param {vec4Like} v @param {number} s @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {number} s @param {vec4} [target=new vec4] @returns {vec4} */
     static setLength( v, s, target = new vec4 ) {
         const factor = s / Math.sqrt( v[0] * v[0] + v[1] * v[1] + v[2] * v[2] + v[3] * v[3] )
         target[0] = v[0] * factor
@@ -2809,14 +2809,14 @@ export class vec4 {
         return target
     }
 
-    /** @param {vec4Like} v @param {number|vec4Like} min @param {number|vec4Like} max @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {number|vec4Like} min @param {number|vec4Like} max @param {vec4} [target=new vec4] @returns {vec4} */
     static clamp( v, min, max, target = new vec4 ) {
         return typeof min === "number"
             ? ( typeof max === "number" ? vec4.sclamp( v, min, max, target ) : vec4.svclamp( v, min, max, target ) )
             : ( typeof max === "number" ? vec4.vsclamp( v, min, max, target ) : vec4.vclamp( v, min, max, target ) )
     }
 
-    /** @param {vec4Like} v @param {number} min @param {number} max @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {number} min @param {number} max @param {vec4} [target=new vec4] @returns {vec4} */
     static sclamp( v, min, max, target = new vec4 ) {
         target[0] = Math.min( Math.max( v[0], min ), max )
         target[1] = Math.min( Math.max( v[1], min ), max )
@@ -2825,7 +2825,7 @@ export class vec4 {
         return target
     }
 
-    /** @param {vec4Like} v @param {number} min @param {vec4Like} max @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {number} min @param {vec4Like} max @param {vec4} [target=new vec4] @returns {vec4} */
     static svclamp( v, min, max, target = new vec4 ) {
         target[0] = Math.min( Math.max( v[0], min ), max[0] )
         target[1] = Math.min( Math.max( v[1], min ), max[1] )
@@ -2834,7 +2834,7 @@ export class vec4 {
         return target
     }
 
-    /** @param {vec4Like} v @param {vec4Like} min @param {number} max @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {vec4Like} min @param {number} max @param {vec4} [target=new vec4] @returns {vec4} */
     static vsclamp( v, min, max, target = new vec4 ) {
         target[0] = Math.min( Math.max( v[0], min[0] ), max )
         target[1] = Math.min( Math.max( v[1], min[1] ), max )
@@ -2843,7 +2843,7 @@ export class vec4 {
         return target
     }
 
-    /** @param {vec4Like} v @param {vec4Like} min @param {vec4Like} max @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {vec4Like} min @param {vec4Like} max @param {vec4} [target=new vec4] @returns {vec4} */
     static vclamp( v, min, max, target = new vec4 ) {
         target[0] = Math.min( Math.max( v[0], min[0] ), max[0] )
         target[1] = Math.min( Math.max( v[1], min[1] ), max[1] )
@@ -2852,7 +2852,7 @@ export class vec4 {
         return target
     }
 
-    /** @param {vec4Like} v @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v @param {vec4} [target=new vec4] @returns {vec4} */
     static saturate( v, target = new vec4 ) {
         target[0] = Math.min( Math.max( v[0], 0 ), 1 )
         target[1] = Math.min( Math.max( v[1], 0 ), 1 )
@@ -2861,7 +2861,7 @@ export class vec4 {
         return target
     }
 
-    /** @param {vec4Like} v1 @param {vec4Like} v2 @param {number} t @param {vec4|undefined} [target=new vec4] @returns {vec4} */
+    /** @param {vec4Like} v1 @param {vec4Like} v2 @param {number} t @param {vec4} [target=new vec4] @returns {vec4} */
     static mix( v1, v2, t, target = new vec4 ) {
         target[0] = v1[0] * ( 1 - t ) + v2[0] * t
         target[1] = v1[1] * ( 1 - t ) + v2[1] * t

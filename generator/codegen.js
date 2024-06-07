@@ -6,7 +6,7 @@ import { JSDoc } from "./docgen.js"
  * @typedef {{default?: string, optional?: boolean, rest?: boolean}} ParameterOptions
  * @typedef {{name: string, type: string, expr?: string, optional: boolean, string: string, jsdoc: JSDocStatement}} Parameter 
  * @typedef {{prefix?: string, type?: string, description?: string, compact?: boolean, indentFn?: (text:string, indent:number) => string, jsdocOpts?: JSDocOptions}} FunctionOptions
- * @typedef {(x: any) => boolean} TypeCheckFunction
+ * @typedef {string|(x: any) => boolean} TypeCheckFunction
  * @typedef {{[check: string]: TypeCheckFunction}} TypeChecks
  */
 
@@ -24,7 +24,7 @@ export class Type {
 
     /**
      * @param {string|Type[]} name 
-     * @param {string|TypeCheckFunction|TypeChecks} [check]
+     * @param {TypeCheckFunction|TypeChecks} [check]
      * @param {TypeChecks} [checks]
      */
     constructor( name, check, checks ) {
@@ -52,6 +52,7 @@ export class Type {
 
     toOptional() {
         this._optional ??= new Type( [this, Type.undefined] )
+        this._optional.name = this.name
         this._optional._optional = this._optional
         return this._optional
     }
@@ -71,6 +72,9 @@ export class Type {
         if ( this.check ) {
             const checks = {}
             checks.type = [`(${this.check})(x)`, this.generateTypeError()]
+            for ( const key in this.checks ) {
+                checks[key] = [`(${this.checks[key]})(x)`, this.generateCheckError( key )]
+            }
             return this._generatedChecks = checks
         } else if ( this.subtypes ) {
             const checks = {}
@@ -79,14 +83,26 @@ export class Type {
             return this._generatedChecks = checks
         }
     }
-    /** @returns {{type: string, [check: string]: string}} */
+    /** @param {string[]} injections  @returns {string} */
+    generateTypeCheckFunction( injections ) {
+        const checks = this.generateChecks()
+        return [
+            `function ${this.name.replace( /\W+/g, "" )}( x ) {`,
+            ...injections.map( injection => "    " + injection ),
+            `    const result = ${checks.type[0]}`,
+            `    if ( !result ) throw ${checks.type[1]}`,
+            `}`,
+        ].join( "\n" )
+    }
+    /** @returns {{[check: string]: string}} */
     generateCheckFunctions() {
         const functions = {}
         const checks = this.generateChecks()
         for ( const name in checks ) {
+            if ( name === "type" ) continue
             const [check, errorMessage] = checks[name]
             functions[name] = [
-                `function ${name === "type" ? this.name.replace( /\W+/g, "" ) : name}( x ) {`,
+                `function( x ) {`,
                 `    const result = ${check}`,
                 `    if ( !result ) throw ${errorMessage}`,
                 `}`,
@@ -178,36 +194,56 @@ export class Fn {
     /** @param {FileBuilder} builder */
     tc( builder ) {
         this.tcInject = []
-        this.tcInjectEnd = []
+        this.tcInjectReturn = []
 
-        const { body, params, opts: { type } } = this
-        for ( const { name, type } of params ) {
-            if ( typeof type === "string" ) continue
-            const tcid = builder.requestDeclaration(
-                type,
-                "tc_" + type.toString().replace( /\W+/g, "" ),
-                type.generateCheckFunctions().type
+        const { body, params } = this
+        for ( const param of params ) {
+            if ( typeof param.type === "string" ) continue
+            const tc_type = param.type.generateCheckFunctions()
+            const tc_type_name = "tc_" + param.type.toString().replace( /\W+/g, "" )
+
+            // generate optional checks
+            const tc_function_injections = []
+            for ( const [checkName, checkFunction] of Object.entries( tc_type ) ) {
+                const tcid = builder.requestDeclaration( checkFunction, "tc_" + checkName, checkFunction )
+                tc_function_injections.push( `${tcid}( x )` )
+            }
+
+            // Generate final check
+            const tc_function = builder.requestDeclaration(
+                param.type, tc_type_name,
+                param.type.generateTypeCheckFunction( tc_function_injections )
             )
-            this.tcInject.push( `${tcid}( ${name} )` )
+            this.tcInject.push( `${tc_function}( ${param.name} )` )
         }
-        if ( type instanceof Type && body.some( s => /return\s+this/g.test( s ) ) ) {
-            const tcid = builder.requestDeclaration(
-                type,
-                "tc_" + type.toString().replace( /\W+/g, "" ),
-                type.generateCheckFunctions().type
+        const type = this.opts.type
+        if ( type instanceof Type ) {
+            const tc_type = type.generateCheckFunctions()
+            const tc_type_name = "tc_" + type.toString().replace( /\W+/g, "" )
+
+            // generate optional checks
+            const tc_function_injections = []
+            for ( const [checkName, checkFunction] of Object.entries( tc_type ) ) {
+                const tcid = builder.requestDeclaration( checkFunction, "tc_" + checkName, checkFunction )
+                tc_function_injections.push( `${tcid}( x )` )
+            }
+
+            // Generate final check
+            const tc_function = builder.requestDeclaration(
+                type, tc_type_name,
+                type.generateTypeCheckFunction( tc_function_injections )
             )
-            this.tcInjectEnd.push( `${tcid}( this )` )
+            this.tcInjectReturn.push( `${tc_function}( tc_return )` )
         }
     }
 
     /** @returns {string} */
     string() {
         const { name, params, body, opts: { prefix, compact, indentFn } } = this
-        if ( this.tcInject || this.tcInjectEnd ) {
-            body.unshift( ...this.tcInject )
-            if ( body.length > this.tcInject.length + 1 )
-                body.splice( -1, 0, ...this.tcInject )
-            body.splice( -1, 0, ...this.tcInjectEnd )
+        if ( this.tcInject || this.tcInjectReturn ) {
+            body.unshift( "let tc_return", ...this.tcInject )
+            body.forEach( ( stmt, i ) => body[i] = stmt.replace( /\breturn\b(?=[^\S\n]*\S)/g, "tc_return =" ) )
+            body.push( ...this.tcInjectReturn, "return tc_return" )
         }
         const fnParams = params.map( p => p.string() ).join( ", " )
         const fnBody = body.map( stmt =>
