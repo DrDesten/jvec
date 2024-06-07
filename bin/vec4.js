@@ -2818,37 +2818,37 @@ export class vec4 {
 
     /** @param {vec4Like} v @param {number} min @param {number} max @param {vec4|undefined} [target=new vec4] @returns {vec4} */
     static sclamp( v, min, max, target = new vec4 ) {
-        target[0] = Math.min( Math.max( v[0], min ), max  )
-        target[1] = Math.min( Math.max( v[1], min ), max  )
-        target[2] = Math.min( Math.max( v[2], min ), max  )
-        target[3] = Math.min( Math.max( v[3], min ), max  )
+        target[0] = Math.min( Math.max( v[0], min ), max )
+        target[1] = Math.min( Math.max( v[1], min ), max )
+        target[2] = Math.min( Math.max( v[2], min ), max )
+        target[3] = Math.min( Math.max( v[3], min ), max )
         return target
     }
 
     /** @param {vec4Like} v @param {number} min @param {vec4Like} max @param {vec4|undefined} [target=new vec4] @returns {vec4} */
     static svclamp( v, min, max, target = new vec4 ) {
-        target[0] = Math.min( Math.max( v[0], min ), max[0]  )
-        target[1] = Math.min( Math.max( v[1], min ), max[1]  )
-        target[2] = Math.min( Math.max( v[2], min ), max[2]  )
-        target[3] = Math.min( Math.max( v[3], min ), max[3]  )
+        target[0] = Math.min( Math.max( v[0], min ), max[0] )
+        target[1] = Math.min( Math.max( v[1], min ), max[1] )
+        target[2] = Math.min( Math.max( v[2], min ), max[2] )
+        target[3] = Math.min( Math.max( v[3], min ), max[3] )
         return target
     }
 
     /** @param {vec4Like} v @param {vec4Like} min @param {number} max @param {vec4|undefined} [target=new vec4] @returns {vec4} */
     static vsclamp( v, min, max, target = new vec4 ) {
-        target[0] = Math.min( Math.max( v[0], min[0] ), max  )
-        target[1] = Math.min( Math.max( v[1], min[1] ), max  )
-        target[2] = Math.min( Math.max( v[2], min[2] ), max  )
-        target[3] = Math.min( Math.max( v[3], min[3] ), max  )
+        target[0] = Math.min( Math.max( v[0], min[0] ), max )
+        target[1] = Math.min( Math.max( v[1], min[1] ), max )
+        target[2] = Math.min( Math.max( v[2], min[2] ), max )
+        target[3] = Math.min( Math.max( v[3], min[3] ), max )
         return target
     }
 
     /** @param {vec4Like} v @param {vec4Like} min @param {vec4Like} max @param {vec4|undefined} [target=new vec4] @returns {vec4} */
     static vclamp( v, min, max, target = new vec4 ) {
-        target[0] = Math.min( Math.max( v[0], min[0] ), max[0]  )
-        target[1] = Math.min( Math.max( v[1], min[1] ), max[1]  )
-        target[2] = Math.min( Math.max( v[2], min[2] ), max[2]  )
-        target[3] = Math.min( Math.max( v[3], min[3] ), max[3]  )
+        target[0] = Math.min( Math.max( v[0], min[0] ), max[0] )
+        target[1] = Math.min( Math.max( v[1], min[1] ), max[1] )
+        target[2] = Math.min( Math.max( v[2], min[2] ), max[2] )
+        target[3] = Math.min( Math.max( v[3], min[3] ), max[3] )
         return target
     }
 

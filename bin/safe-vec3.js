@@ -1,9 +1,9 @@
 const tc_numberundefined = function numberundefined( x ) {
-    const result = ((x => typeof x === "number" && isFinite( x ))(x) || (x => x === undefined)(x))(x)
+    const result = ((x => typeof x === "number")(x) || (x => x === undefined)(x))(x)
     if ( !result ) throw new TypeError( `Expected Type 'number|undefined', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
 const tc_number = function number( x ) {
-    const result = (x => typeof x === "number" && isFinite( x ))(x)
+    const result = (x => typeof x === "number")(x)
     if ( !result ) throw new TypeError( `Expected Type 'number', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
 const tc_vec2Like = function vec2Like( x ) {
@@ -15,15 +15,15 @@ const tc_vec3Like = function vec3Like( x ) {
     if ( !result ) throw new TypeError( `Expected Type 'vec3Like', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
 const tc_numbervec3Like = function numbervec3Like( x ) {
-    const result = ((x => typeof x === "number" && isFinite( x ))(x) || (x => Array.from( { length: 3 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ))(x))(x)
+    const result = ((x => typeof x === "number")(x) || (x => Array.from( { length: 3 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ))(x))(x)
     if ( !result ) throw new TypeError( `Expected Type 'number|vec3Like', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
 const tc_vec3 = function vec3( x ) {
-    const result = (x => x instanceof vec3 && [...x].every( isFinite ))(x)
+    const result = (x => x instanceof vec3)(x)
     if ( !result ) throw new TypeError( `Expected Type 'vec3', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
 const tc_vec3undefined = function vec3undefined( x ) {
-    const result = ((x => x instanceof vec3 && [...x].every( isFinite ))(x) || (x => x === undefined)(x))(x)
+    const result = ((x => x instanceof vec3)(x) || (x => x === undefined)(x))(x)
     if ( !result ) throw new TypeError( `Expected Type 'vec3|undefined', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
 const tc_mat3Like = function mat3Like( x ) {
@@ -2121,9 +2121,9 @@ export class vec3 {
     static sclamp( v, min, max, target = new vec3 ) {
         tc_vec3Like( v )
         tc_vec3undefined( target )
-        target[0] = Math.min( Math.max( v[0], min ), max  )
-        target[1] = Math.min( Math.max( v[1], min ), max  )
-        target[2] = Math.min( Math.max( v[2], min ), max  )
+        target[0] = Math.min( Math.max( v[0], min ), max )
+        target[1] = Math.min( Math.max( v[1], min ), max )
+        target[2] = Math.min( Math.max( v[2], min ), max )
         tc_vec3Like( v )
         tc_vec3undefined( target )
         return target
@@ -2134,9 +2134,9 @@ export class vec3 {
         tc_vec3Like( v )
         tc_vec3Like( max )
         tc_vec3undefined( target )
-        target[0] = Math.min( Math.max( v[0], min ), max[0]  )
-        target[1] = Math.min( Math.max( v[1], min ), max[1]  )
-        target[2] = Math.min( Math.max( v[2], min ), max[2]  )
+        target[0] = Math.min( Math.max( v[0], min ), max[0] )
+        target[1] = Math.min( Math.max( v[1], min ), max[1] )
+        target[2] = Math.min( Math.max( v[2], min ), max[2] )
         tc_vec3Like( v )
         tc_vec3Like( max )
         tc_vec3undefined( target )
@@ -2148,9 +2148,9 @@ export class vec3 {
         tc_vec3Like( v )
         tc_vec3Like( min )
         tc_vec3undefined( target )
-        target[0] = Math.min( Math.max( v[0], min[0] ), max  )
-        target[1] = Math.min( Math.max( v[1], min[1] ), max  )
-        target[2] = Math.min( Math.max( v[2], min[2] ), max  )
+        target[0] = Math.min( Math.max( v[0], min[0] ), max )
+        target[1] = Math.min( Math.max( v[1], min[1] ), max )
+        target[2] = Math.min( Math.max( v[2], min[2] ), max )
         tc_vec3Like( v )
         tc_vec3Like( min )
         tc_vec3undefined( target )
@@ -2163,9 +2163,9 @@ export class vec3 {
         tc_vec3Like( min )
         tc_vec3Like( max )
         tc_vec3undefined( target )
-        target[0] = Math.min( Math.max( v[0], min[0] ), max[0]  )
-        target[1] = Math.min( Math.max( v[1], min[1] ), max[1]  )
-        target[2] = Math.min( Math.max( v[2], min[2] ), max[2]  )
+        target[0] = Math.min( Math.max( v[0], min[0] ), max[0] )
+        target[1] = Math.min( Math.max( v[1], min[1] ), max[1] )
+        target[2] = Math.min( Math.max( v[2], min[2] ), max[2] )
         tc_vec3Like( v )
         tc_vec3Like( min )
         tc_vec3Like( max )

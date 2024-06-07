@@ -175,37 +175,27 @@ export class Fn {
         this.replace( new RegExp( `\\b${current}\\b`, "g" ), replacement )
     }
 
-    /** @param {string} identifier @param {Type} type */
-    #tcGenerateCheck( identifier, type ) {
-        const functions = type.generateCheckFunctions()
-        return `const ${identifier} = ${functions.type}`
-    }
-    /** @param {Type} type @param {Set<string>} usedIdentifiers @param {Map<Type,string>} identifierMap @param {string[]} declarations */
-    #tcResolveId( type, usedIdentifiers, identifierMap, declarations ) {
-        if ( identifierMap.has( type ) ) return identifierMap.get( type )
-        let tcid = `tc_${type.toString().replace( /\W/g, "" )}`
-        while ( usedIdentifiers.has( tcid ) ) {
-            tcid += Math.floor( Math.random() * 36 ).toString( 36 )
-        }
-        usedIdentifiers.add( tcid )
-        identifierMap.set( type, tcid )
-        declarations.push( this.#tcGenerateCheck( tcid, type ) )
-        return tcid
-    }
-    /** @param {Set<string>} usedIdentifiers @param {Map<Type,string>} identifierMap @param {string[]} declarations */
-    tc( usedIdentifiers, identifierMap, declarations ) {
-        this.tcMap = identifierMap
+    /** @param {FileBuilder} builder */
+    tc( builder ) {
         this.tcInject = []
         this.tcInjectEnd = []
 
         const { body, params, opts: { type } } = this
         for ( const { name, type } of params ) {
             if ( typeof type === "string" ) continue
-            const tcid = this.#tcResolveId( type, usedIdentifiers, identifierMap, declarations )
+            const tcid = builder.requestDeclaration(
+                type,
+                "tc_" + type.toString().replace( /\W+/g, "" ),
+                type.generateCheckFunctions().type
+            )
             this.tcInject.push( `${tcid}( ${name} )` )
         }
         if ( type instanceof Type && body.some( s => /return\s+this/g.test( s ) ) ) {
-            const tcid = this.#tcResolveId( type, usedIdentifiers, identifierMap, declarations )
+            const tcid = builder.requestDeclaration(
+                type,
+                "tc_" + type.toString().replace( /\W+/g, "" ),
+                type.generateCheckFunctions().type
+            )
             this.tcInjectEnd.push( `${tcid}( this )` )
         }
     }
@@ -267,23 +257,62 @@ export class Fn {
 
         return [fnNonstatic, fnStatic]
     }
+}
+
+export class FileBuilder {
+    constructor() {
+        /** @type {Set<string>} */
+        this.identifiers = new Set
+        /** @type {Map<any, string>} */
+        this.identifierMap = new Map
+        /** @type {string[]} */
+        this.declarations = []
+    }
+
+
+    /** @param {any} key @param {string} proposedIdentifier @returns {{identifier: string, used: boolean}} */
+    _requestIdentifier( key, proposedIdentifier ) {
+        if ( this.identifierMap.has( key ) ) return {
+            identifier: this.identifierMap.get( key ),
+            used: true,
+        }
+        let identifier = proposedIdentifier
+        while ( this.identifiers.has( identifier ) ) {
+            identifier += Math.floor( Math.random() * 36 ).toString( 36 )
+        }
+        this.identifiers.add( identifier )
+        this.identifierMap.set( key, identifier )
+        return {
+            identifier,
+            used: false,
+        }
+    }
+
+    /** @param {any} key @param {string} proposedIdentifier */
+    requestIdentifier( key, proposedIdentifier ) {
+        return this._requestIdentifier( key, proposedIdentifier ).identifier
+    }
+
+    /** @param {any} key @param {string} proposedIdentifier @param {string} expression */
+    requestDeclaration( key, proposedIdentifier, expression ) {
+        const request = this._requestIdentifier( key, proposedIdentifier )
+        if ( request.used ) return request.identifier
+        this.declarations.push( `const ${request.identifier} = ${expression}` )
+        return request.identifier
+    }
 
     /** @param {(string|Fn)[]} elements @param {boolean} [typecheck=false] */
-    static buildClass( elements, typecheck = false ) {
+    buildFile( elements, typecheck = false ) {
         elements = elements.flat( Infinity )
         let classDecl = ""
 
         if ( typecheck ) {
-            const tcUsedIdentifiers = new Set
-            const tcIdentifiers = new Map
-            const tcDeclarations = []
-
             for ( const element of elements ) {
                 if ( element instanceof Fn ) {
-                    element.tc( tcUsedIdentifiers, tcIdentifiers, tcDeclarations )
+                    element.tc( this )
                 }
             }
-            classDecl += tcDeclarations.join( "\n" ) + "\n\n"
+            classDecl += this.declarations.join( "\n" ) + "\n\n"
         }
 
         for ( const [i, element] of elements.entries() ) {

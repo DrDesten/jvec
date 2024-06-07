@@ -1659,33 +1659,33 @@ export class vec3 {
 
     /** @param {vec3Like} v @param {number} min @param {number} max @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static sclamp( v, min, max, target = new vec3 ) {
-        target[0] = Math.min( Math.max( v[0], min ), max  )
-        target[1] = Math.min( Math.max( v[1], min ), max  )
-        target[2] = Math.min( Math.max( v[2], min ), max  )
+        target[0] = Math.min( Math.max( v[0], min ), max )
+        target[1] = Math.min( Math.max( v[1], min ), max )
+        target[2] = Math.min( Math.max( v[2], min ), max )
         return target
     }
 
     /** @param {vec3Like} v @param {number} min @param {vec3Like} max @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static svclamp( v, min, max, target = new vec3 ) {
-        target[0] = Math.min( Math.max( v[0], min ), max[0]  )
-        target[1] = Math.min( Math.max( v[1], min ), max[1]  )
-        target[2] = Math.min( Math.max( v[2], min ), max[2]  )
+        target[0] = Math.min( Math.max( v[0], min ), max[0] )
+        target[1] = Math.min( Math.max( v[1], min ), max[1] )
+        target[2] = Math.min( Math.max( v[2], min ), max[2] )
         return target
     }
 
     /** @param {vec3Like} v @param {vec3Like} min @param {number} max @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static vsclamp( v, min, max, target = new vec3 ) {
-        target[0] = Math.min( Math.max( v[0], min[0] ), max  )
-        target[1] = Math.min( Math.max( v[1], min[1] ), max  )
-        target[2] = Math.min( Math.max( v[2], min[2] ), max  )
+        target[0] = Math.min( Math.max( v[0], min[0] ), max )
+        target[1] = Math.min( Math.max( v[1], min[1] ), max )
+        target[2] = Math.min( Math.max( v[2], min[2] ), max )
         return target
     }
 
     /** @param {vec3Like} v @param {vec3Like} min @param {vec3Like} max @param {vec3|undefined} [target=new vec3] @returns {vec3} */
     static vclamp( v, min, max, target = new vec3 ) {
-        target[0] = Math.min( Math.max( v[0], min[0] ), max[0]  )
-        target[1] = Math.min( Math.max( v[1], min[1] ), max[1]  )
-        target[2] = Math.min( Math.max( v[2], min[2] ), max[2]  )
+        target[0] = Math.min( Math.max( v[0], min[0] ), max[0] )
+        target[1] = Math.min( Math.max( v[1], min[1] ), max[1] )
+        target[2] = Math.min( Math.max( v[2], min[2] ), max[2] )
         return target
     }
 

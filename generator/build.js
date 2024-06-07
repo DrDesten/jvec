@@ -6,18 +6,18 @@ import { join } from "path"
 const __dirname = path.dirname( url.fileURLToPath( import.meta.url ) )
 
 // Custom includes
-import { setIndent, forceIndent, Type, Fn } from "./codegen.js"
+import { setIndent, forceIndent, Type, Fn, FileBuilder } from "./codegen.js"
 import { JSDoc } from "./docgen.js"
 /** @typedef {import("./docgen.js").JSDocStatement} JSDocStatement @typedef {import("./docgen.js").JSDocOptions} JSDocOptions */
 import { Range } from "./genlib.js"
 
 // Constants
 
-const NUMBER_TYPE = new Type( "number", x => typeof x === "number" && isFinite( x ) )
+const NUMBER_TYPE = new Type( "number", x => typeof x === "number", { NAN: x => !isNaN( x ), FINITE: x => isFinite( x ) } )
 const VECTOR_TYPES = {
-    "2": new Type( "vec2", x => x instanceof vec2 && [...x].every( isFinite ) ),
-    "3": new Type( "vec3", x => x instanceof vec3 && [...x].every( isFinite ) ),
-    "4": new Type( "vec4", x => x instanceof vec4 && [...x].every( isFinite ) ),
+    "2": new Type( "vec2", x => x instanceof vec2, { FINITE: x => [...x].every( isFinite ) } ),
+    "3": new Type( "vec3", x => x instanceof vec3, { FINITE: x => [...x].every( isFinite ) } ),
+    "4": new Type( "vec4", x => x instanceof vec4, { FINITE: x => [...x].every( isFinite ) } ),
 }
 const VECTORLIKE_TYPES = {
     "2": new Type( "vec2Like", x => Array.from( { length: 2 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) ),
@@ -578,10 +578,10 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
                 `( ${IFNUM( `${TYPE}.vsclamp( v, min, max, target )`, `${TYPE}.vclamp( v, min, max, target )`, "max" )} )`,
                 "min", true
             )}`
-            const bodyS = bodyTarget( DRANGE.map( i => `target[${i}] = Math.min( Math.max( v[${i}], min ), max  )` ) )
-            const bodySV = bodyTarget( DRANGE.map( i => `target[${i}] = Math.min( Math.max( v[${i}], min ), max[${i}]  )` ) )
-            const bodyVS = bodyTarget( DRANGE.map( i => `target[${i}] = Math.min( Math.max( v[${i}], min[${i}] ), max  )` ) )
-            const bodyV = bodyTarget( DRANGE.map( i => `target[${i}] = Math.min( Math.max( v[${i}], min[${i}] ), max[${i}]  )` ) )
+            const bodyS = bodyTarget( DRANGE.map( i => `target[${i}] = Math.min( Math.max( v[${i}], min ), max )` ) )
+            const bodySV = bodyTarget( DRANGE.map( i => `target[${i}] = Math.min( Math.max( v[${i}], min ), max[${i}] )` ) )
+            const bodyVS = bodyTarget( DRANGE.map( i => `target[${i}] = Math.min( Math.max( v[${i}], min[${i}] ), max )` ) )
+            const bodyV = bodyTarget( DRANGE.map( i => `target[${i}] = Math.min( Math.max( v[${i}], min[${i}] ), max[${i}] )` ) )
 
             const opts = { prefix: "static", type: TYPE, indentFn: setIndent }
             return [
@@ -649,7 +649,7 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
         utilityFunctions(),
         `}`
     ]
-    return Fn.buildClass( segments, typecheck )
+    return new FileBuilder().buildFile( segments, typecheck )
 }
 
 /** @param {number} dimension matrix dimension */
