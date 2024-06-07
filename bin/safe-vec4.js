@@ -1,38 +1,38 @@
-function tc_numberundefined( x ) {
-    const result = ( x => ( x => typeof x === "number" && isFinite( x ) )(x)||( x => x === undefined )(x) )(x)
-    if ( !result ) throw new TypeError( `Expected Type 'number|undefined', got [${x?.constructor?.name||typeof x}]: ${x}` )
+const tc_numberundefined = function numberundefined( x ) {
+    const result = ((x => typeof x === "number" && isFinite( x ))(x) || (x => x === undefined)(x))(x)
+    if ( !result ) throw new TypeError( `Expected Type 'number|undefined', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
-function tc_number( x ) {
-    const result = ( x => typeof x === "number" && isFinite( x ) )(x)
-    if ( !result ) throw new TypeError( `Expected Type 'number', got [${x?.constructor?.name||typeof x}]: ${x}` )
+const tc_number = function number( x ) {
+    const result = (x => typeof x === "number" && isFinite( x ))(x)
+    if ( !result ) throw new TypeError( `Expected Type 'number', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
-function tc_vec2Like( x ) {
-    const result = ( x => Array.from( { length: 2 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) )(x)
-    if ( !result ) throw new TypeError( `Expected Type 'vec2Like', got [${x?.constructor?.name||typeof x}]: ${x}` )
+const tc_vec2Like = function vec2Like( x ) {
+    const result = (x => Array.from( { length: 2 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ))(x)
+    if ( !result ) throw new TypeError( `Expected Type 'vec2Like', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
-function tc_vec3Like( x ) {
-    const result = ( x => Array.from( { length: 3 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) )(x)
-    if ( !result ) throw new TypeError( `Expected Type 'vec3Like', got [${x?.constructor?.name||typeof x}]: ${x}` )
+const tc_vec3Like = function vec3Like( x ) {
+    const result = (x => Array.from( { length: 3 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ))(x)
+    if ( !result ) throw new TypeError( `Expected Type 'vec3Like', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
-function tc_vec4Like( x ) {
-    const result = ( x => Array.from( { length: 4 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) )(x)
-    if ( !result ) throw new TypeError( `Expected Type 'vec4Like', got [${x?.constructor?.name||typeof x}]: ${x}` )
+const tc_vec4Like = function vec4Like( x ) {
+    const result = (x => Array.from( { length: 4 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ))(x)
+    if ( !result ) throw new TypeError( `Expected Type 'vec4Like', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
-function tc_numbervec4Like( x ) {
-    const result = ( x => ( x => typeof x === "number" && isFinite( x ) )(x)||( x => Array.from( { length: 4 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) )(x) )(x)
-    if ( !result ) throw new TypeError( `Expected Type 'number|vec4Like', got [${x?.constructor?.name||typeof x}]: ${x}` )
+const tc_numbervec4Like = function numbervec4Like( x ) {
+    const result = ((x => typeof x === "number" && isFinite( x ))(x) || (x => Array.from( { length: 4 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ))(x))(x)
+    if ( !result ) throw new TypeError( `Expected Type 'number|vec4Like', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
-function tc_vec4( x ) {
-    const result = ( x => x instanceof vec4 && [...x].every( isFinite ) )(x)
-    if ( !result ) throw new TypeError( `Expected Type 'vec4', got [${x?.constructor?.name||typeof x}]: ${x}` )
+const tc_vec4 = function vec4( x ) {
+    const result = (x => x instanceof vec4 && [...x].every( isFinite ))(x)
+    if ( !result ) throw new TypeError( `Expected Type 'vec4', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
-function tc_vec4undefined( x ) {
-    const result = ( x => ( x => x instanceof vec4 && [...x].every( isFinite ) )(x)||( x => x === undefined )(x) )(x)
-    if ( !result ) throw new TypeError( `Expected Type 'vec4|undefined', got [${x?.constructor?.name||typeof x}]: ${x}` )
+const tc_vec4undefined = function vec4undefined( x ) {
+    const result = ((x => x instanceof vec4 && [...x].every( isFinite ))(x) || (x => x === undefined)(x))(x)
+    if ( !result ) throw new TypeError( `Expected Type 'vec4|undefined', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
-function tc_mat4Like( x ) {
-    const result = ( x => Array.from( { length: 4 ** 2 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) )(x)
-    if ( !result ) throw new TypeError( `Expected Type 'mat4Like', got [${x?.constructor?.name||typeof x}]: ${x}` )
+const tc_mat4Like = function mat4Like( x ) {
+    const result = (x => Array.from( { length: 4 ** 2 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ))(x)
+    if ( !result ) throw new TypeError( `Expected Type 'mat4Like', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
 
 import { randomNorm } from "./vechelper.js"

@@ -1,30 +1,30 @@
-function tc_numberundefined( x ) {
-    const result = ( x => ( x => typeof x === "number" && isFinite( x ) )(x)||( x => x === undefined )(x) )(x)
-    if ( !result ) throw new TypeError( `Expected Type 'number|undefined', got [${x?.constructor?.name||typeof x}]: ${x}` )
+const tc_numberundefined = function numberundefined( x ) {
+    const result = ( ( x => typeof x === "number" && isFinite( x ) )( x ) || ( x => x === undefined )( x ) )( x )
+    if ( !result ) throw new TypeError( `Expected Type 'number|undefined', got [${x?.constructor.name || typeof x}]: ${x}` )
 }
-function tc_number( x ) {
-    const result = ( x => typeof x === "number" && isFinite( x ) )(x)
-    if ( !result ) throw new TypeError( `Expected Type 'number', got [${x?.constructor?.name||typeof x}]: ${x}` )
+const tc_number = function number( x ) {
+    const result = ( x => typeof x === "number" && isFinite( x ) )( x )
+    if ( !result ) throw new TypeError( `Expected Type 'number', got [${x?.constructor.name || typeof x}]: ${x}` )
 }
-function tc_vec2Like( x ) {
-    const result = ( x => Array.from( { length: 2 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) )(x)
-    if ( !result ) throw new TypeError( `Expected Type 'vec2Like', got [${x?.constructor?.name||typeof x}]: ${x}` )
+const tc_vec2Like = function vec2Like( x ) {
+    const result = ( x => Array.from( { length: 2 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) )( x )
+    if ( !result ) throw new TypeError( `Expected Type 'vec2Like', got [${x?.constructor.name || typeof x}]: ${x}` )
 }
-function tc_numbervec2Like( x ) {
-    const result = ( x => ( x => typeof x === "number" && isFinite( x ) )(x)||( x => Array.from( { length: 2 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) )(x) )(x)
-    if ( !result ) throw new TypeError( `Expected Type 'number|vec2Like', got [${x?.constructor?.name||typeof x}]: ${x}` )
+const tc_numbervec2Like = function numbervec2Like( x ) {
+    const result = ( ( x => typeof x === "number" && isFinite( x ) )( x ) || ( x => Array.from( { length: 2 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) )( x ) )( x )
+    if ( !result ) throw new TypeError( `Expected Type 'number|vec2Like', got [${x?.constructor.name || typeof x}]: ${x}` )
 }
-function tc_vec2( x ) {
-    const result = ( x => x instanceof vec2 && [...x].every( isFinite ) )(x)
-    if ( !result ) throw new TypeError( `Expected Type 'vec2', got [${x?.constructor?.name||typeof x}]: ${x}` )
+const tc_vec2 = function vec2( x ) {
+    const result = ( x => x instanceof vec2 && [...x].every( isFinite ) )( x )
+    if ( !result ) throw new TypeError( `Expected Type 'vec2', got [${x?.constructor.name || typeof x}]: ${x}` )
 }
-function tc_vec2undefined( x ) {
-    const result = ( x => ( x => x instanceof vec2 && [...x].every( isFinite ) )(x)||( x => x === undefined )(x) )(x)
-    if ( !result ) throw new TypeError( `Expected Type 'vec2|undefined', got [${x?.constructor?.name||typeof x}]: ${x}` )
+const tc_vec2undefined = function vec2undefined( x ) {
+    const result = ( ( x => x instanceof vec2 && [...x].every( isFinite ) )( x ) || ( x => x === undefined )( x ) )( x )
+    if ( !result ) throw new TypeError( `Expected Type 'vec2|undefined', got [${x?.constructor.name || typeof x}]: ${x}` )
 }
-function tc_mat2Like( x ) {
-    const result = ( x => Array.from( { length: 2 ** 2 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) )(x)
-    if ( !result ) throw new TypeError( `Expected Type 'mat2Like', got [${x?.constructor?.name||typeof x}]: ${x}` )
+const tc_mat2Like = function mat2Like( x ) {
+    const result = ( x => Array.from( { length: 2 ** 2 } ).every( ( _, i ) => typeof x[i] === "number" && isFinite( x[i] ) ) )( x )
+    if ( !result ) throw new TypeError( `Expected Type 'mat2Like', got [${x?.constructor.name || typeof x}]: ${x}` )
 }
 
 import { randomNorm } from "./vechelper.js"
@@ -65,7 +65,7 @@ export class vec2 {
                 : ( this[0] = object, this[1] = +y )
         else
             this[0] = +( object[0] ?? object.x ?? object.r ?? 0 ),
-            this[1] = +( object[1] ?? object.y ?? object.g ?? 0 )
+                this[1] = +( object[1] ?? object.y ?? object.g ?? 0 )
         /** @type {number} x-coordinate of the vector */
         this[0]
         /** @type {number} y-coordinate of the vector */
@@ -107,7 +107,7 @@ export class vec2 {
 
     /** @returns {vec2} */
     static randomSphere() {
-        return new vec2( randomNorm(), randomNorm() ).setLength( Math.random() ** (1/2) )
+        return new vec2( randomNorm(), randomNorm() ).setLength( Math.random() ** ( 1 / 2 ) )
     }
 
     // ---------------------------
@@ -1617,8 +1617,8 @@ export class vec2 {
     static sclamp( v, min, max, target = new vec2 ) {
         tc_vec2Like( v )
         tc_vec2undefined( target )
-        target[0] = Math.min( Math.max( v[0], min ), max  )
-        target[1] = Math.min( Math.max( v[1], min ), max  )
+        target[0] = Math.min( Math.max( v[0], min ), max )
+        target[1] = Math.min( Math.max( v[1], min ), max )
         tc_vec2Like( v )
         tc_vec2undefined( target )
         return target
@@ -1629,8 +1629,8 @@ export class vec2 {
         tc_vec2Like( v )
         tc_vec2Like( max )
         tc_vec2undefined( target )
-        target[0] = Math.min( Math.max( v[0], min ), max[0]  )
-        target[1] = Math.min( Math.max( v[1], min ), max[1]  )
+        target[0] = Math.min( Math.max( v[0], min ), max[0] )
+        target[1] = Math.min( Math.max( v[1], min ), max[1] )
         tc_vec2Like( v )
         tc_vec2Like( max )
         tc_vec2undefined( target )
@@ -1642,8 +1642,8 @@ export class vec2 {
         tc_vec2Like( v )
         tc_vec2Like( min )
         tc_vec2undefined( target )
-        target[0] = Math.min( Math.max( v[0], min[0] ), max  )
-        target[1] = Math.min( Math.max( v[1], min[1] ), max  )
+        target[0] = Math.min( Math.max( v[0], min[0] ), max )
+        target[1] = Math.min( Math.max( v[1], min[1] ), max )
         tc_vec2Like( v )
         tc_vec2Like( min )
         tc_vec2undefined( target )
@@ -1656,8 +1656,8 @@ export class vec2 {
         tc_vec2Like( min )
         tc_vec2Like( max )
         tc_vec2undefined( target )
-        target[0] = Math.min( Math.max( v[0], min[0] ), max[0]  )
-        target[1] = Math.min( Math.max( v[1], min[1] ), max[1]  )
+        target[0] = Math.min( Math.max( v[0], min[0] ), max[0] )
+        target[1] = Math.min( Math.max( v[1], min[1] ), max[1] )
         tc_vec2Like( v )
         tc_vec2Like( min )
         tc_vec2Like( max )

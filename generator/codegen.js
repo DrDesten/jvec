@@ -6,6 +6,8 @@ import { JSDoc } from "./docgen.js"
  * @typedef {{default?: string, optional?: boolean, rest?: boolean}} ParameterOptions
  * @typedef {{name: string, type: string, expr?: string, optional: boolean, string: string, jsdoc: JSDocStatement}} Parameter 
  * @typedef {{prefix?: string, type?: string, description?: string, compact?: boolean, indentFn?: (text:string, indent:number) => string, jsdocOpts?: JSDocOptions}} FunctionOptions
+ * @typedef {(x: any) => boolean} TypeCheckFunction
+ * @typedef {{[check: string]: TypeCheckFunction}} TypeChecks
  */
 
 export class Type {
@@ -22,22 +24,30 @@ export class Type {
 
     /**
      * @param {string|Type[]} name 
-     * @param {string|(x: any) => boolean} check
+     * @param {string|TypeCheckFunction|TypeChecks} [check]
+     * @param {TypeChecks} [checks]
      */
-    constructor( name, check ) {
+    constructor( name, check, checks ) {
         if ( typeof name === "string" ) {
             this.name = name
-            this.check = `( ${check} )(x)`
+            this.check = check
+            this.checks = checks ?? {}
         } else {
             this.name = name.map( t => /[^\w\s]/.test( t.name ) ? `(${t.name})` : t.name ).join( "|" )
-            this.check = `( x => ${name.map( t => t.check ).join( "||" )} )(x)`
+            this.subtypes = name
+            this.checks = check ?? {}
         }
+        /** @type {Type[]=} */
+        this.subtypes
         /** @type {string} */
         this.name
-        /** @type {string} */
+        /** @type {string=} */
         this.check
+        /** @type {TypeChecks} */
+        this.checks
 
         this._optional = null
+        this._generatedChecks = null
     }
 
     toOptional() {
@@ -47,6 +57,42 @@ export class Type {
     }
     toArray() {
         return Type.any
+    }
+
+    generateTypeError() {
+        return `new TypeError( \`Expected Type '${this.name}', got [\${x?.constructor.name||typeof x}]: \${x}\` )`
+    }
+    generateCheckError( name ) {
+        return `new Error( \`Failed optional check '${name}'. Got [\${x?.constructor.name||typeof x}]: \${x}\` )`
+    }
+    /** @returns {{type: [string, string], [check: string]: [string, string]}} */
+    generateChecks() {
+        if ( this._generatedChecks ) return this._generatedChecks
+        if ( this.check ) {
+            const checks = {}
+            checks.type = [`(${this.check})(x)`, this.generateTypeError()]
+            return this._generatedChecks = checks
+        } else if ( this.subtypes ) {
+            const checks = {}
+            const typeCheck = `(${this.subtypes.map( t => t.generateChecks().type[0] ).join( " || " )})(x)`
+            checks.type = [typeCheck, this.generateTypeError()]
+            return this._generatedChecks = checks
+        }
+    }
+    /** @returns {{type: string, [check: string]: string}} */
+    generateCheckFunctions() {
+        const functions = {}
+        const checks = this.generateChecks()
+        for ( const name in checks ) {
+            const [check, errorMessage] = checks[name]
+            functions[name] = [
+                `function ${name === "type" ? this.name.replace( /\W+/g, "" ) : name}( x ) {`,
+                `    const result = ${check}`,
+                `    if ( !result ) throw ${errorMessage}`,
+                `}`,
+            ].join( "\n" )
+        }
+        return functions
     }
 
     toString() {
@@ -131,12 +177,8 @@ export class Fn {
 
     /** @param {string} identifier @param {Type} type */
     #tcGenerateCheck( identifier, type ) {
-        return [
-            `function ${identifier}( x ) {`,
-            `    const result = ${type.check}`,
-            `    if ( !result ) throw new TypeError( \`Expected Type '${type}', got [\${x?.constructor?.name||typeof x}]: \${x}\` )`,
-            `}`
-        ].join( "\n" )
+        const functions = type.generateCheckFunctions()
+        return `const ${identifier} = ${functions.type}`
     }
     /** @param {Type} type @param {Set<string>} usedIdentifiers @param {Map<Type,string>} identifierMap @param {string[]} declarations */
     #tcResolveId( type, usedIdentifiers, identifierMap, declarations ) {
