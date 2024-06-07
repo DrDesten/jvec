@@ -13,16 +13,16 @@ import { Range } from "./genlib.js"
 
 // Constants
 
-const NUMBER_TYPE = new Type( "number", x => typeof x === "number", { NAN: x => !isNaN( x ), FINITE: x => isFinite( x ) } )
+const NUMBER_TYPE = new Type( "number", "typeof x === 'number'", { NAN: "!isNaN( x )", FINITE: "isFinite( x )" } )
 const VECTOR_TYPES = {
-    "2": new Type( "vec2", x => x instanceof vec2, { FINITE: x => [...x].every( isFinite ) } ),
-    "3": new Type( "vec3", x => x instanceof vec3, { FINITE: x => [...x].every( isFinite ) } ),
-    "4": new Type( "vec4", x => x instanceof vec4, { FINITE: x => [...x].every( isFinite ) } ),
+    "2": new Type( "vec2", "x instanceof vec2", { FINITE: "[...x].every( isFinite )" } ),
+    "3": new Type( "vec3", "x instanceof vec3", { FINITE: "[...x].every( isFinite )" } ),
+    "4": new Type( "vec4", "x instanceof vec4", { FINITE: "[...x].every( isFinite )" } ),
 }
 const VECTORLIKE_TYPES = {
-    "2": new Type( "vec2Like", x => [0, 1].every( i => typeof x[i] === "number" ), { FINITE: x => [0, 1].every( i => isFinite( x[i] ) ) } ),
-    "3": new Type( "vec3Like", x => [0, 1, 2].every( i => typeof x[i] === "number" ), { FINITE: x => [0, 1, 2].every( i => isFinite( x[i] ) ) } ),
-    "4": new Type( "vec4Like", x => [0, 1, 2, 3].every( i => typeof x[i] === "number" ), { FINITE: x => [0, 1, 2, 3].every( i => isFinite( x[i] ) ) } ),
+    "2": new Type( "vec2Like", `[0, 1].every( i => typeof x[i] === 'number' )`, { FINITE: `[0, 1].every( i => isFinite( x[i] ) )` } ),
+    "3": new Type( "vec3Like", `[0, 1, 2].every( i => typeof x[i] === 'number' )`, { FINITE: `[0, 1, 2].every( i => isFinite( x[i] ) )` } ),
+    "4": new Type( "vec4Like", `[0, 1, 2, 3].every( i => typeof x[i] === 'number' )`, { FINITE: `[0, 1, 2, 3].every( i => isFinite( x[i] ) )` } ),
 }
 const VECTORLIKE_OR_NUMBER_TYPES = {
     "2": new Type( [NUMBER_TYPE, VECTORLIKE_TYPES[2]] ),
@@ -30,17 +30,17 @@ const VECTORLIKE_OR_NUMBER_TYPES = {
     "4": new Type( [NUMBER_TYPE, VECTORLIKE_TYPES[4]] ),
 }
 const MATRIX_TYPES = {
-    "2": new Type( "mat2", x => x instanceof mat2 ),
-    "3": new Type( "mat3", x => x instanceof mat3 ),
-    "4": new Type( "mat4", x => x instanceof mat4 ),
+    "2": new Type( "mat2", "x instanceof mat2" ),
+    "3": new Type( "mat3", "x instanceof mat3" ),
+    "4": new Type( "mat4", "x instanceof mat4" ),
 }
 const MATRIXLIKE_TYPES = {
-    "2": new Type( "mat2Like", x => Array.from( { length: 2 ** 2 } ).every( ( _, i ) => typeof x[i] === "number" ),
-        { FINITE: x => Array.from( { length: 2 ** 2 } ).every( ( _, i ) => isFinite( x[i] ) ) } ),
-    "3": new Type( "mat3Like", x => Array.from( { length: 3 ** 2 } ).every( ( _, i ) => typeof x[i] === "number" ),
-        { FINITE: x => Array.from( { length: 3 ** 2 } ).every( ( _, i ) => isFinite( x[i] ) ) } ),
-    "4": new Type( "mat4Like", x => Array.from( { length: 4 ** 2 } ).every( ( _, i ) => typeof x[i] === "number" ),
-        { FINITE: x => Array.from( { length: 4 ** 2 } ).every( ( _, i ) => isFinite( x[i] ) ) } ),
+    "2": new Type( "mat2Like",  "Array.from( { length: 2 ** 2 } ).every( ( _, i ) => typeof x[i] === 'number' )",
+        { FINITE: "Array.from( { length: 2 ** 2 } ).every( ( _, i ) => isFinite( x[i] ) )" } ),
+    "3": new Type( "mat3Like",  "Array.from( { length: 3 ** 2 } ).every( ( _, i ) => typeof x[i] === 'number' )",
+        { FINITE: "Array.from( { length: 3 ** 2 } ).every( ( _, i ) => isFinite( x[i] ) )" } ),
+    "4": new Type( "mat4Like",  "Array.from( { length: 4 ** 2 } ).every( ( _, i ) => typeof x[i] === 'number' )",
+        { FINITE: "Array.from( { length: 4 ** 2 } ).every( ( _, i ) => isFinite( x[i] ) )" } ),
 }
 const MATRIXLIKE_OR_NUMBER_TYPES = {
     "2": new Type( [NUMBER_TYPE, MATRIXLIKE_TYPES[2]] ),
@@ -69,34 +69,42 @@ buildMatrix()
 // ------------------------------
 
 function buildVector() {
-    for ( let dim = MIN_DIMENSION; dim <= MAX_DIMENSION; dim++ ) {
-        const file = generateVector( dim )
-        const tc_file = generateVector( dim, true )
+    const range = Range( MIN_DIMENSION, MAX_DIMENSION + 1 )
+    const tc_flags = new Set
+    for ( const dim of range ) {
+        const elements = generateVector( dim ).flat( Infinity )
+
+        const file = new FileBuilder().buildFile( elements, false )
         write( `vec${dim}.js`, file )
+
+        const tc_builder = new FileBuilder()
+        tc_builder.declarations.push( "import { Flags } from './safe-vec.js'" )
+        const tc_file = tc_builder.buildFile( elements, true )
+        tc_builder.customData.flags?.forEach( flag => tc_flags.add( flag ) )
         write( `safe-vec${dim}.js`, tc_file )
     }
 
-    const vec = Range( MIN_DIMENSION, MAX_DIMENSION + 1 )
-        .map( dim => `export { vec${dim} } from "./vec${dim}.js"` ).join( "\n" )
+    const vec = range.map( dim => `export { vec${dim} } from "./vec${dim}.js"` ).join( "\n" )
     write( `vec.js`, vec )
-    const safeVec = Range( MIN_DIMENSION, MAX_DIMENSION + 1 )
-        .map( dim => `export { vec${dim} } from "./safe-vec${dim}.js"` ).join( "\n" )
+    const safeVec = [
+        range.map( dim => `export { vec${dim} } from "./safe-vec${dim}.js"` ),
+        `export const Flags = { ${[...tc_flags].map( f => `${f}: false` ).join( ", " )} }`
+    ].flat( Infinity ).join( "\n" )
     write( `safe-vec.js`, safeVec )
 }
 
 function buildMatrix() {
-    for ( let dim = MIN_DIMENSION; dim <= MAX_DIMENSION; dim++ ) {
+    const range = Range( MIN_DIMENSION, MAX_DIMENSION + 1 )
+    for ( const dim of range ) {
         const file = generateMatrix( dim )
         const tc_file = generateMatrix( dim, true )
         write( `mat${dim}.js`, file )
         write( `safe-mat${dim}.js`, tc_file )
     }
 
-    const mat = Range( MIN_DIMENSION, MAX_DIMENSION + 1 )
-        .map( dim => `export { mat${dim} } from "./mat${dim}.js"` ).join( "\n" )
+    const mat = range.map( dim => `export { mat${dim} } from "./mat${dim}.js"` ).join( "\n" )
     write( `mat.js`, mat )
-    const safemat = Range( MIN_DIMENSION, MAX_DIMENSION + 1 )
-        .map( dim => `export { mat${dim} } from "./safe-mat${dim}.js"` ).join( "\n" )
+    const safemat = range.map( dim => `export { mat${dim} } from "./safe-mat${dim}.js"` ).join( "\n" )
     write( `safe-mat.js`, safemat )
 }
 
@@ -668,7 +676,7 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
         utilityFunctions(),
         `}`
     ]
-    return new FileBuilder().buildFile( segments, typecheck )
+    return segments
 }
 
 /** @param {number} dimension matrix dimension */

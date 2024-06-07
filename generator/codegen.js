@@ -11,16 +11,21 @@ import { JSDoc } from "./docgen.js"
  */
 
 export class Type {
-    static undefined = new Type( "undefined", x => x === undefined )
-    static null = new Type( "null", x => x === null )
-    static boolean = new Type( "boolean", x => typeof x === "boolean" )
-    static bigint = new Type( "bigint", x => typeof x === "bigint" )
-    static number = new Type( "number", x => typeof x === "number" )
-    static symbol = new Type( "symbol", x => typeof x === "symbol" )
-    static string = new Type( "string", x => typeof x === "string" )
-    static function = new Type( "function", x => typeof x === "function" )
-    static object = new Type( "object", x => typeof x === "object" )
-    static any = new Type( "any", () => true )
+    static undefined = new Type( "undefined", "x === undefined" )
+    static null = new Type( "null", "x === null" )
+    static boolean = new Type( "boolean", "typeof x === 'boolean'" )
+    static bigint = new Type( "bigint", "typeof x === 'bigint'" )
+    static number = new Type( "number", "typeof x === 'number'" )
+    static symbol = new Type( "symbol", "typeof x === 'symbol'" )
+    static string = new Type( "string", "typeof x === 'string'" )
+    static function = new Type( "function", "typeof x === 'function'" )
+    static object = new Type( "object", "typeof x === 'object'" )
+    static any = new Type( "any", "true" )
+
+    static gen = {
+        range: ( start, end ) => ( end ?? ( end = start, start = 0 ),
+            "[" + Array.from( { length: end - start }, ( _, i ) => i + start ).join( ", " ) + "]" ),
+    }
 
     /**
      * @param {string|Type[]} name 
@@ -71,14 +76,14 @@ export class Type {
         if ( this._generatedChecks ) return this._generatedChecks
         if ( this.check ) {
             const checks = {}
-            checks.type = [`(${this.check})(x)`, this.generateTypeError()]
+            checks.type = [`${this.check}`, this.generateTypeError()]
             for ( const key in this.checks ) {
-                checks[key] = [`(${this.checks[key]})(x)`, this.generateCheckError( key )]
+                checks[key] = [`${this.checks[key]}`, this.generateCheckError( key )]
             }
             return this._generatedChecks = checks
         } else if ( this.subtypes ) {
             const checks = {}
-            const typeCheck = `(x => ${this.subtypes.map( t => t.generateChecks().type[0] ).join( " || " )})(x)`
+            const typeCheck = `${this.subtypes.map( t => `(${t.generateChecks().type[0]})` ).join( " || " )}`
             checks.type = [typeCheck, this.generateTypeError()]
             return this._generatedChecks = checks
         }
@@ -205,8 +210,10 @@ export class Fn {
             // generate optional checks
             const tc_function_injections = []
             for ( const [checkName, checkFunction] of Object.entries( tc_type ) ) {
+                builder.customData.flags ??= []
+                builder.customData.flags.push( checkName )
                 const tcid = builder.requestDeclaration( checkFunction, "tc_" + checkName, checkFunction )
-                tc_function_injections.push( `${tcid}( x )` )
+                tc_function_injections.push( `if ( Flags.${checkName} ) ${tcid}( x )` )
             }
 
             // Generate final check
@@ -225,7 +232,7 @@ export class Fn {
             const tc_function_injections = []
             for ( const [checkName, checkFunction] of Object.entries( tc_type ) ) {
                 const tcid = builder.requestDeclaration( checkFunction, "tc_" + checkName, checkFunction )
-                tc_function_injections.push( `${tcid}( x )` )
+                tc_function_injections.push( `if ( Flags.${checkName} ) ${tcid}( x )` )
             }
 
             // Generate final check
@@ -303,6 +310,8 @@ export class FileBuilder {
         this.identifierMap = new Map
         /** @type {string[]} */
         this.declarations = []
+        /** @type {{[key: string]: any}} */
+        this.customData = {}
 
         this.appendix = 0
     }

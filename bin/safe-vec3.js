@@ -1,63 +1,64 @@
+import { Flags } from './safe-vec.js'
 const tc_number = function( x ) {
-    const result = (x => (x => typeof x === "number")(x) || (x => x === undefined)(x))(x)
+    const result = (typeof x === 'number') || (x === undefined)
     if ( !result ) throw new TypeError( `Expected Type 'number', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
 const tc_FINITE = function( x ) {
-    const result = (x => [...x].every( isFinite ))(x)
+    const result = [...x].every( isFinite )
     if ( !result ) throw new Error( `Failed optional check 'FINITE'. Got [${x?.constructor.name||typeof x}]: ${x}` )
 }
 const tc_vec3 = function( x ) {
-    tc_FINITE( x )
-    const result = (x => x instanceof vec3)(x)
+    if ( Flags.FINITE ) tc_FINITE( x )
+    const result = x instanceof vec3
     if ( !result ) throw new TypeError( `Expected Type 'vec3', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
 const tc_NAN = function( x ) {
-    const result = (x => !isNaN( x ))(x)
+    const result = !isNaN( x )
     if ( !result ) throw new Error( `Failed optional check 'NAN'. Got [${x?.constructor.name||typeof x}]: ${x}` )
 }
 const tc_FINITE0 = function( x ) {
-    const result = (x => isFinite( x ))(x)
+    const result = isFinite( x )
     if ( !result ) throw new Error( `Failed optional check 'FINITE'. Got [${x?.constructor.name||typeof x}]: ${x}` )
 }
 const tc_number0 = function( x ) {
-    tc_NAN( x )
-    tc_FINITE0( x )
-    const result = (x => typeof x === "number")(x)
+    if ( Flags.NAN ) tc_NAN( x )
+    if ( Flags.FINITE ) tc_FINITE0( x )
+    const result = typeof x === 'number'
     if ( !result ) throw new TypeError( `Expected Type 'number', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
 const tc_FINITE1 = function( x ) {
-    const result = (x => [0, 1].every( i => isFinite( x[i] ) ))(x)
+    const result = [0, 1].every( i => isFinite( x[i] ) )
     if ( !result ) throw new Error( `Failed optional check 'FINITE'. Got [${x?.constructor.name||typeof x}]: ${x}` )
 }
 const tc_vec2Like = function( x ) {
-    tc_FINITE1( x )
-    const result = (x => [0, 1].every( i => typeof x[i] === "number" ))(x)
+    if ( Flags.FINITE ) tc_FINITE1( x )
+    const result = [0, 1].every( i => typeof x[i] === 'number' )
     if ( !result ) throw new TypeError( `Expected Type 'vec2Like', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
 const tc_FINITE2 = function( x ) {
-    const result = (x => [0, 1, 2].every( i => isFinite( x[i] ) ))(x)
+    const result = [0, 1, 2].every( i => isFinite( x[i] ) )
     if ( !result ) throw new Error( `Failed optional check 'FINITE'. Got [${x?.constructor.name||typeof x}]: ${x}` )
 }
 const tc_vec3Like = function( x ) {
-    tc_FINITE2( x )
-    const result = (x => [0, 1, 2].every( i => typeof x[i] === "number" ))(x)
+    if ( Flags.FINITE ) tc_FINITE2( x )
+    const result = [0, 1, 2].every( i => typeof x[i] === 'number' )
     if ( !result ) throw new TypeError( `Expected Type 'vec3Like', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
 const tc_numbervec3Like = function( x ) {
-    const result = (x => (x => typeof x === "number")(x) || (x => [0, 1, 2].every( i => typeof x[i] === "number" ))(x))(x)
+    const result = (typeof x === 'number') || ([0, 1, 2].every( i => typeof x[i] === 'number' ))
     if ( !result ) throw new TypeError( `Expected Type 'number|vec3Like', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
 const tc_vec32 = function( x ) {
-    const result = (x => (x => x instanceof vec3)(x) || (x => x === undefined)(x))(x)
+    const result = (x instanceof vec3) || (x === undefined)
     if ( !result ) throw new TypeError( `Expected Type 'vec3', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
 const tc_FINITE3 = function( x ) {
-    const result = (x => Array.from( { length: 3 ** 2 } ).every( ( _, i ) => isFinite( x[i] ) ))(x)
+    const result = Array.from( { length: 3 ** 2 } ).every( ( _, i ) => isFinite( x[i] ) )
     if ( !result ) throw new Error( `Failed optional check 'FINITE'. Got [${x?.constructor.name||typeof x}]: ${x}` )
 }
 const tc_mat3Like = function( x ) {
-    tc_FINITE3( x )
-    const result = (x => Array.from( { length: 3 ** 2 } ).every( ( _, i ) => typeof x[i] === "number" ))(x)
+    if ( Flags.FINITE ) tc_FINITE3( x )
+    const result = Array.from( { length: 3 ** 2 } ).every( ( _, i ) => typeof x[i] === 'number' )
     if ( !result ) throw new TypeError( `Expected Type 'mat3Like', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
 
