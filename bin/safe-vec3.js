@@ -1,4 +1,6 @@
 import { Flags } from './safe-vec.js'
+import { vec2 as vec2unsafe, vec3 as vec3unsafe, vec4 as vec4unsafe } from './vec.js'
+import { mat2 as mat2unsafe, mat3 as mat3unsafe, mat4 as mat4unsafe } from './mat.js'
 const tc_number = function( x ) {
     const result = (typeof x === 'number') || (x === undefined)
     if ( !result ) throw new TypeError( `Expected Type 'number', got [${x?.constructor.name||typeof x}]: ${x}` )
@@ -9,7 +11,7 @@ const tc_FINITE = function( x ) {
 }
 const tc_vec3 = function( x ) {
     if ( Flags.FINITE ) tc_FINITE( x )
-    const result = x instanceof vec3
+    const result = x instanceof vec3 || x instanceof vec2unsafe
     if ( !result ) throw new TypeError( `Expected Type 'vec3', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
 const tc_NAN = function( x ) {
@@ -49,7 +51,7 @@ const tc_numbervec3Like = function( x ) {
     if ( !result ) throw new TypeError( `Expected Type 'number|vec3Like', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
 const tc_vec32 = function( x ) {
-    const result = (x instanceof vec3) || (x === undefined)
+    const result = (x instanceof vec3 || x instanceof vec2unsafe) || (x === undefined)
     if ( !result ) throw new TypeError( `Expected Type 'vec3', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
 const tc_FINITE3 = function( x ) {
@@ -60,6 +62,15 @@ const tc_mat3Like = function( x ) {
     if ( Flags.FINITE ) tc_FINITE3( x )
     const result = Array.from( { length: 3 ** 2 } ).every( ( _, i ) => typeof x[i] === 'number' )
     if ( !result ) throw new TypeError( `Expected Type 'mat3Like', got [${x?.constructor.name||typeof x}]: ${x}` )
+}
+const tc_FINITE4 = function( x ) {
+    const result = x.every( x => [0, 1, 2].every( i => isFinite( x[i] ) ) )
+    if ( !result ) throw new Error( `Failed optional check 'FINITE'. Got [${x?.constructor.name||typeof x}]: ${x}` )
+}
+const tc_vec3Like4 = function( x ) {
+    if ( Flags.FINITE ) tc_FINITE4( x )
+    const result = x.every( x => [0, 1, 2].every( i => typeof x[i] === 'number' ) )
+    if ( !result ) throw new TypeError( `Expected Type 'vec3Like', got [${x?.constructor.name||typeof x}]: ${x}` )
 }
 
 import { randomNorm } from "./vechelper.js"
@@ -2273,6 +2284,14 @@ export class vec3 {
     // ---------------------------
     //      VECTOR UTILS
     // ---------------------------
+
+    /** @param {vec3Like} v */
+    static noop( ...v ) {
+        let tc_return
+        tc_vec3Like4( v )
+        return
+        return tc_return
+    }
 
     /** @param {vec3Like} v1 @param {vec3Like} v2 @returns {number} */
     static distance( v1, v2 ) {

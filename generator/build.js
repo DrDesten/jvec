@@ -15,9 +15,9 @@ import { Range } from "./genlib.js"
 
 const NUMBER_TYPE = new Type( "number", "typeof x === 'number'", { NAN: "!isNaN( x )", FINITE: "isFinite( x )" } )
 const VECTOR_TYPES = {
-    "2": new Type( "vec2", "x instanceof vec2", { FINITE: "[...x].every( isFinite )" } ),
-    "3": new Type( "vec3", "x instanceof vec3", { FINITE: "[...x].every( isFinite )" } ),
-    "4": new Type( "vec4", "x instanceof vec4", { FINITE: "[...x].every( isFinite )" } ),
+    "2": new Type( "vec2", "x instanceof vec2 || x instanceof vec2unsafe", { FINITE: "[...x].every( isFinite )" } ),
+    "3": new Type( "vec3", "x instanceof vec3 || x instanceof vec2unsafe", { FINITE: "[...x].every( isFinite )" } ),
+    "4": new Type( "vec4", "x instanceof vec4 || x instanceof vec2unsafe", { FINITE: "[...x].every( isFinite )" } ),
 }
 const VECTORLIKE_TYPES = {
     "2": new Type( "vec2Like", `[0, 1].every( i => typeof x[i] === 'number' )`, { FINITE: `[0, 1].every( i => isFinite( x[i] ) )` } ),
@@ -30,16 +30,16 @@ const VECTORLIKE_OR_NUMBER_TYPES = {
     "4": new Type( [NUMBER_TYPE, VECTORLIKE_TYPES[4]] ),
 }
 const MATRIX_TYPES = {
-    "2": new Type( "mat2", "x instanceof mat2" ),
-    "3": new Type( "mat3", "x instanceof mat3" ),
-    "4": new Type( "mat4", "x instanceof mat4" ),
+    "2": new Type( "mat2", "x instanceof mat2 || x instanceof vec2unsafe" ),
+    "3": new Type( "mat3", "x instanceof mat3 || x instanceof vec2unsafe" ),
+    "4": new Type( "mat4", "x instanceof mat4 || x instanceof vec2unsafe" ),
 }
 const MATRIXLIKE_TYPES = {
-    "2": new Type( "mat2Like",  "Array.from( { length: 2 ** 2 } ).every( ( _, i ) => typeof x[i] === 'number' )",
+    "2": new Type( "mat2Like", "Array.from( { length: 2 ** 2 } ).every( ( _, i ) => typeof x[i] === 'number' )",
         { FINITE: "Array.from( { length: 2 ** 2 } ).every( ( _, i ) => isFinite( x[i] ) )" } ),
-    "3": new Type( "mat3Like",  "Array.from( { length: 3 ** 2 } ).every( ( _, i ) => typeof x[i] === 'number' )",
+    "3": new Type( "mat3Like", "Array.from( { length: 3 ** 2 } ).every( ( _, i ) => typeof x[i] === 'number' )",
         { FINITE: "Array.from( { length: 3 ** 2 } ).every( ( _, i ) => isFinite( x[i] ) )" } ),
-    "4": new Type( "mat4Like",  "Array.from( { length: 4 ** 2 } ).every( ( _, i ) => typeof x[i] === 'number' )",
+    "4": new Type( "mat4Like", "Array.from( { length: 4 ** 2 } ).every( ( _, i ) => typeof x[i] === 'number' )",
         { FINITE: "Array.from( { length: 4 ** 2 } ).every( ( _, i ) => isFinite( x[i] ) )" } ),
 }
 const MATRIXLIKE_OR_NUMBER_TYPES = {
@@ -78,7 +78,11 @@ function buildVector() {
         write( `vec${dim}.js`, file )
 
         const tc_builder = new FileBuilder()
-        tc_builder.declarations.push( "import { Flags } from './safe-vec.js'" )
+        tc_builder.declarations.push(
+            "import { Flags } from './safe-vec.js'",
+            "import { vec2 as vec2unsafe, vec3 as vec3unsafe, vec4 as vec4unsafe } from './vec.js'",
+            "import { mat2 as mat2unsafe, mat3 as mat3unsafe, mat4 as mat4unsafe } from './mat.js'",
+        )
         const tc_file = tc_builder.buildFile( elements, true )
         tc_builder.customData.flags?.forEach( flag => tc_flags.add( flag ) )
         write( `safe-vec${dim}.js`, tc_file )
@@ -561,6 +565,10 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
     }
 
     function utilityFunctions() {
+        function noop() {
+            return new Fn( "noop", new Fn.Param( "v", TYPELIKE, { rest: true } ), "return", { prefix: "static" } )
+        }
+
         function distance() {
             const body = `
                 ${DMAP( i => `const d${i} = v1[${i}] - v2[${i}]`, "\n" )}
@@ -630,6 +638,7 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
         }
 
         const functions = [
+            noop(),
             distance(),
             distanceSq(),
             min(),

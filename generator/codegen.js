@@ -52,6 +52,7 @@ export class Type {
         this.checks
 
         this._optional = null
+        this._rest = null
         this._generatedChecks = null
     }
 
@@ -61,8 +62,16 @@ export class Type {
         this._optional._optional = this._optional
         return this._optional
     }
-    toArray() {
-        return Type.any
+    toRest() {
+        this._rest ??= new Type(
+            this.name,
+            `x.every( x => ${this.check} )`,
+            Object.fromEntries( Object.entries( this.checks ).map( ( [name, check] ) => {
+                return [name, `x.every( x => ${check} )`]
+            } ) )
+        )
+        this._rest._rest = this._rest
+        return this._rest
     }
 
     generateTypeError() {
@@ -178,7 +187,7 @@ export class Fn {
         this.params.forEach( param => {
             if ( param.type instanceof Type ) {
                 param.opts.optional && ( param.type = param.type.toOptional() )
-                param.opts.rest && ( param.type = param.type.toArray() )
+                param.opts.rest && ( param.type = param.type.toRest() )
             }
         } )
     }

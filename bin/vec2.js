@@ -1119,6 +1119,11 @@ export class vec2 {
     //      VECTOR UTILS
     // ---------------------------
 
+    /** @param {vec2Like} v */
+    static noop( ...v ) {
+        return
+    }
+
     /** @param {vec2Like} v1 @param {vec2Like} v2 @returns {number} */
     static distance( v1, v2 ) {
         const d0 = v1[0] - v2[0]
