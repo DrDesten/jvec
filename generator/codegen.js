@@ -393,8 +393,49 @@ export class FileBuilder {
 
 // SNIPPETS ###########################################
 
+function curry( arg, ...args ) {
+    if ( typeof arg !== "function" ) return () => arg
+    if ( args.length === 0 ) return arg
+    if ( arg.length <= args.length ) return () => arg( ...args )
+    return ( ...newargs ) => curry( arg, ...args, ...newargs )()
+}
+
+/**
+ * @typedef {string} ExpressionString
+ * @typedef {(index: number) => string} ExpressionFunction
+ * @typedef {ExpressionString|ExpressionFunction} ExpressionValue
+ */
+
 export function call( expression ) {
+    /** @param {ExpressionString[]} args */
     return function ( ...args ) {
-        return `${expression}( ${args.join( ", " )} )`
+        return args.length ? `${expression}( ${args.join( ", " )} )` : `${expression}()`
+    }
+}
+export function index( expression ) {
+    /** @param {ExpressionString} property */
+    return function ( property ) {
+        return `${expression}[${property}]`
+    }
+}
+export function property( expression ) {
+    /** @param {ExpressionString} property */
+    return function ( property ) {
+        return `${expression}.${property}`
+    }
+}
+
+export function assign( target, ...args ) {
+    return function ( expression ) {
+
+    }
+}
+
+export function repeat( count, joiner = ", " ) {
+    /** @param {ExpressionValue} expression */
+    return function ( expression ) {
+        return typeof expression === "function"
+            ? Array.from( { length: count }, ( _, i ) => expression( i ) ).join( joiner )
+            : Array.from( { length: count }, () => expression ).join( joiner )
     }
 }
