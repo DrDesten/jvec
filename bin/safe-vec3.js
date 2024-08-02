@@ -91,7 +91,7 @@ import { mat4 } from "./mat4.js"
 
 /** @typedef {vec3|ArrayLike<number>} vec3Like */
 
-export class vec3 {
+export class vec3 extends Float64Array {
 
     static get NaN() { return new vec3( NaN, NaN, NaN ) }
 
@@ -99,29 +99,34 @@ export class vec3 {
     //      CONSTRUCTORS
     // ---------------------------
 
+    /**  */
+    constructor() {
+        let tc_return
+        super( 2 )
+        return tc_return
+    }
+
     /**
      * @param {number|vec3Like|{x: number, y: number, z: number}|{r: number, g: number, b: number}} [object=0]
      * @param {number} [y]
      * @param {number} [z]
+     * @returns {vec3}
      */
-    constructor( object = 0, y, z ) {
+    static new( object = 0, y, z ) {
         let tc_return
         tc_number( y )
         tc_number( z )
+        const vec = new vec3
         if ( typeof object === "number" )
             y === undefined
-                ? ( this[0] = object, this[1] = object, this[2] = object )
-                : ( this[0] = object, this[1] = +y, this[2] = +( z ?? 0 ) )
+                ? ( vec[0] = object, vec[1] = object, vec[2] = object )
+                : ( vec[0] = object, vec[1] = +y, vec[2] = +( z ?? 0 ) )
         else
-            this[0] = +( object[0] ?? object.x ?? object.r ?? 0 ),
-            this[1] = +( object[1] ?? object.y ?? object.g ?? 0 ),
-            this[2] = +( object[2] ?? object.z ?? object.b ?? 0 )
-        /** @type {number} x-coordinate of the vector */
-        this[0]
-        /** @type {number} y-coordinate of the vector */
-        this[1]
-        /** @type {number} z-coordinate of the vector */
-        this[2]
+            vec[0] = +( object[0] ?? object.x ?? object.r ?? 0 ),
+            vec[1] = +( object[1] ?? object.y ?? object.g ?? 0 ),
+            vec[2] = +( object[2] ?? object.z ?? object.b ?? 0 )
+        tc_return = vec
+        tc_vec3( tc_return )
         return tc_return
     }
 
@@ -130,7 +135,7 @@ export class vec3 {
         let tc_return
         tc_number( index )
         tc_number( stride )
-        tc_return = new vec3( array[0 * stride + index], array[1 * stride + index], array[2 * stride + index] )
+        tc_return = vec3.new( array[0 * stride + index], array[1 * stride + index], array[2 * stride + index] )
         tc_vec3( tc_return )
         return tc_return
     }
@@ -138,7 +143,7 @@ export class vec3 {
     /** @param {(index: number) => number} fn @returns {vec3} */
     static fromFunction( fn ) {
         let tc_return
-        tc_return = new vec3( fn( 0 ), fn( 1 ), fn( 2 ) )
+        tc_return = vec3.new( fn( 0 ), fn( 1 ), fn( 2 ) )
         tc_vec3( tc_return )
         return tc_return
     }
@@ -146,7 +151,7 @@ export class vec3 {
     /** @returns {vec3} */
     static random() {
         let tc_return
-        tc_return = new vec3( Math.random(), Math.random(), Math.random() )
+        tc_return = vec3.new( Math.random(), Math.random(), Math.random() )
         tc_vec3( tc_return )
         return tc_return
     }
@@ -154,7 +159,7 @@ export class vec3 {
     /** @returns {vec3} */
     static randomNorm() {
         let tc_return
-        tc_return = new vec3( randomNorm(), randomNorm(), randomNorm() )
+        tc_return = vec3.new( randomNorm(), randomNorm(), randomNorm() )
         tc_vec3( tc_return )
         return tc_return
     }
@@ -162,7 +167,7 @@ export class vec3 {
     /** @returns {vec3} */
     static randomDir() {
         let tc_return
-        tc_return = new vec3( randomNorm(), randomNorm(), randomNorm() ).normalize()
+        tc_return = vec3.new( randomNorm(), randomNorm(), randomNorm() ).normalize()
         tc_vec3( tc_return )
         return tc_return
     }
@@ -170,7 +175,7 @@ export class vec3 {
     /** @returns {vec3} */
     static randomSphere() {
         let tc_return
-        tc_return = new vec3( randomNorm(), randomNorm(), randomNorm() ).setLength( Math.random() ** (1/3) )
+        tc_return = vec3.new( randomNorm(), randomNorm(), randomNorm() ).setLength( Math.random() ** (1/3) )
         tc_vec3( tc_return )
         return tc_return
     }
@@ -204,521 +209,521 @@ export class vec3 {
     /** @param {number} s */
     set b( s ) { let tc_return; tc_number0( s ); this[2] = s; return tc_return }
     /** @returns {vec2} */
-    get xx() { let tc_return; tc_return = new vec2( this[0], this[0] ); return tc_return }
+    get xx() { let tc_return; tc_return = vec3.new( this[0], this[0] ); return tc_return }
     /** @returns {vec2} */
-    get rr() { let tc_return; tc_return = new vec2( this[0], this[0] ); return tc_return }
+    get rr() { let tc_return; tc_return = vec3.new( this[0], this[0] ); return tc_return }
     /** @returns {vec2} */
-    get xy() { let tc_return; tc_return = new vec2( this[0], this[1] ); return tc_return }
+    get xy() { let tc_return; tc_return = vec3.new( this[0], this[1] ); return tc_return }
     /** @returns {vec2} */
-    get rg() { let tc_return; tc_return = new vec2( this[0], this[1] ); return tc_return }
+    get rg() { let tc_return; tc_return = vec3.new( this[0], this[1] ); return tc_return }
     /** @param {vec2Like} v */
     set xy( v ) { let tc_return; tc_vec2Like( v ); this[0] = v[0], this[1] = v[1]; return tc_return }
     /** @param {vec2Like} v */
     set rg( v ) { let tc_return; tc_vec2Like( v ); this[0] = v[0], this[1] = v[1]; return tc_return }
     /** @returns {vec2} */
-    get xz() { let tc_return; tc_return = new vec2( this[0], this[2] ); return tc_return }
+    get xz() { let tc_return; tc_return = vec3.new( this[0], this[2] ); return tc_return }
     /** @returns {vec2} */
-    get rb() { let tc_return; tc_return = new vec2( this[0], this[2] ); return tc_return }
+    get rb() { let tc_return; tc_return = vec3.new( this[0], this[2] ); return tc_return }
     /** @param {vec2Like} v */
     set xz( v ) { let tc_return; tc_vec2Like( v ); this[0] = v[0], this[2] = v[1]; return tc_return }
     /** @param {vec2Like} v */
     set rb( v ) { let tc_return; tc_vec2Like( v ); this[0] = v[0], this[2] = v[1]; return tc_return }
     /** @returns {vec2} */
-    get yx() { let tc_return; tc_return = new vec2( this[1], this[0] ); return tc_return }
+    get yx() { let tc_return; tc_return = vec3.new( this[1], this[0] ); return tc_return }
     /** @returns {vec2} */
-    get gr() { let tc_return; tc_return = new vec2( this[1], this[0] ); return tc_return }
+    get gr() { let tc_return; tc_return = vec3.new( this[1], this[0] ); return tc_return }
     /** @param {vec2Like} v */
     set yx( v ) { let tc_return; tc_vec2Like( v ); this[1] = v[0], this[0] = v[1]; return tc_return }
     /** @param {vec2Like} v */
     set gr( v ) { let tc_return; tc_vec2Like( v ); this[1] = v[0], this[0] = v[1]; return tc_return }
     /** @returns {vec2} */
-    get yy() { let tc_return; tc_return = new vec2( this[1], this[1] ); return tc_return }
+    get yy() { let tc_return; tc_return = vec3.new( this[1], this[1] ); return tc_return }
     /** @returns {vec2} */
-    get gg() { let tc_return; tc_return = new vec2( this[1], this[1] ); return tc_return }
+    get gg() { let tc_return; tc_return = vec3.new( this[1], this[1] ); return tc_return }
     /** @returns {vec2} */
-    get yz() { let tc_return; tc_return = new vec2( this[1], this[2] ); return tc_return }
+    get yz() { let tc_return; tc_return = vec3.new( this[1], this[2] ); return tc_return }
     /** @returns {vec2} */
-    get gb() { let tc_return; tc_return = new vec2( this[1], this[2] ); return tc_return }
+    get gb() { let tc_return; tc_return = vec3.new( this[1], this[2] ); return tc_return }
     /** @param {vec2Like} v */
     set yz( v ) { let tc_return; tc_vec2Like( v ); this[1] = v[0], this[2] = v[1]; return tc_return }
     /** @param {vec2Like} v */
     set gb( v ) { let tc_return; tc_vec2Like( v ); this[1] = v[0], this[2] = v[1]; return tc_return }
     /** @returns {vec2} */
-    get zx() { let tc_return; tc_return = new vec2( this[2], this[0] ); return tc_return }
+    get zx() { let tc_return; tc_return = vec3.new( this[2], this[0] ); return tc_return }
     /** @returns {vec2} */
-    get br() { let tc_return; tc_return = new vec2( this[2], this[0] ); return tc_return }
+    get br() { let tc_return; tc_return = vec3.new( this[2], this[0] ); return tc_return }
     /** @param {vec2Like} v */
     set zx( v ) { let tc_return; tc_vec2Like( v ); this[2] = v[0], this[0] = v[1]; return tc_return }
     /** @param {vec2Like} v */
     set br( v ) { let tc_return; tc_vec2Like( v ); this[2] = v[0], this[0] = v[1]; return tc_return }
     /** @returns {vec2} */
-    get zy() { let tc_return; tc_return = new vec2( this[2], this[1] ); return tc_return }
+    get zy() { let tc_return; tc_return = vec3.new( this[2], this[1] ); return tc_return }
     /** @returns {vec2} */
-    get bg() { let tc_return; tc_return = new vec2( this[2], this[1] ); return tc_return }
+    get bg() { let tc_return; tc_return = vec3.new( this[2], this[1] ); return tc_return }
     /** @param {vec2Like} v */
     set zy( v ) { let tc_return; tc_vec2Like( v ); this[2] = v[0], this[1] = v[1]; return tc_return }
     /** @param {vec2Like} v */
     set bg( v ) { let tc_return; tc_vec2Like( v ); this[2] = v[0], this[1] = v[1]; return tc_return }
     /** @returns {vec2} */
-    get zz() { let tc_return; tc_return = new vec2( this[2], this[2] ); return tc_return }
+    get zz() { let tc_return; tc_return = vec3.new( this[2], this[2] ); return tc_return }
     /** @returns {vec2} */
-    get bb() { let tc_return; tc_return = new vec2( this[2], this[2] ); return tc_return }
+    get bb() { let tc_return; tc_return = vec3.new( this[2], this[2] ); return tc_return }
     /** @returns {vec3} */
-    get xxx() { let tc_return; tc_return = new vec3( this[0], this[0], this[0] ); return tc_return }
+    get xxx() { let tc_return; tc_return = vec3.new( this[0], this[0], this[0] ); return tc_return }
     /** @returns {vec3} */
-    get rrr() { let tc_return; tc_return = new vec3( this[0], this[0], this[0] ); return tc_return }
+    get rrr() { let tc_return; tc_return = vec3.new( this[0], this[0], this[0] ); return tc_return }
     /** @returns {vec3} */
-    get xxy() { let tc_return; tc_return = new vec3( this[0], this[0], this[1] ); return tc_return }
+    get xxy() { let tc_return; tc_return = vec3.new( this[0], this[0], this[1] ); return tc_return }
     /** @returns {vec3} */
-    get rrg() { let tc_return; tc_return = new vec3( this[0], this[0], this[1] ); return tc_return }
+    get rrg() { let tc_return; tc_return = vec3.new( this[0], this[0], this[1] ); return tc_return }
     /** @returns {vec3} */
-    get xxz() { let tc_return; tc_return = new vec3( this[0], this[0], this[2] ); return tc_return }
+    get xxz() { let tc_return; tc_return = vec3.new( this[0], this[0], this[2] ); return tc_return }
     /** @returns {vec3} */
-    get rrb() { let tc_return; tc_return = new vec3( this[0], this[0], this[2] ); return tc_return }
+    get rrb() { let tc_return; tc_return = vec3.new( this[0], this[0], this[2] ); return tc_return }
     /** @returns {vec3} */
-    get xyx() { let tc_return; tc_return = new vec3( this[0], this[1], this[0] ); return tc_return }
+    get xyx() { let tc_return; tc_return = vec3.new( this[0], this[1], this[0] ); return tc_return }
     /** @returns {vec3} */
-    get rgr() { let tc_return; tc_return = new vec3( this[0], this[1], this[0] ); return tc_return }
+    get rgr() { let tc_return; tc_return = vec3.new( this[0], this[1], this[0] ); return tc_return }
     /** @returns {vec3} */
-    get xyy() { let tc_return; tc_return = new vec3( this[0], this[1], this[1] ); return tc_return }
+    get xyy() { let tc_return; tc_return = vec3.new( this[0], this[1], this[1] ); return tc_return }
     /** @returns {vec3} */
-    get rgg() { let tc_return; tc_return = new vec3( this[0], this[1], this[1] ); return tc_return }
+    get rgg() { let tc_return; tc_return = vec3.new( this[0], this[1], this[1] ); return tc_return }
     /** @returns {vec3} */
-    get xyz() { let tc_return; tc_return = new vec3( this[0], this[1], this[2] ); return tc_return }
+    get xyz() { let tc_return; tc_return = vec3.new( this[0], this[1], this[2] ); return tc_return }
     /** @returns {vec3} */
-    get rgb() { let tc_return; tc_return = new vec3( this[0], this[1], this[2] ); return tc_return }
+    get rgb() { let tc_return; tc_return = vec3.new( this[0], this[1], this[2] ); return tc_return }
     /** @param {vec3Like} v */
     set xyz( v ) { let tc_return; tc_vec3Like( v ); this[0] = v[0], this[1] = v[1], this[2] = v[2]; return tc_return }
     /** @param {vec3Like} v */
     set rgb( v ) { let tc_return; tc_vec3Like( v ); this[0] = v[0], this[1] = v[1], this[2] = v[2]; return tc_return }
     /** @returns {vec3} */
-    get xzx() { let tc_return; tc_return = new vec3( this[0], this[2], this[0] ); return tc_return }
+    get xzx() { let tc_return; tc_return = vec3.new( this[0], this[2], this[0] ); return tc_return }
     /** @returns {vec3} */
-    get rbr() { let tc_return; tc_return = new vec3( this[0], this[2], this[0] ); return tc_return }
+    get rbr() { let tc_return; tc_return = vec3.new( this[0], this[2], this[0] ); return tc_return }
     /** @returns {vec3} */
-    get xzy() { let tc_return; tc_return = new vec3( this[0], this[2], this[1] ); return tc_return }
+    get xzy() { let tc_return; tc_return = vec3.new( this[0], this[2], this[1] ); return tc_return }
     /** @returns {vec3} */
-    get rbg() { let tc_return; tc_return = new vec3( this[0], this[2], this[1] ); return tc_return }
+    get rbg() { let tc_return; tc_return = vec3.new( this[0], this[2], this[1] ); return tc_return }
     /** @param {vec3Like} v */
     set xzy( v ) { let tc_return; tc_vec3Like( v ); this[0] = v[0], this[2] = v[1], this[1] = v[2]; return tc_return }
     /** @param {vec3Like} v */
     set rbg( v ) { let tc_return; tc_vec3Like( v ); this[0] = v[0], this[2] = v[1], this[1] = v[2]; return tc_return }
     /** @returns {vec3} */
-    get xzz() { let tc_return; tc_return = new vec3( this[0], this[2], this[2] ); return tc_return }
+    get xzz() { let tc_return; tc_return = vec3.new( this[0], this[2], this[2] ); return tc_return }
     /** @returns {vec3} */
-    get rbb() { let tc_return; tc_return = new vec3( this[0], this[2], this[2] ); return tc_return }
+    get rbb() { let tc_return; tc_return = vec3.new( this[0], this[2], this[2] ); return tc_return }
     /** @returns {vec3} */
-    get yxx() { let tc_return; tc_return = new vec3( this[1], this[0], this[0] ); return tc_return }
+    get yxx() { let tc_return; tc_return = vec3.new( this[1], this[0], this[0] ); return tc_return }
     /** @returns {vec3} */
-    get grr() { let tc_return; tc_return = new vec3( this[1], this[0], this[0] ); return tc_return }
+    get grr() { let tc_return; tc_return = vec3.new( this[1], this[0], this[0] ); return tc_return }
     /** @returns {vec3} */
-    get yxy() { let tc_return; tc_return = new vec3( this[1], this[0], this[1] ); return tc_return }
+    get yxy() { let tc_return; tc_return = vec3.new( this[1], this[0], this[1] ); return tc_return }
     /** @returns {vec3} */
-    get grg() { let tc_return; tc_return = new vec3( this[1], this[0], this[1] ); return tc_return }
+    get grg() { let tc_return; tc_return = vec3.new( this[1], this[0], this[1] ); return tc_return }
     /** @returns {vec3} */
-    get yxz() { let tc_return; tc_return = new vec3( this[1], this[0], this[2] ); return tc_return }
+    get yxz() { let tc_return; tc_return = vec3.new( this[1], this[0], this[2] ); return tc_return }
     /** @returns {vec3} */
-    get grb() { let tc_return; tc_return = new vec3( this[1], this[0], this[2] ); return tc_return }
+    get grb() { let tc_return; tc_return = vec3.new( this[1], this[0], this[2] ); return tc_return }
     /** @param {vec3Like} v */
     set yxz( v ) { let tc_return; tc_vec3Like( v ); this[1] = v[0], this[0] = v[1], this[2] = v[2]; return tc_return }
     /** @param {vec3Like} v */
     set grb( v ) { let tc_return; tc_vec3Like( v ); this[1] = v[0], this[0] = v[1], this[2] = v[2]; return tc_return }
     /** @returns {vec3} */
-    get yyx() { let tc_return; tc_return = new vec3( this[1], this[1], this[0] ); return tc_return }
+    get yyx() { let tc_return; tc_return = vec3.new( this[1], this[1], this[0] ); return tc_return }
     /** @returns {vec3} */
-    get ggr() { let tc_return; tc_return = new vec3( this[1], this[1], this[0] ); return tc_return }
+    get ggr() { let tc_return; tc_return = vec3.new( this[1], this[1], this[0] ); return tc_return }
     /** @returns {vec3} */
-    get yyy() { let tc_return; tc_return = new vec3( this[1], this[1], this[1] ); return tc_return }
+    get yyy() { let tc_return; tc_return = vec3.new( this[1], this[1], this[1] ); return tc_return }
     /** @returns {vec3} */
-    get ggg() { let tc_return; tc_return = new vec3( this[1], this[1], this[1] ); return tc_return }
+    get ggg() { let tc_return; tc_return = vec3.new( this[1], this[1], this[1] ); return tc_return }
     /** @returns {vec3} */
-    get yyz() { let tc_return; tc_return = new vec3( this[1], this[1], this[2] ); return tc_return }
+    get yyz() { let tc_return; tc_return = vec3.new( this[1], this[1], this[2] ); return tc_return }
     /** @returns {vec3} */
-    get ggb() { let tc_return; tc_return = new vec3( this[1], this[1], this[2] ); return tc_return }
+    get ggb() { let tc_return; tc_return = vec3.new( this[1], this[1], this[2] ); return tc_return }
     /** @returns {vec3} */
-    get yzx() { let tc_return; tc_return = new vec3( this[1], this[2], this[0] ); return tc_return }
+    get yzx() { let tc_return; tc_return = vec3.new( this[1], this[2], this[0] ); return tc_return }
     /** @returns {vec3} */
-    get gbr() { let tc_return; tc_return = new vec3( this[1], this[2], this[0] ); return tc_return }
+    get gbr() { let tc_return; tc_return = vec3.new( this[1], this[2], this[0] ); return tc_return }
     /** @param {vec3Like} v */
     set yzx( v ) { let tc_return; tc_vec3Like( v ); this[1] = v[0], this[2] = v[1], this[0] = v[2]; return tc_return }
     /** @param {vec3Like} v */
     set gbr( v ) { let tc_return; tc_vec3Like( v ); this[1] = v[0], this[2] = v[1], this[0] = v[2]; return tc_return }
     /** @returns {vec3} */
-    get yzy() { let tc_return; tc_return = new vec3( this[1], this[2], this[1] ); return tc_return }
+    get yzy() { let tc_return; tc_return = vec3.new( this[1], this[2], this[1] ); return tc_return }
     /** @returns {vec3} */
-    get gbg() { let tc_return; tc_return = new vec3( this[1], this[2], this[1] ); return tc_return }
+    get gbg() { let tc_return; tc_return = vec3.new( this[1], this[2], this[1] ); return tc_return }
     /** @returns {vec3} */
-    get yzz() { let tc_return; tc_return = new vec3( this[1], this[2], this[2] ); return tc_return }
+    get yzz() { let tc_return; tc_return = vec3.new( this[1], this[2], this[2] ); return tc_return }
     /** @returns {vec3} */
-    get gbb() { let tc_return; tc_return = new vec3( this[1], this[2], this[2] ); return tc_return }
+    get gbb() { let tc_return; tc_return = vec3.new( this[1], this[2], this[2] ); return tc_return }
     /** @returns {vec3} */
-    get zxx() { let tc_return; tc_return = new vec3( this[2], this[0], this[0] ); return tc_return }
+    get zxx() { let tc_return; tc_return = vec3.new( this[2], this[0], this[0] ); return tc_return }
     /** @returns {vec3} */
-    get brr() { let tc_return; tc_return = new vec3( this[2], this[0], this[0] ); return tc_return }
+    get brr() { let tc_return; tc_return = vec3.new( this[2], this[0], this[0] ); return tc_return }
     /** @returns {vec3} */
-    get zxy() { let tc_return; tc_return = new vec3( this[2], this[0], this[1] ); return tc_return }
+    get zxy() { let tc_return; tc_return = vec3.new( this[2], this[0], this[1] ); return tc_return }
     /** @returns {vec3} */
-    get brg() { let tc_return; tc_return = new vec3( this[2], this[0], this[1] ); return tc_return }
+    get brg() { let tc_return; tc_return = vec3.new( this[2], this[0], this[1] ); return tc_return }
     /** @param {vec3Like} v */
     set zxy( v ) { let tc_return; tc_vec3Like( v ); this[2] = v[0], this[0] = v[1], this[1] = v[2]; return tc_return }
     /** @param {vec3Like} v */
     set brg( v ) { let tc_return; tc_vec3Like( v ); this[2] = v[0], this[0] = v[1], this[1] = v[2]; return tc_return }
     /** @returns {vec3} */
-    get zxz() { let tc_return; tc_return = new vec3( this[2], this[0], this[2] ); return tc_return }
+    get zxz() { let tc_return; tc_return = vec3.new( this[2], this[0], this[2] ); return tc_return }
     /** @returns {vec3} */
-    get brb() { let tc_return; tc_return = new vec3( this[2], this[0], this[2] ); return tc_return }
+    get brb() { let tc_return; tc_return = vec3.new( this[2], this[0], this[2] ); return tc_return }
     /** @returns {vec3} */
-    get zyx() { let tc_return; tc_return = new vec3( this[2], this[1], this[0] ); return tc_return }
+    get zyx() { let tc_return; tc_return = vec3.new( this[2], this[1], this[0] ); return tc_return }
     /** @returns {vec3} */
-    get bgr() { let tc_return; tc_return = new vec3( this[2], this[1], this[0] ); return tc_return }
+    get bgr() { let tc_return; tc_return = vec3.new( this[2], this[1], this[0] ); return tc_return }
     /** @param {vec3Like} v */
     set zyx( v ) { let tc_return; tc_vec3Like( v ); this[2] = v[0], this[1] = v[1], this[0] = v[2]; return tc_return }
     /** @param {vec3Like} v */
     set bgr( v ) { let tc_return; tc_vec3Like( v ); this[2] = v[0], this[1] = v[1], this[0] = v[2]; return tc_return }
     /** @returns {vec3} */
-    get zyy() { let tc_return; tc_return = new vec3( this[2], this[1], this[1] ); return tc_return }
+    get zyy() { let tc_return; tc_return = vec3.new( this[2], this[1], this[1] ); return tc_return }
     /** @returns {vec3} */
-    get bgg() { let tc_return; tc_return = new vec3( this[2], this[1], this[1] ); return tc_return }
+    get bgg() { let tc_return; tc_return = vec3.new( this[2], this[1], this[1] ); return tc_return }
     /** @returns {vec3} */
-    get zyz() { let tc_return; tc_return = new vec3( this[2], this[1], this[2] ); return tc_return }
+    get zyz() { let tc_return; tc_return = vec3.new( this[2], this[1], this[2] ); return tc_return }
     /** @returns {vec3} */
-    get bgb() { let tc_return; tc_return = new vec3( this[2], this[1], this[2] ); return tc_return }
+    get bgb() { let tc_return; tc_return = vec3.new( this[2], this[1], this[2] ); return tc_return }
     /** @returns {vec3} */
-    get zzx() { let tc_return; tc_return = new vec3( this[2], this[2], this[0] ); return tc_return }
+    get zzx() { let tc_return; tc_return = vec3.new( this[2], this[2], this[0] ); return tc_return }
     /** @returns {vec3} */
-    get bbr() { let tc_return; tc_return = new vec3( this[2], this[2], this[0] ); return tc_return }
+    get bbr() { let tc_return; tc_return = vec3.new( this[2], this[2], this[0] ); return tc_return }
     /** @returns {vec3} */
-    get zzy() { let tc_return; tc_return = new vec3( this[2], this[2], this[1] ); return tc_return }
+    get zzy() { let tc_return; tc_return = vec3.new( this[2], this[2], this[1] ); return tc_return }
     /** @returns {vec3} */
-    get bbg() { let tc_return; tc_return = new vec3( this[2], this[2], this[1] ); return tc_return }
+    get bbg() { let tc_return; tc_return = vec3.new( this[2], this[2], this[1] ); return tc_return }
     /** @returns {vec3} */
-    get zzz() { let tc_return; tc_return = new vec3( this[2], this[2], this[2] ); return tc_return }
+    get zzz() { let tc_return; tc_return = vec3.new( this[2], this[2], this[2] ); return tc_return }
     /** @returns {vec3} */
-    get bbb() { let tc_return; tc_return = new vec3( this[2], this[2], this[2] ); return tc_return }
+    get bbb() { let tc_return; tc_return = vec3.new( this[2], this[2], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get xxxx() { let tc_return; tc_return = new vec4( this[0], this[0], this[0], this[0] ); return tc_return }
+    get xxxx() { let tc_return; tc_return = vec3.new( this[0], this[0], this[0], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get rrrr() { let tc_return; tc_return = new vec4( this[0], this[0], this[0], this[0] ); return tc_return }
+    get rrrr() { let tc_return; tc_return = vec3.new( this[0], this[0], this[0], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get xxxy() { let tc_return; tc_return = new vec4( this[0], this[0], this[0], this[1] ); return tc_return }
+    get xxxy() { let tc_return; tc_return = vec3.new( this[0], this[0], this[0], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get rrrg() { let tc_return; tc_return = new vec4( this[0], this[0], this[0], this[1] ); return tc_return }
+    get rrrg() { let tc_return; tc_return = vec3.new( this[0], this[0], this[0], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get xxxz() { let tc_return; tc_return = new vec4( this[0], this[0], this[0], this[2] ); return tc_return }
+    get xxxz() { let tc_return; tc_return = vec3.new( this[0], this[0], this[0], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get rrrb() { let tc_return; tc_return = new vec4( this[0], this[0], this[0], this[2] ); return tc_return }
+    get rrrb() { let tc_return; tc_return = vec3.new( this[0], this[0], this[0], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get xxyx() { let tc_return; tc_return = new vec4( this[0], this[0], this[1], this[0] ); return tc_return }
+    get xxyx() { let tc_return; tc_return = vec3.new( this[0], this[0], this[1], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get rrgr() { let tc_return; tc_return = new vec4( this[0], this[0], this[1], this[0] ); return tc_return }
+    get rrgr() { let tc_return; tc_return = vec3.new( this[0], this[0], this[1], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get xxyy() { let tc_return; tc_return = new vec4( this[0], this[0], this[1], this[1] ); return tc_return }
+    get xxyy() { let tc_return; tc_return = vec3.new( this[0], this[0], this[1], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get rrgg() { let tc_return; tc_return = new vec4( this[0], this[0], this[1], this[1] ); return tc_return }
+    get rrgg() { let tc_return; tc_return = vec3.new( this[0], this[0], this[1], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get xxyz() { let tc_return; tc_return = new vec4( this[0], this[0], this[1], this[2] ); return tc_return }
+    get xxyz() { let tc_return; tc_return = vec3.new( this[0], this[0], this[1], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get rrgb() { let tc_return; tc_return = new vec4( this[0], this[0], this[1], this[2] ); return tc_return }
+    get rrgb() { let tc_return; tc_return = vec3.new( this[0], this[0], this[1], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get xxzx() { let tc_return; tc_return = new vec4( this[0], this[0], this[2], this[0] ); return tc_return }
+    get xxzx() { let tc_return; tc_return = vec3.new( this[0], this[0], this[2], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get rrbr() { let tc_return; tc_return = new vec4( this[0], this[0], this[2], this[0] ); return tc_return }
+    get rrbr() { let tc_return; tc_return = vec3.new( this[0], this[0], this[2], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get xxzy() { let tc_return; tc_return = new vec4( this[0], this[0], this[2], this[1] ); return tc_return }
+    get xxzy() { let tc_return; tc_return = vec3.new( this[0], this[0], this[2], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get rrbg() { let tc_return; tc_return = new vec4( this[0], this[0], this[2], this[1] ); return tc_return }
+    get rrbg() { let tc_return; tc_return = vec3.new( this[0], this[0], this[2], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get xxzz() { let tc_return; tc_return = new vec4( this[0], this[0], this[2], this[2] ); return tc_return }
+    get xxzz() { let tc_return; tc_return = vec3.new( this[0], this[0], this[2], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get rrbb() { let tc_return; tc_return = new vec4( this[0], this[0], this[2], this[2] ); return tc_return }
+    get rrbb() { let tc_return; tc_return = vec3.new( this[0], this[0], this[2], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get xyxx() { let tc_return; tc_return = new vec4( this[0], this[1], this[0], this[0] ); return tc_return }
+    get xyxx() { let tc_return; tc_return = vec3.new( this[0], this[1], this[0], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get rgrr() { let tc_return; tc_return = new vec4( this[0], this[1], this[0], this[0] ); return tc_return }
+    get rgrr() { let tc_return; tc_return = vec3.new( this[0], this[1], this[0], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get xyxy() { let tc_return; tc_return = new vec4( this[0], this[1], this[0], this[1] ); return tc_return }
+    get xyxy() { let tc_return; tc_return = vec3.new( this[0], this[1], this[0], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get rgrg() { let tc_return; tc_return = new vec4( this[0], this[1], this[0], this[1] ); return tc_return }
+    get rgrg() { let tc_return; tc_return = vec3.new( this[0], this[1], this[0], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get xyxz() { let tc_return; tc_return = new vec4( this[0], this[1], this[0], this[2] ); return tc_return }
+    get xyxz() { let tc_return; tc_return = vec3.new( this[0], this[1], this[0], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get rgrb() { let tc_return; tc_return = new vec4( this[0], this[1], this[0], this[2] ); return tc_return }
+    get rgrb() { let tc_return; tc_return = vec3.new( this[0], this[1], this[0], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get xyyx() { let tc_return; tc_return = new vec4( this[0], this[1], this[1], this[0] ); return tc_return }
+    get xyyx() { let tc_return; tc_return = vec3.new( this[0], this[1], this[1], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get rggr() { let tc_return; tc_return = new vec4( this[0], this[1], this[1], this[0] ); return tc_return }
+    get rggr() { let tc_return; tc_return = vec3.new( this[0], this[1], this[1], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get xyyy() { let tc_return; tc_return = new vec4( this[0], this[1], this[1], this[1] ); return tc_return }
+    get xyyy() { let tc_return; tc_return = vec3.new( this[0], this[1], this[1], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get rggg() { let tc_return; tc_return = new vec4( this[0], this[1], this[1], this[1] ); return tc_return }
+    get rggg() { let tc_return; tc_return = vec3.new( this[0], this[1], this[1], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get xyyz() { let tc_return; tc_return = new vec4( this[0], this[1], this[1], this[2] ); return tc_return }
+    get xyyz() { let tc_return; tc_return = vec3.new( this[0], this[1], this[1], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get rggb() { let tc_return; tc_return = new vec4( this[0], this[1], this[1], this[2] ); return tc_return }
+    get rggb() { let tc_return; tc_return = vec3.new( this[0], this[1], this[1], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get xyzx() { let tc_return; tc_return = new vec4( this[0], this[1], this[2], this[0] ); return tc_return }
+    get xyzx() { let tc_return; tc_return = vec3.new( this[0], this[1], this[2], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get rgbr() { let tc_return; tc_return = new vec4( this[0], this[1], this[2], this[0] ); return tc_return }
+    get rgbr() { let tc_return; tc_return = vec3.new( this[0], this[1], this[2], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get xyzy() { let tc_return; tc_return = new vec4( this[0], this[1], this[2], this[1] ); return tc_return }
+    get xyzy() { let tc_return; tc_return = vec3.new( this[0], this[1], this[2], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get rgbg() { let tc_return; tc_return = new vec4( this[0], this[1], this[2], this[1] ); return tc_return }
+    get rgbg() { let tc_return; tc_return = vec3.new( this[0], this[1], this[2], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get xyzz() { let tc_return; tc_return = new vec4( this[0], this[1], this[2], this[2] ); return tc_return }
+    get xyzz() { let tc_return; tc_return = vec3.new( this[0], this[1], this[2], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get rgbb() { let tc_return; tc_return = new vec4( this[0], this[1], this[2], this[2] ); return tc_return }
+    get rgbb() { let tc_return; tc_return = vec3.new( this[0], this[1], this[2], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get xzxx() { let tc_return; tc_return = new vec4( this[0], this[2], this[0], this[0] ); return tc_return }
+    get xzxx() { let tc_return; tc_return = vec3.new( this[0], this[2], this[0], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get rbrr() { let tc_return; tc_return = new vec4( this[0], this[2], this[0], this[0] ); return tc_return }
+    get rbrr() { let tc_return; tc_return = vec3.new( this[0], this[2], this[0], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get xzxy() { let tc_return; tc_return = new vec4( this[0], this[2], this[0], this[1] ); return tc_return }
+    get xzxy() { let tc_return; tc_return = vec3.new( this[0], this[2], this[0], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get rbrg() { let tc_return; tc_return = new vec4( this[0], this[2], this[0], this[1] ); return tc_return }
+    get rbrg() { let tc_return; tc_return = vec3.new( this[0], this[2], this[0], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get xzxz() { let tc_return; tc_return = new vec4( this[0], this[2], this[0], this[2] ); return tc_return }
+    get xzxz() { let tc_return; tc_return = vec3.new( this[0], this[2], this[0], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get rbrb() { let tc_return; tc_return = new vec4( this[0], this[2], this[0], this[2] ); return tc_return }
+    get rbrb() { let tc_return; tc_return = vec3.new( this[0], this[2], this[0], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get xzyx() { let tc_return; tc_return = new vec4( this[0], this[2], this[1], this[0] ); return tc_return }
+    get xzyx() { let tc_return; tc_return = vec3.new( this[0], this[2], this[1], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get rbgr() { let tc_return; tc_return = new vec4( this[0], this[2], this[1], this[0] ); return tc_return }
+    get rbgr() { let tc_return; tc_return = vec3.new( this[0], this[2], this[1], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get xzyy() { let tc_return; tc_return = new vec4( this[0], this[2], this[1], this[1] ); return tc_return }
+    get xzyy() { let tc_return; tc_return = vec3.new( this[0], this[2], this[1], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get rbgg() { let tc_return; tc_return = new vec4( this[0], this[2], this[1], this[1] ); return tc_return }
+    get rbgg() { let tc_return; tc_return = vec3.new( this[0], this[2], this[1], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get xzyz() { let tc_return; tc_return = new vec4( this[0], this[2], this[1], this[2] ); return tc_return }
+    get xzyz() { let tc_return; tc_return = vec3.new( this[0], this[2], this[1], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get rbgb() { let tc_return; tc_return = new vec4( this[0], this[2], this[1], this[2] ); return tc_return }
+    get rbgb() { let tc_return; tc_return = vec3.new( this[0], this[2], this[1], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get xzzx() { let tc_return; tc_return = new vec4( this[0], this[2], this[2], this[0] ); return tc_return }
+    get xzzx() { let tc_return; tc_return = vec3.new( this[0], this[2], this[2], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get rbbr() { let tc_return; tc_return = new vec4( this[0], this[2], this[2], this[0] ); return tc_return }
+    get rbbr() { let tc_return; tc_return = vec3.new( this[0], this[2], this[2], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get xzzy() { let tc_return; tc_return = new vec4( this[0], this[2], this[2], this[1] ); return tc_return }
+    get xzzy() { let tc_return; tc_return = vec3.new( this[0], this[2], this[2], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get rbbg() { let tc_return; tc_return = new vec4( this[0], this[2], this[2], this[1] ); return tc_return }
+    get rbbg() { let tc_return; tc_return = vec3.new( this[0], this[2], this[2], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get xzzz() { let tc_return; tc_return = new vec4( this[0], this[2], this[2], this[2] ); return tc_return }
+    get xzzz() { let tc_return; tc_return = vec3.new( this[0], this[2], this[2], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get rbbb() { let tc_return; tc_return = new vec4( this[0], this[2], this[2], this[2] ); return tc_return }
+    get rbbb() { let tc_return; tc_return = vec3.new( this[0], this[2], this[2], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get yxxx() { let tc_return; tc_return = new vec4( this[1], this[0], this[0], this[0] ); return tc_return }
+    get yxxx() { let tc_return; tc_return = vec3.new( this[1], this[0], this[0], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get grrr() { let tc_return; tc_return = new vec4( this[1], this[0], this[0], this[0] ); return tc_return }
+    get grrr() { let tc_return; tc_return = vec3.new( this[1], this[0], this[0], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get yxxy() { let tc_return; tc_return = new vec4( this[1], this[0], this[0], this[1] ); return tc_return }
+    get yxxy() { let tc_return; tc_return = vec3.new( this[1], this[0], this[0], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get grrg() { let tc_return; tc_return = new vec4( this[1], this[0], this[0], this[1] ); return tc_return }
+    get grrg() { let tc_return; tc_return = vec3.new( this[1], this[0], this[0], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get yxxz() { let tc_return; tc_return = new vec4( this[1], this[0], this[0], this[2] ); return tc_return }
+    get yxxz() { let tc_return; tc_return = vec3.new( this[1], this[0], this[0], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get grrb() { let tc_return; tc_return = new vec4( this[1], this[0], this[0], this[2] ); return tc_return }
+    get grrb() { let tc_return; tc_return = vec3.new( this[1], this[0], this[0], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get yxyx() { let tc_return; tc_return = new vec4( this[1], this[0], this[1], this[0] ); return tc_return }
+    get yxyx() { let tc_return; tc_return = vec3.new( this[1], this[0], this[1], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get grgr() { let tc_return; tc_return = new vec4( this[1], this[0], this[1], this[0] ); return tc_return }
+    get grgr() { let tc_return; tc_return = vec3.new( this[1], this[0], this[1], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get yxyy() { let tc_return; tc_return = new vec4( this[1], this[0], this[1], this[1] ); return tc_return }
+    get yxyy() { let tc_return; tc_return = vec3.new( this[1], this[0], this[1], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get grgg() { let tc_return; tc_return = new vec4( this[1], this[0], this[1], this[1] ); return tc_return }
+    get grgg() { let tc_return; tc_return = vec3.new( this[1], this[0], this[1], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get yxyz() { let tc_return; tc_return = new vec4( this[1], this[0], this[1], this[2] ); return tc_return }
+    get yxyz() { let tc_return; tc_return = vec3.new( this[1], this[0], this[1], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get grgb() { let tc_return; tc_return = new vec4( this[1], this[0], this[1], this[2] ); return tc_return }
+    get grgb() { let tc_return; tc_return = vec3.new( this[1], this[0], this[1], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get yxzx() { let tc_return; tc_return = new vec4( this[1], this[0], this[2], this[0] ); return tc_return }
+    get yxzx() { let tc_return; tc_return = vec3.new( this[1], this[0], this[2], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get grbr() { let tc_return; tc_return = new vec4( this[1], this[0], this[2], this[0] ); return tc_return }
+    get grbr() { let tc_return; tc_return = vec3.new( this[1], this[0], this[2], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get yxzy() { let tc_return; tc_return = new vec4( this[1], this[0], this[2], this[1] ); return tc_return }
+    get yxzy() { let tc_return; tc_return = vec3.new( this[1], this[0], this[2], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get grbg() { let tc_return; tc_return = new vec4( this[1], this[0], this[2], this[1] ); return tc_return }
+    get grbg() { let tc_return; tc_return = vec3.new( this[1], this[0], this[2], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get yxzz() { let tc_return; tc_return = new vec4( this[1], this[0], this[2], this[2] ); return tc_return }
+    get yxzz() { let tc_return; tc_return = vec3.new( this[1], this[0], this[2], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get grbb() { let tc_return; tc_return = new vec4( this[1], this[0], this[2], this[2] ); return tc_return }
+    get grbb() { let tc_return; tc_return = vec3.new( this[1], this[0], this[2], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get yyxx() { let tc_return; tc_return = new vec4( this[1], this[1], this[0], this[0] ); return tc_return }
+    get yyxx() { let tc_return; tc_return = vec3.new( this[1], this[1], this[0], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get ggrr() { let tc_return; tc_return = new vec4( this[1], this[1], this[0], this[0] ); return tc_return }
+    get ggrr() { let tc_return; tc_return = vec3.new( this[1], this[1], this[0], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get yyxy() { let tc_return; tc_return = new vec4( this[1], this[1], this[0], this[1] ); return tc_return }
+    get yyxy() { let tc_return; tc_return = vec3.new( this[1], this[1], this[0], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get ggrg() { let tc_return; tc_return = new vec4( this[1], this[1], this[0], this[1] ); return tc_return }
+    get ggrg() { let tc_return; tc_return = vec3.new( this[1], this[1], this[0], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get yyxz() { let tc_return; tc_return = new vec4( this[1], this[1], this[0], this[2] ); return tc_return }
+    get yyxz() { let tc_return; tc_return = vec3.new( this[1], this[1], this[0], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get ggrb() { let tc_return; tc_return = new vec4( this[1], this[1], this[0], this[2] ); return tc_return }
+    get ggrb() { let tc_return; tc_return = vec3.new( this[1], this[1], this[0], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get yyyx() { let tc_return; tc_return = new vec4( this[1], this[1], this[1], this[0] ); return tc_return }
+    get yyyx() { let tc_return; tc_return = vec3.new( this[1], this[1], this[1], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get gggr() { let tc_return; tc_return = new vec4( this[1], this[1], this[1], this[0] ); return tc_return }
+    get gggr() { let tc_return; tc_return = vec3.new( this[1], this[1], this[1], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get yyyy() { let tc_return; tc_return = new vec4( this[1], this[1], this[1], this[1] ); return tc_return }
+    get yyyy() { let tc_return; tc_return = vec3.new( this[1], this[1], this[1], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get gggg() { let tc_return; tc_return = new vec4( this[1], this[1], this[1], this[1] ); return tc_return }
+    get gggg() { let tc_return; tc_return = vec3.new( this[1], this[1], this[1], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get yyyz() { let tc_return; tc_return = new vec4( this[1], this[1], this[1], this[2] ); return tc_return }
+    get yyyz() { let tc_return; tc_return = vec3.new( this[1], this[1], this[1], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get gggb() { let tc_return; tc_return = new vec4( this[1], this[1], this[1], this[2] ); return tc_return }
+    get gggb() { let tc_return; tc_return = vec3.new( this[1], this[1], this[1], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get yyzx() { let tc_return; tc_return = new vec4( this[1], this[1], this[2], this[0] ); return tc_return }
+    get yyzx() { let tc_return; tc_return = vec3.new( this[1], this[1], this[2], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get ggbr() { let tc_return; tc_return = new vec4( this[1], this[1], this[2], this[0] ); return tc_return }
+    get ggbr() { let tc_return; tc_return = vec3.new( this[1], this[1], this[2], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get yyzy() { let tc_return; tc_return = new vec4( this[1], this[1], this[2], this[1] ); return tc_return }
+    get yyzy() { let tc_return; tc_return = vec3.new( this[1], this[1], this[2], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get ggbg() { let tc_return; tc_return = new vec4( this[1], this[1], this[2], this[1] ); return tc_return }
+    get ggbg() { let tc_return; tc_return = vec3.new( this[1], this[1], this[2], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get yyzz() { let tc_return; tc_return = new vec4( this[1], this[1], this[2], this[2] ); return tc_return }
+    get yyzz() { let tc_return; tc_return = vec3.new( this[1], this[1], this[2], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get ggbb() { let tc_return; tc_return = new vec4( this[1], this[1], this[2], this[2] ); return tc_return }
+    get ggbb() { let tc_return; tc_return = vec3.new( this[1], this[1], this[2], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get yzxx() { let tc_return; tc_return = new vec4( this[1], this[2], this[0], this[0] ); return tc_return }
+    get yzxx() { let tc_return; tc_return = vec3.new( this[1], this[2], this[0], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get gbrr() { let tc_return; tc_return = new vec4( this[1], this[2], this[0], this[0] ); return tc_return }
+    get gbrr() { let tc_return; tc_return = vec3.new( this[1], this[2], this[0], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get yzxy() { let tc_return; tc_return = new vec4( this[1], this[2], this[0], this[1] ); return tc_return }
+    get yzxy() { let tc_return; tc_return = vec3.new( this[1], this[2], this[0], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get gbrg() { let tc_return; tc_return = new vec4( this[1], this[2], this[0], this[1] ); return tc_return }
+    get gbrg() { let tc_return; tc_return = vec3.new( this[1], this[2], this[0], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get yzxz() { let tc_return; tc_return = new vec4( this[1], this[2], this[0], this[2] ); return tc_return }
+    get yzxz() { let tc_return; tc_return = vec3.new( this[1], this[2], this[0], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get gbrb() { let tc_return; tc_return = new vec4( this[1], this[2], this[0], this[2] ); return tc_return }
+    get gbrb() { let tc_return; tc_return = vec3.new( this[1], this[2], this[0], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get yzyx() { let tc_return; tc_return = new vec4( this[1], this[2], this[1], this[0] ); return tc_return }
+    get yzyx() { let tc_return; tc_return = vec3.new( this[1], this[2], this[1], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get gbgr() { let tc_return; tc_return = new vec4( this[1], this[2], this[1], this[0] ); return tc_return }
+    get gbgr() { let tc_return; tc_return = vec3.new( this[1], this[2], this[1], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get yzyy() { let tc_return; tc_return = new vec4( this[1], this[2], this[1], this[1] ); return tc_return }
+    get yzyy() { let tc_return; tc_return = vec3.new( this[1], this[2], this[1], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get gbgg() { let tc_return; tc_return = new vec4( this[1], this[2], this[1], this[1] ); return tc_return }
+    get gbgg() { let tc_return; tc_return = vec3.new( this[1], this[2], this[1], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get yzyz() { let tc_return; tc_return = new vec4( this[1], this[2], this[1], this[2] ); return tc_return }
+    get yzyz() { let tc_return; tc_return = vec3.new( this[1], this[2], this[1], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get gbgb() { let tc_return; tc_return = new vec4( this[1], this[2], this[1], this[2] ); return tc_return }
+    get gbgb() { let tc_return; tc_return = vec3.new( this[1], this[2], this[1], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get yzzx() { let tc_return; tc_return = new vec4( this[1], this[2], this[2], this[0] ); return tc_return }
+    get yzzx() { let tc_return; tc_return = vec3.new( this[1], this[2], this[2], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get gbbr() { let tc_return; tc_return = new vec4( this[1], this[2], this[2], this[0] ); return tc_return }
+    get gbbr() { let tc_return; tc_return = vec3.new( this[1], this[2], this[2], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get yzzy() { let tc_return; tc_return = new vec4( this[1], this[2], this[2], this[1] ); return tc_return }
+    get yzzy() { let tc_return; tc_return = vec3.new( this[1], this[2], this[2], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get gbbg() { let tc_return; tc_return = new vec4( this[1], this[2], this[2], this[1] ); return tc_return }
+    get gbbg() { let tc_return; tc_return = vec3.new( this[1], this[2], this[2], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get yzzz() { let tc_return; tc_return = new vec4( this[1], this[2], this[2], this[2] ); return tc_return }
+    get yzzz() { let tc_return; tc_return = vec3.new( this[1], this[2], this[2], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get gbbb() { let tc_return; tc_return = new vec4( this[1], this[2], this[2], this[2] ); return tc_return }
+    get gbbb() { let tc_return; tc_return = vec3.new( this[1], this[2], this[2], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get zxxx() { let tc_return; tc_return = new vec4( this[2], this[0], this[0], this[0] ); return tc_return }
+    get zxxx() { let tc_return; tc_return = vec3.new( this[2], this[0], this[0], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get brrr() { let tc_return; tc_return = new vec4( this[2], this[0], this[0], this[0] ); return tc_return }
+    get brrr() { let tc_return; tc_return = vec3.new( this[2], this[0], this[0], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get zxxy() { let tc_return; tc_return = new vec4( this[2], this[0], this[0], this[1] ); return tc_return }
+    get zxxy() { let tc_return; tc_return = vec3.new( this[2], this[0], this[0], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get brrg() { let tc_return; tc_return = new vec4( this[2], this[0], this[0], this[1] ); return tc_return }
+    get brrg() { let tc_return; tc_return = vec3.new( this[2], this[0], this[0], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get zxxz() { let tc_return; tc_return = new vec4( this[2], this[0], this[0], this[2] ); return tc_return }
+    get zxxz() { let tc_return; tc_return = vec3.new( this[2], this[0], this[0], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get brrb() { let tc_return; tc_return = new vec4( this[2], this[0], this[0], this[2] ); return tc_return }
+    get brrb() { let tc_return; tc_return = vec3.new( this[2], this[0], this[0], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get zxyx() { let tc_return; tc_return = new vec4( this[2], this[0], this[1], this[0] ); return tc_return }
+    get zxyx() { let tc_return; tc_return = vec3.new( this[2], this[0], this[1], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get brgr() { let tc_return; tc_return = new vec4( this[2], this[0], this[1], this[0] ); return tc_return }
+    get brgr() { let tc_return; tc_return = vec3.new( this[2], this[0], this[1], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get zxyy() { let tc_return; tc_return = new vec4( this[2], this[0], this[1], this[1] ); return tc_return }
+    get zxyy() { let tc_return; tc_return = vec3.new( this[2], this[0], this[1], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get brgg() { let tc_return; tc_return = new vec4( this[2], this[0], this[1], this[1] ); return tc_return }
+    get brgg() { let tc_return; tc_return = vec3.new( this[2], this[0], this[1], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get zxyz() { let tc_return; tc_return = new vec4( this[2], this[0], this[1], this[2] ); return tc_return }
+    get zxyz() { let tc_return; tc_return = vec3.new( this[2], this[0], this[1], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get brgb() { let tc_return; tc_return = new vec4( this[2], this[0], this[1], this[2] ); return tc_return }
+    get brgb() { let tc_return; tc_return = vec3.new( this[2], this[0], this[1], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get zxzx() { let tc_return; tc_return = new vec4( this[2], this[0], this[2], this[0] ); return tc_return }
+    get zxzx() { let tc_return; tc_return = vec3.new( this[2], this[0], this[2], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get brbr() { let tc_return; tc_return = new vec4( this[2], this[0], this[2], this[0] ); return tc_return }
+    get brbr() { let tc_return; tc_return = vec3.new( this[2], this[0], this[2], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get zxzy() { let tc_return; tc_return = new vec4( this[2], this[0], this[2], this[1] ); return tc_return }
+    get zxzy() { let tc_return; tc_return = vec3.new( this[2], this[0], this[2], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get brbg() { let tc_return; tc_return = new vec4( this[2], this[0], this[2], this[1] ); return tc_return }
+    get brbg() { let tc_return; tc_return = vec3.new( this[2], this[0], this[2], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get zxzz() { let tc_return; tc_return = new vec4( this[2], this[0], this[2], this[2] ); return tc_return }
+    get zxzz() { let tc_return; tc_return = vec3.new( this[2], this[0], this[2], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get brbb() { let tc_return; tc_return = new vec4( this[2], this[0], this[2], this[2] ); return tc_return }
+    get brbb() { let tc_return; tc_return = vec3.new( this[2], this[0], this[2], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get zyxx() { let tc_return; tc_return = new vec4( this[2], this[1], this[0], this[0] ); return tc_return }
+    get zyxx() { let tc_return; tc_return = vec3.new( this[2], this[1], this[0], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get bgrr() { let tc_return; tc_return = new vec4( this[2], this[1], this[0], this[0] ); return tc_return }
+    get bgrr() { let tc_return; tc_return = vec3.new( this[2], this[1], this[0], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get zyxy() { let tc_return; tc_return = new vec4( this[2], this[1], this[0], this[1] ); return tc_return }
+    get zyxy() { let tc_return; tc_return = vec3.new( this[2], this[1], this[0], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get bgrg() { let tc_return; tc_return = new vec4( this[2], this[1], this[0], this[1] ); return tc_return }
+    get bgrg() { let tc_return; tc_return = vec3.new( this[2], this[1], this[0], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get zyxz() { let tc_return; tc_return = new vec4( this[2], this[1], this[0], this[2] ); return tc_return }
+    get zyxz() { let tc_return; tc_return = vec3.new( this[2], this[1], this[0], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get bgrb() { let tc_return; tc_return = new vec4( this[2], this[1], this[0], this[2] ); return tc_return }
+    get bgrb() { let tc_return; tc_return = vec3.new( this[2], this[1], this[0], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get zyyx() { let tc_return; tc_return = new vec4( this[2], this[1], this[1], this[0] ); return tc_return }
+    get zyyx() { let tc_return; tc_return = vec3.new( this[2], this[1], this[1], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get bggr() { let tc_return; tc_return = new vec4( this[2], this[1], this[1], this[0] ); return tc_return }
+    get bggr() { let tc_return; tc_return = vec3.new( this[2], this[1], this[1], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get zyyy() { let tc_return; tc_return = new vec4( this[2], this[1], this[1], this[1] ); return tc_return }
+    get zyyy() { let tc_return; tc_return = vec3.new( this[2], this[1], this[1], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get bggg() { let tc_return; tc_return = new vec4( this[2], this[1], this[1], this[1] ); return tc_return }
+    get bggg() { let tc_return; tc_return = vec3.new( this[2], this[1], this[1], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get zyyz() { let tc_return; tc_return = new vec4( this[2], this[1], this[1], this[2] ); return tc_return }
+    get zyyz() { let tc_return; tc_return = vec3.new( this[2], this[1], this[1], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get bggb() { let tc_return; tc_return = new vec4( this[2], this[1], this[1], this[2] ); return tc_return }
+    get bggb() { let tc_return; tc_return = vec3.new( this[2], this[1], this[1], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get zyzx() { let tc_return; tc_return = new vec4( this[2], this[1], this[2], this[0] ); return tc_return }
+    get zyzx() { let tc_return; tc_return = vec3.new( this[2], this[1], this[2], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get bgbr() { let tc_return; tc_return = new vec4( this[2], this[1], this[2], this[0] ); return tc_return }
+    get bgbr() { let tc_return; tc_return = vec3.new( this[2], this[1], this[2], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get zyzy() { let tc_return; tc_return = new vec4( this[2], this[1], this[2], this[1] ); return tc_return }
+    get zyzy() { let tc_return; tc_return = vec3.new( this[2], this[1], this[2], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get bgbg() { let tc_return; tc_return = new vec4( this[2], this[1], this[2], this[1] ); return tc_return }
+    get bgbg() { let tc_return; tc_return = vec3.new( this[2], this[1], this[2], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get zyzz() { let tc_return; tc_return = new vec4( this[2], this[1], this[2], this[2] ); return tc_return }
+    get zyzz() { let tc_return; tc_return = vec3.new( this[2], this[1], this[2], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get bgbb() { let tc_return; tc_return = new vec4( this[2], this[1], this[2], this[2] ); return tc_return }
+    get bgbb() { let tc_return; tc_return = vec3.new( this[2], this[1], this[2], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get zzxx() { let tc_return; tc_return = new vec4( this[2], this[2], this[0], this[0] ); return tc_return }
+    get zzxx() { let tc_return; tc_return = vec3.new( this[2], this[2], this[0], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get bbrr() { let tc_return; tc_return = new vec4( this[2], this[2], this[0], this[0] ); return tc_return }
+    get bbrr() { let tc_return; tc_return = vec3.new( this[2], this[2], this[0], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get zzxy() { let tc_return; tc_return = new vec4( this[2], this[2], this[0], this[1] ); return tc_return }
+    get zzxy() { let tc_return; tc_return = vec3.new( this[2], this[2], this[0], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get bbrg() { let tc_return; tc_return = new vec4( this[2], this[2], this[0], this[1] ); return tc_return }
+    get bbrg() { let tc_return; tc_return = vec3.new( this[2], this[2], this[0], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get zzxz() { let tc_return; tc_return = new vec4( this[2], this[2], this[0], this[2] ); return tc_return }
+    get zzxz() { let tc_return; tc_return = vec3.new( this[2], this[2], this[0], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get bbrb() { let tc_return; tc_return = new vec4( this[2], this[2], this[0], this[2] ); return tc_return }
+    get bbrb() { let tc_return; tc_return = vec3.new( this[2], this[2], this[0], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get zzyx() { let tc_return; tc_return = new vec4( this[2], this[2], this[1], this[0] ); return tc_return }
+    get zzyx() { let tc_return; tc_return = vec3.new( this[2], this[2], this[1], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get bbgr() { let tc_return; tc_return = new vec4( this[2], this[2], this[1], this[0] ); return tc_return }
+    get bbgr() { let tc_return; tc_return = vec3.new( this[2], this[2], this[1], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get zzyy() { let tc_return; tc_return = new vec4( this[2], this[2], this[1], this[1] ); return tc_return }
+    get zzyy() { let tc_return; tc_return = vec3.new( this[2], this[2], this[1], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get bbgg() { let tc_return; tc_return = new vec4( this[2], this[2], this[1], this[1] ); return tc_return }
+    get bbgg() { let tc_return; tc_return = vec3.new( this[2], this[2], this[1], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get zzyz() { let tc_return; tc_return = new vec4( this[2], this[2], this[1], this[2] ); return tc_return }
+    get zzyz() { let tc_return; tc_return = vec3.new( this[2], this[2], this[1], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get bbgb() { let tc_return; tc_return = new vec4( this[2], this[2], this[1], this[2] ); return tc_return }
+    get bbgb() { let tc_return; tc_return = vec3.new( this[2], this[2], this[1], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get zzzx() { let tc_return; tc_return = new vec4( this[2], this[2], this[2], this[0] ); return tc_return }
+    get zzzx() { let tc_return; tc_return = vec3.new( this[2], this[2], this[2], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get bbbr() { let tc_return; tc_return = new vec4( this[2], this[2], this[2], this[0] ); return tc_return }
+    get bbbr() { let tc_return; tc_return = vec3.new( this[2], this[2], this[2], this[0] ); return tc_return }
     /** @returns {vec4} */
-    get zzzy() { let tc_return; tc_return = new vec4( this[2], this[2], this[2], this[1] ); return tc_return }
+    get zzzy() { let tc_return; tc_return = vec3.new( this[2], this[2], this[2], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get bbbg() { let tc_return; tc_return = new vec4( this[2], this[2], this[2], this[1] ); return tc_return }
+    get bbbg() { let tc_return; tc_return = vec3.new( this[2], this[2], this[2], this[1] ); return tc_return }
     /** @returns {vec4} */
-    get zzzz() { let tc_return; tc_return = new vec4( this[2], this[2], this[2], this[2] ); return tc_return }
+    get zzzz() { let tc_return; tc_return = vec3.new( this[2], this[2], this[2], this[2] ); return tc_return }
     /** @returns {vec4} */
-    get bbbb() { let tc_return; tc_return = new vec4( this[2], this[2], this[2], this[2] ); return tc_return }
+    get bbbb() { let tc_return; tc_return = vec3.new( this[2], this[2], this[2], this[2] ); return tc_return }
 
     /** @param {number|vec3Like} x @param {number} [y] @param {number} [z] @returns {vec3} */
     set( x, y, z ) {
@@ -735,7 +740,7 @@ export class vec3 {
     /** @returns {vec3} */
     clone() {
         let tc_return
-        tc_return = new vec3( this )
+        tc_return = vec3.new(  this  )
         tc_vec3( tc_return )
         return tc_return
     }

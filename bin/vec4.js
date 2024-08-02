@@ -16,7 +16,7 @@ import { mat4 } from "./mat4.js"
 
 /** @typedef {vec4|ArrayLike<number>} vec4Like */
 
-export class vec4 {
+export class vec4 extends Float64Array {
 
     static get NaN() { return new vec4( NaN, NaN, NaN, NaN ) }
 
@@ -24,60 +24,60 @@ export class vec4 {
     //      CONSTRUCTORS
     // ---------------------------
 
+    /**  */
+    constructor() {
+        super( 2 )
+    }
+
     /**
      * @param {number|vec4Like|{x: number, y: number, z: number, w: number}|{r: number, g: number, b: number, a: number}} [object=0]
      * @param {number} [y]
      * @param {number} [z]
      * @param {number} [w]
+     * @returns {vec4}
      */
-    constructor( object = 0, y, z, w ) {
+    static new( object = 0, y, z, w ) {
+        const vec = new vec4
         if ( typeof object === "number" )
             y === undefined
-                ? ( this[0] = object, this[1] = object, this[2] = object, this[3] = object )
-                : ( this[0] = object, this[1] = +y, this[2] = +( z ?? 0 ), this[3] = +( w ?? 0 ) )
+                ? ( vec[0] = object, vec[1] = object, vec[2] = object, vec[3] = object )
+                : ( vec[0] = object, vec[1] = +y, vec[2] = +( z ?? 0 ), vec[3] = +( w ?? 0 ) )
         else
-            this[0] = +( object[0] ?? object.x ?? object.r ?? 0 ),
-            this[1] = +( object[1] ?? object.y ?? object.g ?? 0 ),
-            this[2] = +( object[2] ?? object.z ?? object.b ?? 0 ),
-            this[3] = +( object[3] ?? object.w ?? object.a ?? 0 )
-        /** @type {number} x-coordinate of the vector */
-        this[0]
-        /** @type {number} y-coordinate of the vector */
-        this[1]
-        /** @type {number} z-coordinate of the vector */
-        this[2]
-        /** @type {number} w-coordinate of the vector */
-        this[3]
+            vec[0] = +( object[0] ?? object.x ?? object.r ?? 0 ),
+            vec[1] = +( object[1] ?? object.y ?? object.g ?? 0 ),
+            vec[2] = +( object[2] ?? object.z ?? object.b ?? 0 ),
+            vec[3] = +( object[3] ?? object.w ?? object.a ?? 0 )
+        return vec
     }
 
     /** @param {ArrayLike<number>} array @param {number} [index=0] @param {number} [stride=1] @returns {vec4} */
     static fromArray( array, index = 0, stride = 1 ) {
-        return new vec4( array[0 * stride + index], array[1 * stride + index], array[2 * stride + index], array[3 * stride + index] )
+        return vec4.new( array[0 * stride + index], array[1 * stride + index], array[2 * stride + index], array[3 * stride + index] )
     }
 
     /** @param {(index: number) => number} fn @returns {vec4} */
     static fromFunction( fn ) {
-        return new vec4( fn( 0 ), fn( 1 ), fn( 2 ), fn( 3 ) )
+        return vec4.new( fn( 0 ), fn( 1 ), fn( 2 ), fn( 3 ) )
     }
 
     /** @returns {vec4} */
     static random() {
-        return new vec4( Math.random(), Math.random(), Math.random(), Math.random() )
+        return vec4.new( Math.random(), Math.random(), Math.random(), Math.random() )
     }
 
     /** @returns {vec4} */
     static randomNorm() {
-        return new vec4( randomNorm(), randomNorm(), randomNorm(), randomNorm() )
+        return vec4.new( randomNorm(), randomNorm(), randomNorm(), randomNorm() )
     }
 
     /** @returns {vec4} */
     static randomDir() {
-        return new vec4( randomNorm(), randomNorm(), randomNorm(), randomNorm() ).normalize()
+        return vec4.new( randomNorm(), randomNorm(), randomNorm(), randomNorm() ).normalize()
     }
 
     /** @returns {vec4} */
     static randomSphere() {
-        return new vec4( randomNorm(), randomNorm(), randomNorm(), randomNorm() ).setLength( Math.random() ** (1/4) )
+        return vec4.new( randomNorm(), randomNorm(), randomNorm(), randomNorm() ).setLength( Math.random() ** (1/4) )
     }
 
     // ---------------------------
@@ -117,1589 +117,1589 @@ export class vec4 {
     /** @param {number} s */
     set a( s ) { this[3] = s }
     /** @returns {vec2} */
-    get xx() { return new vec2( this[0], this[0] ) }
+    get xx() { return vec4.new( this[0], this[0] ) }
     /** @returns {vec2} */
-    get rr() { return new vec2( this[0], this[0] ) }
+    get rr() { return vec4.new( this[0], this[0] ) }
     /** @returns {vec2} */
-    get xy() { return new vec2( this[0], this[1] ) }
+    get xy() { return vec4.new( this[0], this[1] ) }
     /** @returns {vec2} */
-    get rg() { return new vec2( this[0], this[1] ) }
+    get rg() { return vec4.new( this[0], this[1] ) }
     /** @param {vec2Like} v */
     set xy( v ) { this[0] = v[0], this[1] = v[1] }
     /** @param {vec2Like} v */
     set rg( v ) { this[0] = v[0], this[1] = v[1] }
     /** @returns {vec2} */
-    get xz() { return new vec2( this[0], this[2] ) }
+    get xz() { return vec4.new( this[0], this[2] ) }
     /** @returns {vec2} */
-    get rb() { return new vec2( this[0], this[2] ) }
+    get rb() { return vec4.new( this[0], this[2] ) }
     /** @param {vec2Like} v */
     set xz( v ) { this[0] = v[0], this[2] = v[1] }
     /** @param {vec2Like} v */
     set rb( v ) { this[0] = v[0], this[2] = v[1] }
     /** @returns {vec2} */
-    get xw() { return new vec2( this[0], this[3] ) }
+    get xw() { return vec4.new( this[0], this[3] ) }
     /** @returns {vec2} */
-    get ra() { return new vec2( this[0], this[3] ) }
+    get ra() { return vec4.new( this[0], this[3] ) }
     /** @param {vec2Like} v */
     set xw( v ) { this[0] = v[0], this[3] = v[1] }
     /** @param {vec2Like} v */
     set ra( v ) { this[0] = v[0], this[3] = v[1] }
     /** @returns {vec2} */
-    get yx() { return new vec2( this[1], this[0] ) }
+    get yx() { return vec4.new( this[1], this[0] ) }
     /** @returns {vec2} */
-    get gr() { return new vec2( this[1], this[0] ) }
+    get gr() { return vec4.new( this[1], this[0] ) }
     /** @param {vec2Like} v */
     set yx( v ) { this[1] = v[0], this[0] = v[1] }
     /** @param {vec2Like} v */
     set gr( v ) { this[1] = v[0], this[0] = v[1] }
     /** @returns {vec2} */
-    get yy() { return new vec2( this[1], this[1] ) }
+    get yy() { return vec4.new( this[1], this[1] ) }
     /** @returns {vec2} */
-    get gg() { return new vec2( this[1], this[1] ) }
+    get gg() { return vec4.new( this[1], this[1] ) }
     /** @returns {vec2} */
-    get yz() { return new vec2( this[1], this[2] ) }
+    get yz() { return vec4.new( this[1], this[2] ) }
     /** @returns {vec2} */
-    get gb() { return new vec2( this[1], this[2] ) }
+    get gb() { return vec4.new( this[1], this[2] ) }
     /** @param {vec2Like} v */
     set yz( v ) { this[1] = v[0], this[2] = v[1] }
     /** @param {vec2Like} v */
     set gb( v ) { this[1] = v[0], this[2] = v[1] }
     /** @returns {vec2} */
-    get yw() { return new vec2( this[1], this[3] ) }
+    get yw() { return vec4.new( this[1], this[3] ) }
     /** @returns {vec2} */
-    get ga() { return new vec2( this[1], this[3] ) }
+    get ga() { return vec4.new( this[1], this[3] ) }
     /** @param {vec2Like} v */
     set yw( v ) { this[1] = v[0], this[3] = v[1] }
     /** @param {vec2Like} v */
     set ga( v ) { this[1] = v[0], this[3] = v[1] }
     /** @returns {vec2} */
-    get zx() { return new vec2( this[2], this[0] ) }
+    get zx() { return vec4.new( this[2], this[0] ) }
     /** @returns {vec2} */
-    get br() { return new vec2( this[2], this[0] ) }
+    get br() { return vec4.new( this[2], this[0] ) }
     /** @param {vec2Like} v */
     set zx( v ) { this[2] = v[0], this[0] = v[1] }
     /** @param {vec2Like} v */
     set br( v ) { this[2] = v[0], this[0] = v[1] }
     /** @returns {vec2} */
-    get zy() { return new vec2( this[2], this[1] ) }
+    get zy() { return vec4.new( this[2], this[1] ) }
     /** @returns {vec2} */
-    get bg() { return new vec2( this[2], this[1] ) }
+    get bg() { return vec4.new( this[2], this[1] ) }
     /** @param {vec2Like} v */
     set zy( v ) { this[2] = v[0], this[1] = v[1] }
     /** @param {vec2Like} v */
     set bg( v ) { this[2] = v[0], this[1] = v[1] }
     /** @returns {vec2} */
-    get zz() { return new vec2( this[2], this[2] ) }
+    get zz() { return vec4.new( this[2], this[2] ) }
     /** @returns {vec2} */
-    get bb() { return new vec2( this[2], this[2] ) }
+    get bb() { return vec4.new( this[2], this[2] ) }
     /** @returns {vec2} */
-    get zw() { return new vec2( this[2], this[3] ) }
+    get zw() { return vec4.new( this[2], this[3] ) }
     /** @returns {vec2} */
-    get ba() { return new vec2( this[2], this[3] ) }
+    get ba() { return vec4.new( this[2], this[3] ) }
     /** @param {vec2Like} v */
     set zw( v ) { this[2] = v[0], this[3] = v[1] }
     /** @param {vec2Like} v */
     set ba( v ) { this[2] = v[0], this[3] = v[1] }
     /** @returns {vec2} */
-    get wx() { return new vec2( this[3], this[0] ) }
+    get wx() { return vec4.new( this[3], this[0] ) }
     /** @returns {vec2} */
-    get ar() { return new vec2( this[3], this[0] ) }
+    get ar() { return vec4.new( this[3], this[0] ) }
     /** @param {vec2Like} v */
     set wx( v ) { this[3] = v[0], this[0] = v[1] }
     /** @param {vec2Like} v */
     set ar( v ) { this[3] = v[0], this[0] = v[1] }
     /** @returns {vec2} */
-    get wy() { return new vec2( this[3], this[1] ) }
+    get wy() { return vec4.new( this[3], this[1] ) }
     /** @returns {vec2} */
-    get ag() { return new vec2( this[3], this[1] ) }
+    get ag() { return vec4.new( this[3], this[1] ) }
     /** @param {vec2Like} v */
     set wy( v ) { this[3] = v[0], this[1] = v[1] }
     /** @param {vec2Like} v */
     set ag( v ) { this[3] = v[0], this[1] = v[1] }
     /** @returns {vec2} */
-    get wz() { return new vec2( this[3], this[2] ) }
+    get wz() { return vec4.new( this[3], this[2] ) }
     /** @returns {vec2} */
-    get ab() { return new vec2( this[3], this[2] ) }
+    get ab() { return vec4.new( this[3], this[2] ) }
     /** @param {vec2Like} v */
     set wz( v ) { this[3] = v[0], this[2] = v[1] }
     /** @param {vec2Like} v */
     set ab( v ) { this[3] = v[0], this[2] = v[1] }
     /** @returns {vec2} */
-    get ww() { return new vec2( this[3], this[3] ) }
+    get ww() { return vec4.new( this[3], this[3] ) }
     /** @returns {vec2} */
-    get aa() { return new vec2( this[3], this[3] ) }
+    get aa() { return vec4.new( this[3], this[3] ) }
     /** @returns {vec3} */
-    get xxx() { return new vec3( this[0], this[0], this[0] ) }
+    get xxx() { return vec4.new( this[0], this[0], this[0] ) }
     /** @returns {vec3} */
-    get rrr() { return new vec3( this[0], this[0], this[0] ) }
+    get rrr() { return vec4.new( this[0], this[0], this[0] ) }
     /** @returns {vec3} */
-    get xxy() { return new vec3( this[0], this[0], this[1] ) }
+    get xxy() { return vec4.new( this[0], this[0], this[1] ) }
     /** @returns {vec3} */
-    get rrg() { return new vec3( this[0], this[0], this[1] ) }
+    get rrg() { return vec4.new( this[0], this[0], this[1] ) }
     /** @returns {vec3} */
-    get xxz() { return new vec3( this[0], this[0], this[2] ) }
+    get xxz() { return vec4.new( this[0], this[0], this[2] ) }
     /** @returns {vec3} */
-    get rrb() { return new vec3( this[0], this[0], this[2] ) }
+    get rrb() { return vec4.new( this[0], this[0], this[2] ) }
     /** @returns {vec3} */
-    get xxw() { return new vec3( this[0], this[0], this[3] ) }
+    get xxw() { return vec4.new( this[0], this[0], this[3] ) }
     /** @returns {vec3} */
-    get rra() { return new vec3( this[0], this[0], this[3] ) }
+    get rra() { return vec4.new( this[0], this[0], this[3] ) }
     /** @returns {vec3} */
-    get xyx() { return new vec3( this[0], this[1], this[0] ) }
+    get xyx() { return vec4.new( this[0], this[1], this[0] ) }
     /** @returns {vec3} */
-    get rgr() { return new vec3( this[0], this[1], this[0] ) }
+    get rgr() { return vec4.new( this[0], this[1], this[0] ) }
     /** @returns {vec3} */
-    get xyy() { return new vec3( this[0], this[1], this[1] ) }
+    get xyy() { return vec4.new( this[0], this[1], this[1] ) }
     /** @returns {vec3} */
-    get rgg() { return new vec3( this[0], this[1], this[1] ) }
+    get rgg() { return vec4.new( this[0], this[1], this[1] ) }
     /** @returns {vec3} */
-    get xyz() { return new vec3( this[0], this[1], this[2] ) }
+    get xyz() { return vec4.new( this[0], this[1], this[2] ) }
     /** @returns {vec3} */
-    get rgb() { return new vec3( this[0], this[1], this[2] ) }
+    get rgb() { return vec4.new( this[0], this[1], this[2] ) }
     /** @param {vec3Like} v */
     set xyz( v ) { this[0] = v[0], this[1] = v[1], this[2] = v[2] }
     /** @param {vec3Like} v */
     set rgb( v ) { this[0] = v[0], this[1] = v[1], this[2] = v[2] }
     /** @returns {vec3} */
-    get xyw() { return new vec3( this[0], this[1], this[3] ) }
+    get xyw() { return vec4.new( this[0], this[1], this[3] ) }
     /** @returns {vec3} */
-    get rga() { return new vec3( this[0], this[1], this[3] ) }
+    get rga() { return vec4.new( this[0], this[1], this[3] ) }
     /** @param {vec3Like} v */
     set xyw( v ) { this[0] = v[0], this[1] = v[1], this[3] = v[2] }
     /** @param {vec3Like} v */
     set rga( v ) { this[0] = v[0], this[1] = v[1], this[3] = v[2] }
     /** @returns {vec3} */
-    get xzx() { return new vec3( this[0], this[2], this[0] ) }
+    get xzx() { return vec4.new( this[0], this[2], this[0] ) }
     /** @returns {vec3} */
-    get rbr() { return new vec3( this[0], this[2], this[0] ) }
+    get rbr() { return vec4.new( this[0], this[2], this[0] ) }
     /** @returns {vec3} */
-    get xzy() { return new vec3( this[0], this[2], this[1] ) }
+    get xzy() { return vec4.new( this[0], this[2], this[1] ) }
     /** @returns {vec3} */
-    get rbg() { return new vec3( this[0], this[2], this[1] ) }
+    get rbg() { return vec4.new( this[0], this[2], this[1] ) }
     /** @param {vec3Like} v */
     set xzy( v ) { this[0] = v[0], this[2] = v[1], this[1] = v[2] }
     /** @param {vec3Like} v */
     set rbg( v ) { this[0] = v[0], this[2] = v[1], this[1] = v[2] }
     /** @returns {vec3} */
-    get xzz() { return new vec3( this[0], this[2], this[2] ) }
+    get xzz() { return vec4.new( this[0], this[2], this[2] ) }
     /** @returns {vec3} */
-    get rbb() { return new vec3( this[0], this[2], this[2] ) }
+    get rbb() { return vec4.new( this[0], this[2], this[2] ) }
     /** @returns {vec3} */
-    get xzw() { return new vec3( this[0], this[2], this[3] ) }
+    get xzw() { return vec4.new( this[0], this[2], this[3] ) }
     /** @returns {vec3} */
-    get rba() { return new vec3( this[0], this[2], this[3] ) }
+    get rba() { return vec4.new( this[0], this[2], this[3] ) }
     /** @param {vec3Like} v */
     set xzw( v ) { this[0] = v[0], this[2] = v[1], this[3] = v[2] }
     /** @param {vec3Like} v */
     set rba( v ) { this[0] = v[0], this[2] = v[1], this[3] = v[2] }
     /** @returns {vec3} */
-    get xwx() { return new vec3( this[0], this[3], this[0] ) }
+    get xwx() { return vec4.new( this[0], this[3], this[0] ) }
     /** @returns {vec3} */
-    get rar() { return new vec3( this[0], this[3], this[0] ) }
+    get rar() { return vec4.new( this[0], this[3], this[0] ) }
     /** @returns {vec3} */
-    get xwy() { return new vec3( this[0], this[3], this[1] ) }
+    get xwy() { return vec4.new( this[0], this[3], this[1] ) }
     /** @returns {vec3} */
-    get rag() { return new vec3( this[0], this[3], this[1] ) }
+    get rag() { return vec4.new( this[0], this[3], this[1] ) }
     /** @param {vec3Like} v */
     set xwy( v ) { this[0] = v[0], this[3] = v[1], this[1] = v[2] }
     /** @param {vec3Like} v */
     set rag( v ) { this[0] = v[0], this[3] = v[1], this[1] = v[2] }
     /** @returns {vec3} */
-    get xwz() { return new vec3( this[0], this[3], this[2] ) }
+    get xwz() { return vec4.new( this[0], this[3], this[2] ) }
     /** @returns {vec3} */
-    get rab() { return new vec3( this[0], this[3], this[2] ) }
+    get rab() { return vec4.new( this[0], this[3], this[2] ) }
     /** @param {vec3Like} v */
     set xwz( v ) { this[0] = v[0], this[3] = v[1], this[2] = v[2] }
     /** @param {vec3Like} v */
     set rab( v ) { this[0] = v[0], this[3] = v[1], this[2] = v[2] }
     /** @returns {vec3} */
-    get xww() { return new vec3( this[0], this[3], this[3] ) }
+    get xww() { return vec4.new( this[0], this[3], this[3] ) }
     /** @returns {vec3} */
-    get raa() { return new vec3( this[0], this[3], this[3] ) }
+    get raa() { return vec4.new( this[0], this[3], this[3] ) }
     /** @returns {vec3} */
-    get yxx() { return new vec3( this[1], this[0], this[0] ) }
+    get yxx() { return vec4.new( this[1], this[0], this[0] ) }
     /** @returns {vec3} */
-    get grr() { return new vec3( this[1], this[0], this[0] ) }
+    get grr() { return vec4.new( this[1], this[0], this[0] ) }
     /** @returns {vec3} */
-    get yxy() { return new vec3( this[1], this[0], this[1] ) }
+    get yxy() { return vec4.new( this[1], this[0], this[1] ) }
     /** @returns {vec3} */
-    get grg() { return new vec3( this[1], this[0], this[1] ) }
+    get grg() { return vec4.new( this[1], this[0], this[1] ) }
     /** @returns {vec3} */
-    get yxz() { return new vec3( this[1], this[0], this[2] ) }
+    get yxz() { return vec4.new( this[1], this[0], this[2] ) }
     /** @returns {vec3} */
-    get grb() { return new vec3( this[1], this[0], this[2] ) }
+    get grb() { return vec4.new( this[1], this[0], this[2] ) }
     /** @param {vec3Like} v */
     set yxz( v ) { this[1] = v[0], this[0] = v[1], this[2] = v[2] }
     /** @param {vec3Like} v */
     set grb( v ) { this[1] = v[0], this[0] = v[1], this[2] = v[2] }
     /** @returns {vec3} */
-    get yxw() { return new vec3( this[1], this[0], this[3] ) }
+    get yxw() { return vec4.new( this[1], this[0], this[3] ) }
     /** @returns {vec3} */
-    get gra() { return new vec3( this[1], this[0], this[3] ) }
+    get gra() { return vec4.new( this[1], this[0], this[3] ) }
     /** @param {vec3Like} v */
     set yxw( v ) { this[1] = v[0], this[0] = v[1], this[3] = v[2] }
     /** @param {vec3Like} v */
     set gra( v ) { this[1] = v[0], this[0] = v[1], this[3] = v[2] }
     /** @returns {vec3} */
-    get yyx() { return new vec3( this[1], this[1], this[0] ) }
+    get yyx() { return vec4.new( this[1], this[1], this[0] ) }
     /** @returns {vec3} */
-    get ggr() { return new vec3( this[1], this[1], this[0] ) }
+    get ggr() { return vec4.new( this[1], this[1], this[0] ) }
     /** @returns {vec3} */
-    get yyy() { return new vec3( this[1], this[1], this[1] ) }
+    get yyy() { return vec4.new( this[1], this[1], this[1] ) }
     /** @returns {vec3} */
-    get ggg() { return new vec3( this[1], this[1], this[1] ) }
+    get ggg() { return vec4.new( this[1], this[1], this[1] ) }
     /** @returns {vec3} */
-    get yyz() { return new vec3( this[1], this[1], this[2] ) }
+    get yyz() { return vec4.new( this[1], this[1], this[2] ) }
     /** @returns {vec3} */
-    get ggb() { return new vec3( this[1], this[1], this[2] ) }
+    get ggb() { return vec4.new( this[1], this[1], this[2] ) }
     /** @returns {vec3} */
-    get yyw() { return new vec3( this[1], this[1], this[3] ) }
+    get yyw() { return vec4.new( this[1], this[1], this[3] ) }
     /** @returns {vec3} */
-    get gga() { return new vec3( this[1], this[1], this[3] ) }
+    get gga() { return vec4.new( this[1], this[1], this[3] ) }
     /** @returns {vec3} */
-    get yzx() { return new vec3( this[1], this[2], this[0] ) }
+    get yzx() { return vec4.new( this[1], this[2], this[0] ) }
     /** @returns {vec3} */
-    get gbr() { return new vec3( this[1], this[2], this[0] ) }
+    get gbr() { return vec4.new( this[1], this[2], this[0] ) }
     /** @param {vec3Like} v */
     set yzx( v ) { this[1] = v[0], this[2] = v[1], this[0] = v[2] }
     /** @param {vec3Like} v */
     set gbr( v ) { this[1] = v[0], this[2] = v[1], this[0] = v[2] }
     /** @returns {vec3} */
-    get yzy() { return new vec3( this[1], this[2], this[1] ) }
+    get yzy() { return vec4.new( this[1], this[2], this[1] ) }
     /** @returns {vec3} */
-    get gbg() { return new vec3( this[1], this[2], this[1] ) }
+    get gbg() { return vec4.new( this[1], this[2], this[1] ) }
     /** @returns {vec3} */
-    get yzz() { return new vec3( this[1], this[2], this[2] ) }
+    get yzz() { return vec4.new( this[1], this[2], this[2] ) }
     /** @returns {vec3} */
-    get gbb() { return new vec3( this[1], this[2], this[2] ) }
+    get gbb() { return vec4.new( this[1], this[2], this[2] ) }
     /** @returns {vec3} */
-    get yzw() { return new vec3( this[1], this[2], this[3] ) }
+    get yzw() { return vec4.new( this[1], this[2], this[3] ) }
     /** @returns {vec3} */
-    get gba() { return new vec3( this[1], this[2], this[3] ) }
+    get gba() { return vec4.new( this[1], this[2], this[3] ) }
     /** @param {vec3Like} v */
     set yzw( v ) { this[1] = v[0], this[2] = v[1], this[3] = v[2] }
     /** @param {vec3Like} v */
     set gba( v ) { this[1] = v[0], this[2] = v[1], this[3] = v[2] }
     /** @returns {vec3} */
-    get ywx() { return new vec3( this[1], this[3], this[0] ) }
+    get ywx() { return vec4.new( this[1], this[3], this[0] ) }
     /** @returns {vec3} */
-    get gar() { return new vec3( this[1], this[3], this[0] ) }
+    get gar() { return vec4.new( this[1], this[3], this[0] ) }
     /** @param {vec3Like} v */
     set ywx( v ) { this[1] = v[0], this[3] = v[1], this[0] = v[2] }
     /** @param {vec3Like} v */
     set gar( v ) { this[1] = v[0], this[3] = v[1], this[0] = v[2] }
     /** @returns {vec3} */
-    get ywy() { return new vec3( this[1], this[3], this[1] ) }
+    get ywy() { return vec4.new( this[1], this[3], this[1] ) }
     /** @returns {vec3} */
-    get gag() { return new vec3( this[1], this[3], this[1] ) }
+    get gag() { return vec4.new( this[1], this[3], this[1] ) }
     /** @returns {vec3} */
-    get ywz() { return new vec3( this[1], this[3], this[2] ) }
+    get ywz() { return vec4.new( this[1], this[3], this[2] ) }
     /** @returns {vec3} */
-    get gab() { return new vec3( this[1], this[3], this[2] ) }
+    get gab() { return vec4.new( this[1], this[3], this[2] ) }
     /** @param {vec3Like} v */
     set ywz( v ) { this[1] = v[0], this[3] = v[1], this[2] = v[2] }
     /** @param {vec3Like} v */
     set gab( v ) { this[1] = v[0], this[3] = v[1], this[2] = v[2] }
     /** @returns {vec3} */
-    get yww() { return new vec3( this[1], this[3], this[3] ) }
+    get yww() { return vec4.new( this[1], this[3], this[3] ) }
     /** @returns {vec3} */
-    get gaa() { return new vec3( this[1], this[3], this[3] ) }
+    get gaa() { return vec4.new( this[1], this[3], this[3] ) }
     /** @returns {vec3} */
-    get zxx() { return new vec3( this[2], this[0], this[0] ) }
+    get zxx() { return vec4.new( this[2], this[0], this[0] ) }
     /** @returns {vec3} */
-    get brr() { return new vec3( this[2], this[0], this[0] ) }
+    get brr() { return vec4.new( this[2], this[0], this[0] ) }
     /** @returns {vec3} */
-    get zxy() { return new vec3( this[2], this[0], this[1] ) }
+    get zxy() { return vec4.new( this[2], this[0], this[1] ) }
     /** @returns {vec3} */
-    get brg() { return new vec3( this[2], this[0], this[1] ) }
+    get brg() { return vec4.new( this[2], this[0], this[1] ) }
     /** @param {vec3Like} v */
     set zxy( v ) { this[2] = v[0], this[0] = v[1], this[1] = v[2] }
     /** @param {vec3Like} v */
     set brg( v ) { this[2] = v[0], this[0] = v[1], this[1] = v[2] }
     /** @returns {vec3} */
-    get zxz() { return new vec3( this[2], this[0], this[2] ) }
+    get zxz() { return vec4.new( this[2], this[0], this[2] ) }
     /** @returns {vec3} */
-    get brb() { return new vec3( this[2], this[0], this[2] ) }
+    get brb() { return vec4.new( this[2], this[0], this[2] ) }
     /** @returns {vec3} */
-    get zxw() { return new vec3( this[2], this[0], this[3] ) }
+    get zxw() { return vec4.new( this[2], this[0], this[3] ) }
     /** @returns {vec3} */
-    get bra() { return new vec3( this[2], this[0], this[3] ) }
+    get bra() { return vec4.new( this[2], this[0], this[3] ) }
     /** @param {vec3Like} v */
     set zxw( v ) { this[2] = v[0], this[0] = v[1], this[3] = v[2] }
     /** @param {vec3Like} v */
     set bra( v ) { this[2] = v[0], this[0] = v[1], this[3] = v[2] }
     /** @returns {vec3} */
-    get zyx() { return new vec3( this[2], this[1], this[0] ) }
+    get zyx() { return vec4.new( this[2], this[1], this[0] ) }
     /** @returns {vec3} */
-    get bgr() { return new vec3( this[2], this[1], this[0] ) }
+    get bgr() { return vec4.new( this[2], this[1], this[0] ) }
     /** @param {vec3Like} v */
     set zyx( v ) { this[2] = v[0], this[1] = v[1], this[0] = v[2] }
     /** @param {vec3Like} v */
     set bgr( v ) { this[2] = v[0], this[1] = v[1], this[0] = v[2] }
     /** @returns {vec3} */
-    get zyy() { return new vec3( this[2], this[1], this[1] ) }
+    get zyy() { return vec4.new( this[2], this[1], this[1] ) }
     /** @returns {vec3} */
-    get bgg() { return new vec3( this[2], this[1], this[1] ) }
+    get bgg() { return vec4.new( this[2], this[1], this[1] ) }
     /** @returns {vec3} */
-    get zyz() { return new vec3( this[2], this[1], this[2] ) }
+    get zyz() { return vec4.new( this[2], this[1], this[2] ) }
     /** @returns {vec3} */
-    get bgb() { return new vec3( this[2], this[1], this[2] ) }
+    get bgb() { return vec4.new( this[2], this[1], this[2] ) }
     /** @returns {vec3} */
-    get zyw() { return new vec3( this[2], this[1], this[3] ) }
+    get zyw() { return vec4.new( this[2], this[1], this[3] ) }
     /** @returns {vec3} */
-    get bga() { return new vec3( this[2], this[1], this[3] ) }
+    get bga() { return vec4.new( this[2], this[1], this[3] ) }
     /** @param {vec3Like} v */
     set zyw( v ) { this[2] = v[0], this[1] = v[1], this[3] = v[2] }
     /** @param {vec3Like} v */
     set bga( v ) { this[2] = v[0], this[1] = v[1], this[3] = v[2] }
     /** @returns {vec3} */
-    get zzx() { return new vec3( this[2], this[2], this[0] ) }
+    get zzx() { return vec4.new( this[2], this[2], this[0] ) }
     /** @returns {vec3} */
-    get bbr() { return new vec3( this[2], this[2], this[0] ) }
+    get bbr() { return vec4.new( this[2], this[2], this[0] ) }
     /** @returns {vec3} */
-    get zzy() { return new vec3( this[2], this[2], this[1] ) }
+    get zzy() { return vec4.new( this[2], this[2], this[1] ) }
     /** @returns {vec3} */
-    get bbg() { return new vec3( this[2], this[2], this[1] ) }
+    get bbg() { return vec4.new( this[2], this[2], this[1] ) }
     /** @returns {vec3} */
-    get zzz() { return new vec3( this[2], this[2], this[2] ) }
+    get zzz() { return vec4.new( this[2], this[2], this[2] ) }
     /** @returns {vec3} */
-    get bbb() { return new vec3( this[2], this[2], this[2] ) }
+    get bbb() { return vec4.new( this[2], this[2], this[2] ) }
     /** @returns {vec3} */
-    get zzw() { return new vec3( this[2], this[2], this[3] ) }
+    get zzw() { return vec4.new( this[2], this[2], this[3] ) }
     /** @returns {vec3} */
-    get bba() { return new vec3( this[2], this[2], this[3] ) }
+    get bba() { return vec4.new( this[2], this[2], this[3] ) }
     /** @returns {vec3} */
-    get zwx() { return new vec3( this[2], this[3], this[0] ) }
+    get zwx() { return vec4.new( this[2], this[3], this[0] ) }
     /** @returns {vec3} */
-    get bar() { return new vec3( this[2], this[3], this[0] ) }
+    get bar() { return vec4.new( this[2], this[3], this[0] ) }
     /** @param {vec3Like} v */
     set zwx( v ) { this[2] = v[0], this[3] = v[1], this[0] = v[2] }
     /** @param {vec3Like} v */
     set bar( v ) { this[2] = v[0], this[3] = v[1], this[0] = v[2] }
     /** @returns {vec3} */
-    get zwy() { return new vec3( this[2], this[3], this[1] ) }
+    get zwy() { return vec4.new( this[2], this[3], this[1] ) }
     /** @returns {vec3} */
-    get bag() { return new vec3( this[2], this[3], this[1] ) }
+    get bag() { return vec4.new( this[2], this[3], this[1] ) }
     /** @param {vec3Like} v */
     set zwy( v ) { this[2] = v[0], this[3] = v[1], this[1] = v[2] }
     /** @param {vec3Like} v */
     set bag( v ) { this[2] = v[0], this[3] = v[1], this[1] = v[2] }
     /** @returns {vec3} */
-    get zwz() { return new vec3( this[2], this[3], this[2] ) }
+    get zwz() { return vec4.new( this[2], this[3], this[2] ) }
     /** @returns {vec3} */
-    get bab() { return new vec3( this[2], this[3], this[2] ) }
+    get bab() { return vec4.new( this[2], this[3], this[2] ) }
     /** @returns {vec3} */
-    get zww() { return new vec3( this[2], this[3], this[3] ) }
+    get zww() { return vec4.new( this[2], this[3], this[3] ) }
     /** @returns {vec3} */
-    get baa() { return new vec3( this[2], this[3], this[3] ) }
+    get baa() { return vec4.new( this[2], this[3], this[3] ) }
     /** @returns {vec3} */
-    get wxx() { return new vec3( this[3], this[0], this[0] ) }
+    get wxx() { return vec4.new( this[3], this[0], this[0] ) }
     /** @returns {vec3} */
-    get arr() { return new vec3( this[3], this[0], this[0] ) }
+    get arr() { return vec4.new( this[3], this[0], this[0] ) }
     /** @returns {vec3} */
-    get wxy() { return new vec3( this[3], this[0], this[1] ) }
+    get wxy() { return vec4.new( this[3], this[0], this[1] ) }
     /** @returns {vec3} */
-    get arg() { return new vec3( this[3], this[0], this[1] ) }
+    get arg() { return vec4.new( this[3], this[0], this[1] ) }
     /** @param {vec3Like} v */
     set wxy( v ) { this[3] = v[0], this[0] = v[1], this[1] = v[2] }
     /** @param {vec3Like} v */
     set arg( v ) { this[3] = v[0], this[0] = v[1], this[1] = v[2] }
     /** @returns {vec3} */
-    get wxz() { return new vec3( this[3], this[0], this[2] ) }
+    get wxz() { return vec4.new( this[3], this[0], this[2] ) }
     /** @returns {vec3} */
-    get arb() { return new vec3( this[3], this[0], this[2] ) }
+    get arb() { return vec4.new( this[3], this[0], this[2] ) }
     /** @param {vec3Like} v */
     set wxz( v ) { this[3] = v[0], this[0] = v[1], this[2] = v[2] }
     /** @param {vec3Like} v */
     set arb( v ) { this[3] = v[0], this[0] = v[1], this[2] = v[2] }
     /** @returns {vec3} */
-    get wxw() { return new vec3( this[3], this[0], this[3] ) }
+    get wxw() { return vec4.new( this[3], this[0], this[3] ) }
     /** @returns {vec3} */
-    get ara() { return new vec3( this[3], this[0], this[3] ) }
+    get ara() { return vec4.new( this[3], this[0], this[3] ) }
     /** @returns {vec3} */
-    get wyx() { return new vec3( this[3], this[1], this[0] ) }
+    get wyx() { return vec4.new( this[3], this[1], this[0] ) }
     /** @returns {vec3} */
-    get agr() { return new vec3( this[3], this[1], this[0] ) }
+    get agr() { return vec4.new( this[3], this[1], this[0] ) }
     /** @param {vec3Like} v */
     set wyx( v ) { this[3] = v[0], this[1] = v[1], this[0] = v[2] }
     /** @param {vec3Like} v */
     set agr( v ) { this[3] = v[0], this[1] = v[1], this[0] = v[2] }
     /** @returns {vec3} */
-    get wyy() { return new vec3( this[3], this[1], this[1] ) }
+    get wyy() { return vec4.new( this[3], this[1], this[1] ) }
     /** @returns {vec3} */
-    get agg() { return new vec3( this[3], this[1], this[1] ) }
+    get agg() { return vec4.new( this[3], this[1], this[1] ) }
     /** @returns {vec3} */
-    get wyz() { return new vec3( this[3], this[1], this[2] ) }
+    get wyz() { return vec4.new( this[3], this[1], this[2] ) }
     /** @returns {vec3} */
-    get agb() { return new vec3( this[3], this[1], this[2] ) }
+    get agb() { return vec4.new( this[3], this[1], this[2] ) }
     /** @param {vec3Like} v */
     set wyz( v ) { this[3] = v[0], this[1] = v[1], this[2] = v[2] }
     /** @param {vec3Like} v */
     set agb( v ) { this[3] = v[0], this[1] = v[1], this[2] = v[2] }
     /** @returns {vec3} */
-    get wyw() { return new vec3( this[3], this[1], this[3] ) }
+    get wyw() { return vec4.new( this[3], this[1], this[3] ) }
     /** @returns {vec3} */
-    get aga() { return new vec3( this[3], this[1], this[3] ) }
+    get aga() { return vec4.new( this[3], this[1], this[3] ) }
     /** @returns {vec3} */
-    get wzx() { return new vec3( this[3], this[2], this[0] ) }
+    get wzx() { return vec4.new( this[3], this[2], this[0] ) }
     /** @returns {vec3} */
-    get abr() { return new vec3( this[3], this[2], this[0] ) }
+    get abr() { return vec4.new( this[3], this[2], this[0] ) }
     /** @param {vec3Like} v */
     set wzx( v ) { this[3] = v[0], this[2] = v[1], this[0] = v[2] }
     /** @param {vec3Like} v */
     set abr( v ) { this[3] = v[0], this[2] = v[1], this[0] = v[2] }
     /** @returns {vec3} */
-    get wzy() { return new vec3( this[3], this[2], this[1] ) }
+    get wzy() { return vec4.new( this[3], this[2], this[1] ) }
     /** @returns {vec3} */
-    get abg() { return new vec3( this[3], this[2], this[1] ) }
+    get abg() { return vec4.new( this[3], this[2], this[1] ) }
     /** @param {vec3Like} v */
     set wzy( v ) { this[3] = v[0], this[2] = v[1], this[1] = v[2] }
     /** @param {vec3Like} v */
     set abg( v ) { this[3] = v[0], this[2] = v[1], this[1] = v[2] }
     /** @returns {vec3} */
-    get wzz() { return new vec3( this[3], this[2], this[2] ) }
+    get wzz() { return vec4.new( this[3], this[2], this[2] ) }
     /** @returns {vec3} */
-    get abb() { return new vec3( this[3], this[2], this[2] ) }
+    get abb() { return vec4.new( this[3], this[2], this[2] ) }
     /** @returns {vec3} */
-    get wzw() { return new vec3( this[3], this[2], this[3] ) }
+    get wzw() { return vec4.new( this[3], this[2], this[3] ) }
     /** @returns {vec3} */
-    get aba() { return new vec3( this[3], this[2], this[3] ) }
+    get aba() { return vec4.new( this[3], this[2], this[3] ) }
     /** @returns {vec3} */
-    get wwx() { return new vec3( this[3], this[3], this[0] ) }
+    get wwx() { return vec4.new( this[3], this[3], this[0] ) }
     /** @returns {vec3} */
-    get aar() { return new vec3( this[3], this[3], this[0] ) }
+    get aar() { return vec4.new( this[3], this[3], this[0] ) }
     /** @returns {vec3} */
-    get wwy() { return new vec3( this[3], this[3], this[1] ) }
+    get wwy() { return vec4.new( this[3], this[3], this[1] ) }
     /** @returns {vec3} */
-    get aag() { return new vec3( this[3], this[3], this[1] ) }
+    get aag() { return vec4.new( this[3], this[3], this[1] ) }
     /** @returns {vec3} */
-    get wwz() { return new vec3( this[3], this[3], this[2] ) }
+    get wwz() { return vec4.new( this[3], this[3], this[2] ) }
     /** @returns {vec3} */
-    get aab() { return new vec3( this[3], this[3], this[2] ) }
+    get aab() { return vec4.new( this[3], this[3], this[2] ) }
     /** @returns {vec3} */
-    get www() { return new vec3( this[3], this[3], this[3] ) }
+    get www() { return vec4.new( this[3], this[3], this[3] ) }
     /** @returns {vec3} */
-    get aaa() { return new vec3( this[3], this[3], this[3] ) }
+    get aaa() { return vec4.new( this[3], this[3], this[3] ) }
     /** @returns {vec4} */
-    get xxxx() { return new vec4( this[0], this[0], this[0], this[0] ) }
+    get xxxx() { return vec4.new( this[0], this[0], this[0], this[0] ) }
     /** @returns {vec4} */
-    get rrrr() { return new vec4( this[0], this[0], this[0], this[0] ) }
+    get rrrr() { return vec4.new( this[0], this[0], this[0], this[0] ) }
     /** @returns {vec4} */
-    get xxxy() { return new vec4( this[0], this[0], this[0], this[1] ) }
+    get xxxy() { return vec4.new( this[0], this[0], this[0], this[1] ) }
     /** @returns {vec4} */
-    get rrrg() { return new vec4( this[0], this[0], this[0], this[1] ) }
+    get rrrg() { return vec4.new( this[0], this[0], this[0], this[1] ) }
     /** @returns {vec4} */
-    get xxxz() { return new vec4( this[0], this[0], this[0], this[2] ) }
+    get xxxz() { return vec4.new( this[0], this[0], this[0], this[2] ) }
     /** @returns {vec4} */
-    get rrrb() { return new vec4( this[0], this[0], this[0], this[2] ) }
+    get rrrb() { return vec4.new( this[0], this[0], this[0], this[2] ) }
     /** @returns {vec4} */
-    get xxxw() { return new vec4( this[0], this[0], this[0], this[3] ) }
+    get xxxw() { return vec4.new( this[0], this[0], this[0], this[3] ) }
     /** @returns {vec4} */
-    get rrra() { return new vec4( this[0], this[0], this[0], this[3] ) }
+    get rrra() { return vec4.new( this[0], this[0], this[0], this[3] ) }
     /** @returns {vec4} */
-    get xxyx() { return new vec4( this[0], this[0], this[1], this[0] ) }
+    get xxyx() { return vec4.new( this[0], this[0], this[1], this[0] ) }
     /** @returns {vec4} */
-    get rrgr() { return new vec4( this[0], this[0], this[1], this[0] ) }
+    get rrgr() { return vec4.new( this[0], this[0], this[1], this[0] ) }
     /** @returns {vec4} */
-    get xxyy() { return new vec4( this[0], this[0], this[1], this[1] ) }
+    get xxyy() { return vec4.new( this[0], this[0], this[1], this[1] ) }
     /** @returns {vec4} */
-    get rrgg() { return new vec4( this[0], this[0], this[1], this[1] ) }
+    get rrgg() { return vec4.new( this[0], this[0], this[1], this[1] ) }
     /** @returns {vec4} */
-    get xxyz() { return new vec4( this[0], this[0], this[1], this[2] ) }
+    get xxyz() { return vec4.new( this[0], this[0], this[1], this[2] ) }
     /** @returns {vec4} */
-    get rrgb() { return new vec4( this[0], this[0], this[1], this[2] ) }
+    get rrgb() { return vec4.new( this[0], this[0], this[1], this[2] ) }
     /** @returns {vec4} */
-    get xxyw() { return new vec4( this[0], this[0], this[1], this[3] ) }
+    get xxyw() { return vec4.new( this[0], this[0], this[1], this[3] ) }
     /** @returns {vec4} */
-    get rrga() { return new vec4( this[0], this[0], this[1], this[3] ) }
+    get rrga() { return vec4.new( this[0], this[0], this[1], this[3] ) }
     /** @returns {vec4} */
-    get xxzx() { return new vec4( this[0], this[0], this[2], this[0] ) }
+    get xxzx() { return vec4.new( this[0], this[0], this[2], this[0] ) }
     /** @returns {vec4} */
-    get rrbr() { return new vec4( this[0], this[0], this[2], this[0] ) }
+    get rrbr() { return vec4.new( this[0], this[0], this[2], this[0] ) }
     /** @returns {vec4} */
-    get xxzy() { return new vec4( this[0], this[0], this[2], this[1] ) }
+    get xxzy() { return vec4.new( this[0], this[0], this[2], this[1] ) }
     /** @returns {vec4} */
-    get rrbg() { return new vec4( this[0], this[0], this[2], this[1] ) }
+    get rrbg() { return vec4.new( this[0], this[0], this[2], this[1] ) }
     /** @returns {vec4} */
-    get xxzz() { return new vec4( this[0], this[0], this[2], this[2] ) }
+    get xxzz() { return vec4.new( this[0], this[0], this[2], this[2] ) }
     /** @returns {vec4} */
-    get rrbb() { return new vec4( this[0], this[0], this[2], this[2] ) }
+    get rrbb() { return vec4.new( this[0], this[0], this[2], this[2] ) }
     /** @returns {vec4} */
-    get xxzw() { return new vec4( this[0], this[0], this[2], this[3] ) }
+    get xxzw() { return vec4.new( this[0], this[0], this[2], this[3] ) }
     /** @returns {vec4} */
-    get rrba() { return new vec4( this[0], this[0], this[2], this[3] ) }
+    get rrba() { return vec4.new( this[0], this[0], this[2], this[3] ) }
     /** @returns {vec4} */
-    get xxwx() { return new vec4( this[0], this[0], this[3], this[0] ) }
+    get xxwx() { return vec4.new( this[0], this[0], this[3], this[0] ) }
     /** @returns {vec4} */
-    get rrar() { return new vec4( this[0], this[0], this[3], this[0] ) }
+    get rrar() { return vec4.new( this[0], this[0], this[3], this[0] ) }
     /** @returns {vec4} */
-    get xxwy() { return new vec4( this[0], this[0], this[3], this[1] ) }
+    get xxwy() { return vec4.new( this[0], this[0], this[3], this[1] ) }
     /** @returns {vec4} */
-    get rrag() { return new vec4( this[0], this[0], this[3], this[1] ) }
+    get rrag() { return vec4.new( this[0], this[0], this[3], this[1] ) }
     /** @returns {vec4} */
-    get xxwz() { return new vec4( this[0], this[0], this[3], this[2] ) }
+    get xxwz() { return vec4.new( this[0], this[0], this[3], this[2] ) }
     /** @returns {vec4} */
-    get rrab() { return new vec4( this[0], this[0], this[3], this[2] ) }
+    get rrab() { return vec4.new( this[0], this[0], this[3], this[2] ) }
     /** @returns {vec4} */
-    get xxww() { return new vec4( this[0], this[0], this[3], this[3] ) }
+    get xxww() { return vec4.new( this[0], this[0], this[3], this[3] ) }
     /** @returns {vec4} */
-    get rraa() { return new vec4( this[0], this[0], this[3], this[3] ) }
+    get rraa() { return vec4.new( this[0], this[0], this[3], this[3] ) }
     /** @returns {vec4} */
-    get xyxx() { return new vec4( this[0], this[1], this[0], this[0] ) }
+    get xyxx() { return vec4.new( this[0], this[1], this[0], this[0] ) }
     /** @returns {vec4} */
-    get rgrr() { return new vec4( this[0], this[1], this[0], this[0] ) }
+    get rgrr() { return vec4.new( this[0], this[1], this[0], this[0] ) }
     /** @returns {vec4} */
-    get xyxy() { return new vec4( this[0], this[1], this[0], this[1] ) }
+    get xyxy() { return vec4.new( this[0], this[1], this[0], this[1] ) }
     /** @returns {vec4} */
-    get rgrg() { return new vec4( this[0], this[1], this[0], this[1] ) }
+    get rgrg() { return vec4.new( this[0], this[1], this[0], this[1] ) }
     /** @returns {vec4} */
-    get xyxz() { return new vec4( this[0], this[1], this[0], this[2] ) }
+    get xyxz() { return vec4.new( this[0], this[1], this[0], this[2] ) }
     /** @returns {vec4} */
-    get rgrb() { return new vec4( this[0], this[1], this[0], this[2] ) }
+    get rgrb() { return vec4.new( this[0], this[1], this[0], this[2] ) }
     /** @returns {vec4} */
-    get xyxw() { return new vec4( this[0], this[1], this[0], this[3] ) }
+    get xyxw() { return vec4.new( this[0], this[1], this[0], this[3] ) }
     /** @returns {vec4} */
-    get rgra() { return new vec4( this[0], this[1], this[0], this[3] ) }
+    get rgra() { return vec4.new( this[0], this[1], this[0], this[3] ) }
     /** @returns {vec4} */
-    get xyyx() { return new vec4( this[0], this[1], this[1], this[0] ) }
+    get xyyx() { return vec4.new( this[0], this[1], this[1], this[0] ) }
     /** @returns {vec4} */
-    get rggr() { return new vec4( this[0], this[1], this[1], this[0] ) }
+    get rggr() { return vec4.new( this[0], this[1], this[1], this[0] ) }
     /** @returns {vec4} */
-    get xyyy() { return new vec4( this[0], this[1], this[1], this[1] ) }
+    get xyyy() { return vec4.new( this[0], this[1], this[1], this[1] ) }
     /** @returns {vec4} */
-    get rggg() { return new vec4( this[0], this[1], this[1], this[1] ) }
+    get rggg() { return vec4.new( this[0], this[1], this[1], this[1] ) }
     /** @returns {vec4} */
-    get xyyz() { return new vec4( this[0], this[1], this[1], this[2] ) }
+    get xyyz() { return vec4.new( this[0], this[1], this[1], this[2] ) }
     /** @returns {vec4} */
-    get rggb() { return new vec4( this[0], this[1], this[1], this[2] ) }
+    get rggb() { return vec4.new( this[0], this[1], this[1], this[2] ) }
     /** @returns {vec4} */
-    get xyyw() { return new vec4( this[0], this[1], this[1], this[3] ) }
+    get xyyw() { return vec4.new( this[0], this[1], this[1], this[3] ) }
     /** @returns {vec4} */
-    get rgga() { return new vec4( this[0], this[1], this[1], this[3] ) }
+    get rgga() { return vec4.new( this[0], this[1], this[1], this[3] ) }
     /** @returns {vec4} */
-    get xyzx() { return new vec4( this[0], this[1], this[2], this[0] ) }
+    get xyzx() { return vec4.new( this[0], this[1], this[2], this[0] ) }
     /** @returns {vec4} */
-    get rgbr() { return new vec4( this[0], this[1], this[2], this[0] ) }
+    get rgbr() { return vec4.new( this[0], this[1], this[2], this[0] ) }
     /** @returns {vec4} */
-    get xyzy() { return new vec4( this[0], this[1], this[2], this[1] ) }
+    get xyzy() { return vec4.new( this[0], this[1], this[2], this[1] ) }
     /** @returns {vec4} */
-    get rgbg() { return new vec4( this[0], this[1], this[2], this[1] ) }
+    get rgbg() { return vec4.new( this[0], this[1], this[2], this[1] ) }
     /** @returns {vec4} */
-    get xyzz() { return new vec4( this[0], this[1], this[2], this[2] ) }
+    get xyzz() { return vec4.new( this[0], this[1], this[2], this[2] ) }
     /** @returns {vec4} */
-    get rgbb() { return new vec4( this[0], this[1], this[2], this[2] ) }
+    get rgbb() { return vec4.new( this[0], this[1], this[2], this[2] ) }
     /** @returns {vec4} */
-    get xyzw() { return new vec4( this[0], this[1], this[2], this[3] ) }
+    get xyzw() { return vec4.new( this[0], this[1], this[2], this[3] ) }
     /** @returns {vec4} */
-    get rgba() { return new vec4( this[0], this[1], this[2], this[3] ) }
+    get rgba() { return vec4.new( this[0], this[1], this[2], this[3] ) }
     /** @param {vec4Like} v */
     set xyzw( v ) { this[0] = v[0], this[1] = v[1], this[2] = v[2], this[3] = v[3] }
     /** @param {vec4Like} v */
     set rgba( v ) { this[0] = v[0], this[1] = v[1], this[2] = v[2], this[3] = v[3] }
     /** @returns {vec4} */
-    get xywx() { return new vec4( this[0], this[1], this[3], this[0] ) }
+    get xywx() { return vec4.new( this[0], this[1], this[3], this[0] ) }
     /** @returns {vec4} */
-    get rgar() { return new vec4( this[0], this[1], this[3], this[0] ) }
+    get rgar() { return vec4.new( this[0], this[1], this[3], this[0] ) }
     /** @returns {vec4} */
-    get xywy() { return new vec4( this[0], this[1], this[3], this[1] ) }
+    get xywy() { return vec4.new( this[0], this[1], this[3], this[1] ) }
     /** @returns {vec4} */
-    get rgag() { return new vec4( this[0], this[1], this[3], this[1] ) }
+    get rgag() { return vec4.new( this[0], this[1], this[3], this[1] ) }
     /** @returns {vec4} */
-    get xywz() { return new vec4( this[0], this[1], this[3], this[2] ) }
+    get xywz() { return vec4.new( this[0], this[1], this[3], this[2] ) }
     /** @returns {vec4} */
-    get rgab() { return new vec4( this[0], this[1], this[3], this[2] ) }
+    get rgab() { return vec4.new( this[0], this[1], this[3], this[2] ) }
     /** @param {vec4Like} v */
     set xywz( v ) { this[0] = v[0], this[1] = v[1], this[3] = v[2], this[2] = v[3] }
     /** @param {vec4Like} v */
     set rgab( v ) { this[0] = v[0], this[1] = v[1], this[3] = v[2], this[2] = v[3] }
     /** @returns {vec4} */
-    get xyww() { return new vec4( this[0], this[1], this[3], this[3] ) }
+    get xyww() { return vec4.new( this[0], this[1], this[3], this[3] ) }
     /** @returns {vec4} */
-    get rgaa() { return new vec4( this[0], this[1], this[3], this[3] ) }
+    get rgaa() { return vec4.new( this[0], this[1], this[3], this[3] ) }
     /** @returns {vec4} */
-    get xzxx() { return new vec4( this[0], this[2], this[0], this[0] ) }
+    get xzxx() { return vec4.new( this[0], this[2], this[0], this[0] ) }
     /** @returns {vec4} */
-    get rbrr() { return new vec4( this[0], this[2], this[0], this[0] ) }
+    get rbrr() { return vec4.new( this[0], this[2], this[0], this[0] ) }
     /** @returns {vec4} */
-    get xzxy() { return new vec4( this[0], this[2], this[0], this[1] ) }
+    get xzxy() { return vec4.new( this[0], this[2], this[0], this[1] ) }
     /** @returns {vec4} */
-    get rbrg() { return new vec4( this[0], this[2], this[0], this[1] ) }
+    get rbrg() { return vec4.new( this[0], this[2], this[0], this[1] ) }
     /** @returns {vec4} */
-    get xzxz() { return new vec4( this[0], this[2], this[0], this[2] ) }
+    get xzxz() { return vec4.new( this[0], this[2], this[0], this[2] ) }
     /** @returns {vec4} */
-    get rbrb() { return new vec4( this[0], this[2], this[0], this[2] ) }
+    get rbrb() { return vec4.new( this[0], this[2], this[0], this[2] ) }
     /** @returns {vec4} */
-    get xzxw() { return new vec4( this[0], this[2], this[0], this[3] ) }
+    get xzxw() { return vec4.new( this[0], this[2], this[0], this[3] ) }
     /** @returns {vec4} */
-    get rbra() { return new vec4( this[0], this[2], this[0], this[3] ) }
+    get rbra() { return vec4.new( this[0], this[2], this[0], this[3] ) }
     /** @returns {vec4} */
-    get xzyx() { return new vec4( this[0], this[2], this[1], this[0] ) }
+    get xzyx() { return vec4.new( this[0], this[2], this[1], this[0] ) }
     /** @returns {vec4} */
-    get rbgr() { return new vec4( this[0], this[2], this[1], this[0] ) }
+    get rbgr() { return vec4.new( this[0], this[2], this[1], this[0] ) }
     /** @returns {vec4} */
-    get xzyy() { return new vec4( this[0], this[2], this[1], this[1] ) }
+    get xzyy() { return vec4.new( this[0], this[2], this[1], this[1] ) }
     /** @returns {vec4} */
-    get rbgg() { return new vec4( this[0], this[2], this[1], this[1] ) }
+    get rbgg() { return vec4.new( this[0], this[2], this[1], this[1] ) }
     /** @returns {vec4} */
-    get xzyz() { return new vec4( this[0], this[2], this[1], this[2] ) }
+    get xzyz() { return vec4.new( this[0], this[2], this[1], this[2] ) }
     /** @returns {vec4} */
-    get rbgb() { return new vec4( this[0], this[2], this[1], this[2] ) }
+    get rbgb() { return vec4.new( this[0], this[2], this[1], this[2] ) }
     /** @returns {vec4} */
-    get xzyw() { return new vec4( this[0], this[2], this[1], this[3] ) }
+    get xzyw() { return vec4.new( this[0], this[2], this[1], this[3] ) }
     /** @returns {vec4} */
-    get rbga() { return new vec4( this[0], this[2], this[1], this[3] ) }
+    get rbga() { return vec4.new( this[0], this[2], this[1], this[3] ) }
     /** @param {vec4Like} v */
     set xzyw( v ) { this[0] = v[0], this[2] = v[1], this[1] = v[2], this[3] = v[3] }
     /** @param {vec4Like} v */
     set rbga( v ) { this[0] = v[0], this[2] = v[1], this[1] = v[2], this[3] = v[3] }
     /** @returns {vec4} */
-    get xzzx() { return new vec4( this[0], this[2], this[2], this[0] ) }
+    get xzzx() { return vec4.new( this[0], this[2], this[2], this[0] ) }
     /** @returns {vec4} */
-    get rbbr() { return new vec4( this[0], this[2], this[2], this[0] ) }
+    get rbbr() { return vec4.new( this[0], this[2], this[2], this[0] ) }
     /** @returns {vec4} */
-    get xzzy() { return new vec4( this[0], this[2], this[2], this[1] ) }
+    get xzzy() { return vec4.new( this[0], this[2], this[2], this[1] ) }
     /** @returns {vec4} */
-    get rbbg() { return new vec4( this[0], this[2], this[2], this[1] ) }
+    get rbbg() { return vec4.new( this[0], this[2], this[2], this[1] ) }
     /** @returns {vec4} */
-    get xzzz() { return new vec4( this[0], this[2], this[2], this[2] ) }
+    get xzzz() { return vec4.new( this[0], this[2], this[2], this[2] ) }
     /** @returns {vec4} */
-    get rbbb() { return new vec4( this[0], this[2], this[2], this[2] ) }
+    get rbbb() { return vec4.new( this[0], this[2], this[2], this[2] ) }
     /** @returns {vec4} */
-    get xzzw() { return new vec4( this[0], this[2], this[2], this[3] ) }
+    get xzzw() { return vec4.new( this[0], this[2], this[2], this[3] ) }
     /** @returns {vec4} */
-    get rbba() { return new vec4( this[0], this[2], this[2], this[3] ) }
+    get rbba() { return vec4.new( this[0], this[2], this[2], this[3] ) }
     /** @returns {vec4} */
-    get xzwx() { return new vec4( this[0], this[2], this[3], this[0] ) }
+    get xzwx() { return vec4.new( this[0], this[2], this[3], this[0] ) }
     /** @returns {vec4} */
-    get rbar() { return new vec4( this[0], this[2], this[3], this[0] ) }
+    get rbar() { return vec4.new( this[0], this[2], this[3], this[0] ) }
     /** @returns {vec4} */
-    get xzwy() { return new vec4( this[0], this[2], this[3], this[1] ) }
+    get xzwy() { return vec4.new( this[0], this[2], this[3], this[1] ) }
     /** @returns {vec4} */
-    get rbag() { return new vec4( this[0], this[2], this[3], this[1] ) }
+    get rbag() { return vec4.new( this[0], this[2], this[3], this[1] ) }
     /** @param {vec4Like} v */
     set xzwy( v ) { this[0] = v[0], this[2] = v[1], this[3] = v[2], this[1] = v[3] }
     /** @param {vec4Like} v */
     set rbag( v ) { this[0] = v[0], this[2] = v[1], this[3] = v[2], this[1] = v[3] }
     /** @returns {vec4} */
-    get xzwz() { return new vec4( this[0], this[2], this[3], this[2] ) }
+    get xzwz() { return vec4.new( this[0], this[2], this[3], this[2] ) }
     /** @returns {vec4} */
-    get rbab() { return new vec4( this[0], this[2], this[3], this[2] ) }
+    get rbab() { return vec4.new( this[0], this[2], this[3], this[2] ) }
     /** @returns {vec4} */
-    get xzww() { return new vec4( this[0], this[2], this[3], this[3] ) }
+    get xzww() { return vec4.new( this[0], this[2], this[3], this[3] ) }
     /** @returns {vec4} */
-    get rbaa() { return new vec4( this[0], this[2], this[3], this[3] ) }
+    get rbaa() { return vec4.new( this[0], this[2], this[3], this[3] ) }
     /** @returns {vec4} */
-    get xwxx() { return new vec4( this[0], this[3], this[0], this[0] ) }
+    get xwxx() { return vec4.new( this[0], this[3], this[0], this[0] ) }
     /** @returns {vec4} */
-    get rarr() { return new vec4( this[0], this[3], this[0], this[0] ) }
+    get rarr() { return vec4.new( this[0], this[3], this[0], this[0] ) }
     /** @returns {vec4} */
-    get xwxy() { return new vec4( this[0], this[3], this[0], this[1] ) }
+    get xwxy() { return vec4.new( this[0], this[3], this[0], this[1] ) }
     /** @returns {vec4} */
-    get rarg() { return new vec4( this[0], this[3], this[0], this[1] ) }
+    get rarg() { return vec4.new( this[0], this[3], this[0], this[1] ) }
     /** @returns {vec4} */
-    get xwxz() { return new vec4( this[0], this[3], this[0], this[2] ) }
+    get xwxz() { return vec4.new( this[0], this[3], this[0], this[2] ) }
     /** @returns {vec4} */
-    get rarb() { return new vec4( this[0], this[3], this[0], this[2] ) }
+    get rarb() { return vec4.new( this[0], this[3], this[0], this[2] ) }
     /** @returns {vec4} */
-    get xwxw() { return new vec4( this[0], this[3], this[0], this[3] ) }
+    get xwxw() { return vec4.new( this[0], this[3], this[0], this[3] ) }
     /** @returns {vec4} */
-    get rara() { return new vec4( this[0], this[3], this[0], this[3] ) }
+    get rara() { return vec4.new( this[0], this[3], this[0], this[3] ) }
     /** @returns {vec4} */
-    get xwyx() { return new vec4( this[0], this[3], this[1], this[0] ) }
+    get xwyx() { return vec4.new( this[0], this[3], this[1], this[0] ) }
     /** @returns {vec4} */
-    get ragr() { return new vec4( this[0], this[3], this[1], this[0] ) }
+    get ragr() { return vec4.new( this[0], this[3], this[1], this[0] ) }
     /** @returns {vec4} */
-    get xwyy() { return new vec4( this[0], this[3], this[1], this[1] ) }
+    get xwyy() { return vec4.new( this[0], this[3], this[1], this[1] ) }
     /** @returns {vec4} */
-    get ragg() { return new vec4( this[0], this[3], this[1], this[1] ) }
+    get ragg() { return vec4.new( this[0], this[3], this[1], this[1] ) }
     /** @returns {vec4} */
-    get xwyz() { return new vec4( this[0], this[3], this[1], this[2] ) }
+    get xwyz() { return vec4.new( this[0], this[3], this[1], this[2] ) }
     /** @returns {vec4} */
-    get ragb() { return new vec4( this[0], this[3], this[1], this[2] ) }
+    get ragb() { return vec4.new( this[0], this[3], this[1], this[2] ) }
     /** @param {vec4Like} v */
     set xwyz( v ) { this[0] = v[0], this[3] = v[1], this[1] = v[2], this[2] = v[3] }
     /** @param {vec4Like} v */
     set ragb( v ) { this[0] = v[0], this[3] = v[1], this[1] = v[2], this[2] = v[3] }
     /** @returns {vec4} */
-    get xwyw() { return new vec4( this[0], this[3], this[1], this[3] ) }
+    get xwyw() { return vec4.new( this[0], this[3], this[1], this[3] ) }
     /** @returns {vec4} */
-    get raga() { return new vec4( this[0], this[3], this[1], this[3] ) }
+    get raga() { return vec4.new( this[0], this[3], this[1], this[3] ) }
     /** @returns {vec4} */
-    get xwzx() { return new vec4( this[0], this[3], this[2], this[0] ) }
+    get xwzx() { return vec4.new( this[0], this[3], this[2], this[0] ) }
     /** @returns {vec4} */
-    get rabr() { return new vec4( this[0], this[3], this[2], this[0] ) }
+    get rabr() { return vec4.new( this[0], this[3], this[2], this[0] ) }
     /** @returns {vec4} */
-    get xwzy() { return new vec4( this[0], this[3], this[2], this[1] ) }
+    get xwzy() { return vec4.new( this[0], this[3], this[2], this[1] ) }
     /** @returns {vec4} */
-    get rabg() { return new vec4( this[0], this[3], this[2], this[1] ) }
+    get rabg() { return vec4.new( this[0], this[3], this[2], this[1] ) }
     /** @param {vec4Like} v */
     set xwzy( v ) { this[0] = v[0], this[3] = v[1], this[2] = v[2], this[1] = v[3] }
     /** @param {vec4Like} v */
     set rabg( v ) { this[0] = v[0], this[3] = v[1], this[2] = v[2], this[1] = v[3] }
     /** @returns {vec4} */
-    get xwzz() { return new vec4( this[0], this[3], this[2], this[2] ) }
+    get xwzz() { return vec4.new( this[0], this[3], this[2], this[2] ) }
     /** @returns {vec4} */
-    get rabb() { return new vec4( this[0], this[3], this[2], this[2] ) }
+    get rabb() { return vec4.new( this[0], this[3], this[2], this[2] ) }
     /** @returns {vec4} */
-    get xwzw() { return new vec4( this[0], this[3], this[2], this[3] ) }
+    get xwzw() { return vec4.new( this[0], this[3], this[2], this[3] ) }
     /** @returns {vec4} */
-    get raba() { return new vec4( this[0], this[3], this[2], this[3] ) }
+    get raba() { return vec4.new( this[0], this[3], this[2], this[3] ) }
     /** @returns {vec4} */
-    get xwwx() { return new vec4( this[0], this[3], this[3], this[0] ) }
+    get xwwx() { return vec4.new( this[0], this[3], this[3], this[0] ) }
     /** @returns {vec4} */
-    get raar() { return new vec4( this[0], this[3], this[3], this[0] ) }
+    get raar() { return vec4.new( this[0], this[3], this[3], this[0] ) }
     /** @returns {vec4} */
-    get xwwy() { return new vec4( this[0], this[3], this[3], this[1] ) }
+    get xwwy() { return vec4.new( this[0], this[3], this[3], this[1] ) }
     /** @returns {vec4} */
-    get raag() { return new vec4( this[0], this[3], this[3], this[1] ) }
+    get raag() { return vec4.new( this[0], this[3], this[3], this[1] ) }
     /** @returns {vec4} */
-    get xwwz() { return new vec4( this[0], this[3], this[3], this[2] ) }
+    get xwwz() { return vec4.new( this[0], this[3], this[3], this[2] ) }
     /** @returns {vec4} */
-    get raab() { return new vec4( this[0], this[3], this[3], this[2] ) }
+    get raab() { return vec4.new( this[0], this[3], this[3], this[2] ) }
     /** @returns {vec4} */
-    get xwww() { return new vec4( this[0], this[3], this[3], this[3] ) }
+    get xwww() { return vec4.new( this[0], this[3], this[3], this[3] ) }
     /** @returns {vec4} */
-    get raaa() { return new vec4( this[0], this[3], this[3], this[3] ) }
+    get raaa() { return vec4.new( this[0], this[3], this[3], this[3] ) }
     /** @returns {vec4} */
-    get yxxx() { return new vec4( this[1], this[0], this[0], this[0] ) }
+    get yxxx() { return vec4.new( this[1], this[0], this[0], this[0] ) }
     /** @returns {vec4} */
-    get grrr() { return new vec4( this[1], this[0], this[0], this[0] ) }
+    get grrr() { return vec4.new( this[1], this[0], this[0], this[0] ) }
     /** @returns {vec4} */
-    get yxxy() { return new vec4( this[1], this[0], this[0], this[1] ) }
+    get yxxy() { return vec4.new( this[1], this[0], this[0], this[1] ) }
     /** @returns {vec4} */
-    get grrg() { return new vec4( this[1], this[0], this[0], this[1] ) }
+    get grrg() { return vec4.new( this[1], this[0], this[0], this[1] ) }
     /** @returns {vec4} */
-    get yxxz() { return new vec4( this[1], this[0], this[0], this[2] ) }
+    get yxxz() { return vec4.new( this[1], this[0], this[0], this[2] ) }
     /** @returns {vec4} */
-    get grrb() { return new vec4( this[1], this[0], this[0], this[2] ) }
+    get grrb() { return vec4.new( this[1], this[0], this[0], this[2] ) }
     /** @returns {vec4} */
-    get yxxw() { return new vec4( this[1], this[0], this[0], this[3] ) }
+    get yxxw() { return vec4.new( this[1], this[0], this[0], this[3] ) }
     /** @returns {vec4} */
-    get grra() { return new vec4( this[1], this[0], this[0], this[3] ) }
+    get grra() { return vec4.new( this[1], this[0], this[0], this[3] ) }
     /** @returns {vec4} */
-    get yxyx() { return new vec4( this[1], this[0], this[1], this[0] ) }
+    get yxyx() { return vec4.new( this[1], this[0], this[1], this[0] ) }
     /** @returns {vec4} */
-    get grgr() { return new vec4( this[1], this[0], this[1], this[0] ) }
+    get grgr() { return vec4.new( this[1], this[0], this[1], this[0] ) }
     /** @returns {vec4} */
-    get yxyy() { return new vec4( this[1], this[0], this[1], this[1] ) }
+    get yxyy() { return vec4.new( this[1], this[0], this[1], this[1] ) }
     /** @returns {vec4} */
-    get grgg() { return new vec4( this[1], this[0], this[1], this[1] ) }
+    get grgg() { return vec4.new( this[1], this[0], this[1], this[1] ) }
     /** @returns {vec4} */
-    get yxyz() { return new vec4( this[1], this[0], this[1], this[2] ) }
+    get yxyz() { return vec4.new( this[1], this[0], this[1], this[2] ) }
     /** @returns {vec4} */
-    get grgb() { return new vec4( this[1], this[0], this[1], this[2] ) }
+    get grgb() { return vec4.new( this[1], this[0], this[1], this[2] ) }
     /** @returns {vec4} */
-    get yxyw() { return new vec4( this[1], this[0], this[1], this[3] ) }
+    get yxyw() { return vec4.new( this[1], this[0], this[1], this[3] ) }
     /** @returns {vec4} */
-    get grga() { return new vec4( this[1], this[0], this[1], this[3] ) }
+    get grga() { return vec4.new( this[1], this[0], this[1], this[3] ) }
     /** @returns {vec4} */
-    get yxzx() { return new vec4( this[1], this[0], this[2], this[0] ) }
+    get yxzx() { return vec4.new( this[1], this[0], this[2], this[0] ) }
     /** @returns {vec4} */
-    get grbr() { return new vec4( this[1], this[0], this[2], this[0] ) }
+    get grbr() { return vec4.new( this[1], this[0], this[2], this[0] ) }
     /** @returns {vec4} */
-    get yxzy() { return new vec4( this[1], this[0], this[2], this[1] ) }
+    get yxzy() { return vec4.new( this[1], this[0], this[2], this[1] ) }
     /** @returns {vec4} */
-    get grbg() { return new vec4( this[1], this[0], this[2], this[1] ) }
+    get grbg() { return vec4.new( this[1], this[0], this[2], this[1] ) }
     /** @returns {vec4} */
-    get yxzz() { return new vec4( this[1], this[0], this[2], this[2] ) }
+    get yxzz() { return vec4.new( this[1], this[0], this[2], this[2] ) }
     /** @returns {vec4} */
-    get grbb() { return new vec4( this[1], this[0], this[2], this[2] ) }
+    get grbb() { return vec4.new( this[1], this[0], this[2], this[2] ) }
     /** @returns {vec4} */
-    get yxzw() { return new vec4( this[1], this[0], this[2], this[3] ) }
+    get yxzw() { return vec4.new( this[1], this[0], this[2], this[3] ) }
     /** @returns {vec4} */
-    get grba() { return new vec4( this[1], this[0], this[2], this[3] ) }
+    get grba() { return vec4.new( this[1], this[0], this[2], this[3] ) }
     /** @param {vec4Like} v */
     set yxzw( v ) { this[1] = v[0], this[0] = v[1], this[2] = v[2], this[3] = v[3] }
     /** @param {vec4Like} v */
     set grba( v ) { this[1] = v[0], this[0] = v[1], this[2] = v[2], this[3] = v[3] }
     /** @returns {vec4} */
-    get yxwx() { return new vec4( this[1], this[0], this[3], this[0] ) }
+    get yxwx() { return vec4.new( this[1], this[0], this[3], this[0] ) }
     /** @returns {vec4} */
-    get grar() { return new vec4( this[1], this[0], this[3], this[0] ) }
+    get grar() { return vec4.new( this[1], this[0], this[3], this[0] ) }
     /** @returns {vec4} */
-    get yxwy() { return new vec4( this[1], this[0], this[3], this[1] ) }
+    get yxwy() { return vec4.new( this[1], this[0], this[3], this[1] ) }
     /** @returns {vec4} */
-    get grag() { return new vec4( this[1], this[0], this[3], this[1] ) }
+    get grag() { return vec4.new( this[1], this[0], this[3], this[1] ) }
     /** @returns {vec4} */
-    get yxwz() { return new vec4( this[1], this[0], this[3], this[2] ) }
+    get yxwz() { return vec4.new( this[1], this[0], this[3], this[2] ) }
     /** @returns {vec4} */
-    get grab() { return new vec4( this[1], this[0], this[3], this[2] ) }
+    get grab() { return vec4.new( this[1], this[0], this[3], this[2] ) }
     /** @param {vec4Like} v */
     set yxwz( v ) { this[1] = v[0], this[0] = v[1], this[3] = v[2], this[2] = v[3] }
     /** @param {vec4Like} v */
     set grab( v ) { this[1] = v[0], this[0] = v[1], this[3] = v[2], this[2] = v[3] }
     /** @returns {vec4} */
-    get yxww() { return new vec4( this[1], this[0], this[3], this[3] ) }
+    get yxww() { return vec4.new( this[1], this[0], this[3], this[3] ) }
     /** @returns {vec4} */
-    get graa() { return new vec4( this[1], this[0], this[3], this[3] ) }
+    get graa() { return vec4.new( this[1], this[0], this[3], this[3] ) }
     /** @returns {vec4} */
-    get yyxx() { return new vec4( this[1], this[1], this[0], this[0] ) }
+    get yyxx() { return vec4.new( this[1], this[1], this[0], this[0] ) }
     /** @returns {vec4} */
-    get ggrr() { return new vec4( this[1], this[1], this[0], this[0] ) }
+    get ggrr() { return vec4.new( this[1], this[1], this[0], this[0] ) }
     /** @returns {vec4} */
-    get yyxy() { return new vec4( this[1], this[1], this[0], this[1] ) }
+    get yyxy() { return vec4.new( this[1], this[1], this[0], this[1] ) }
     /** @returns {vec4} */
-    get ggrg() { return new vec4( this[1], this[1], this[0], this[1] ) }
+    get ggrg() { return vec4.new( this[1], this[1], this[0], this[1] ) }
     /** @returns {vec4} */
-    get yyxz() { return new vec4( this[1], this[1], this[0], this[2] ) }
+    get yyxz() { return vec4.new( this[1], this[1], this[0], this[2] ) }
     /** @returns {vec4} */
-    get ggrb() { return new vec4( this[1], this[1], this[0], this[2] ) }
+    get ggrb() { return vec4.new( this[1], this[1], this[0], this[2] ) }
     /** @returns {vec4} */
-    get yyxw() { return new vec4( this[1], this[1], this[0], this[3] ) }
+    get yyxw() { return vec4.new( this[1], this[1], this[0], this[3] ) }
     /** @returns {vec4} */
-    get ggra() { return new vec4( this[1], this[1], this[0], this[3] ) }
+    get ggra() { return vec4.new( this[1], this[1], this[0], this[3] ) }
     /** @returns {vec4} */
-    get yyyx() { return new vec4( this[1], this[1], this[1], this[0] ) }
+    get yyyx() { return vec4.new( this[1], this[1], this[1], this[0] ) }
     /** @returns {vec4} */
-    get gggr() { return new vec4( this[1], this[1], this[1], this[0] ) }
+    get gggr() { return vec4.new( this[1], this[1], this[1], this[0] ) }
     /** @returns {vec4} */
-    get yyyy() { return new vec4( this[1], this[1], this[1], this[1] ) }
+    get yyyy() { return vec4.new( this[1], this[1], this[1], this[1] ) }
     /** @returns {vec4} */
-    get gggg() { return new vec4( this[1], this[1], this[1], this[1] ) }
+    get gggg() { return vec4.new( this[1], this[1], this[1], this[1] ) }
     /** @returns {vec4} */
-    get yyyz() { return new vec4( this[1], this[1], this[1], this[2] ) }
+    get yyyz() { return vec4.new( this[1], this[1], this[1], this[2] ) }
     /** @returns {vec4} */
-    get gggb() { return new vec4( this[1], this[1], this[1], this[2] ) }
+    get gggb() { return vec4.new( this[1], this[1], this[1], this[2] ) }
     /** @returns {vec4} */
-    get yyyw() { return new vec4( this[1], this[1], this[1], this[3] ) }
+    get yyyw() { return vec4.new( this[1], this[1], this[1], this[3] ) }
     /** @returns {vec4} */
-    get ggga() { return new vec4( this[1], this[1], this[1], this[3] ) }
+    get ggga() { return vec4.new( this[1], this[1], this[1], this[3] ) }
     /** @returns {vec4} */
-    get yyzx() { return new vec4( this[1], this[1], this[2], this[0] ) }
+    get yyzx() { return vec4.new( this[1], this[1], this[2], this[0] ) }
     /** @returns {vec4} */
-    get ggbr() { return new vec4( this[1], this[1], this[2], this[0] ) }
+    get ggbr() { return vec4.new( this[1], this[1], this[2], this[0] ) }
     /** @returns {vec4} */
-    get yyzy() { return new vec4( this[1], this[1], this[2], this[1] ) }
+    get yyzy() { return vec4.new( this[1], this[1], this[2], this[1] ) }
     /** @returns {vec4} */
-    get ggbg() { return new vec4( this[1], this[1], this[2], this[1] ) }
+    get ggbg() { return vec4.new( this[1], this[1], this[2], this[1] ) }
     /** @returns {vec4} */
-    get yyzz() { return new vec4( this[1], this[1], this[2], this[2] ) }
+    get yyzz() { return vec4.new( this[1], this[1], this[2], this[2] ) }
     /** @returns {vec4} */
-    get ggbb() { return new vec4( this[1], this[1], this[2], this[2] ) }
+    get ggbb() { return vec4.new( this[1], this[1], this[2], this[2] ) }
     /** @returns {vec4} */
-    get yyzw() { return new vec4( this[1], this[1], this[2], this[3] ) }
+    get yyzw() { return vec4.new( this[1], this[1], this[2], this[3] ) }
     /** @returns {vec4} */
-    get ggba() { return new vec4( this[1], this[1], this[2], this[3] ) }
+    get ggba() { return vec4.new( this[1], this[1], this[2], this[3] ) }
     /** @returns {vec4} */
-    get yywx() { return new vec4( this[1], this[1], this[3], this[0] ) }
+    get yywx() { return vec4.new( this[1], this[1], this[3], this[0] ) }
     /** @returns {vec4} */
-    get ggar() { return new vec4( this[1], this[1], this[3], this[0] ) }
+    get ggar() { return vec4.new( this[1], this[1], this[3], this[0] ) }
     /** @returns {vec4} */
-    get yywy() { return new vec4( this[1], this[1], this[3], this[1] ) }
+    get yywy() { return vec4.new( this[1], this[1], this[3], this[1] ) }
     /** @returns {vec4} */
-    get ggag() { return new vec4( this[1], this[1], this[3], this[1] ) }
+    get ggag() { return vec4.new( this[1], this[1], this[3], this[1] ) }
     /** @returns {vec4} */
-    get yywz() { return new vec4( this[1], this[1], this[3], this[2] ) }
+    get yywz() { return vec4.new( this[1], this[1], this[3], this[2] ) }
     /** @returns {vec4} */
-    get ggab() { return new vec4( this[1], this[1], this[3], this[2] ) }
+    get ggab() { return vec4.new( this[1], this[1], this[3], this[2] ) }
     /** @returns {vec4} */
-    get yyww() { return new vec4( this[1], this[1], this[3], this[3] ) }
+    get yyww() { return vec4.new( this[1], this[1], this[3], this[3] ) }
     /** @returns {vec4} */
-    get ggaa() { return new vec4( this[1], this[1], this[3], this[3] ) }
+    get ggaa() { return vec4.new( this[1], this[1], this[3], this[3] ) }
     /** @returns {vec4} */
-    get yzxx() { return new vec4( this[1], this[2], this[0], this[0] ) }
+    get yzxx() { return vec4.new( this[1], this[2], this[0], this[0] ) }
     /** @returns {vec4} */
-    get gbrr() { return new vec4( this[1], this[2], this[0], this[0] ) }
+    get gbrr() { return vec4.new( this[1], this[2], this[0], this[0] ) }
     /** @returns {vec4} */
-    get yzxy() { return new vec4( this[1], this[2], this[0], this[1] ) }
+    get yzxy() { return vec4.new( this[1], this[2], this[0], this[1] ) }
     /** @returns {vec4} */
-    get gbrg() { return new vec4( this[1], this[2], this[0], this[1] ) }
+    get gbrg() { return vec4.new( this[1], this[2], this[0], this[1] ) }
     /** @returns {vec4} */
-    get yzxz() { return new vec4( this[1], this[2], this[0], this[2] ) }
+    get yzxz() { return vec4.new( this[1], this[2], this[0], this[2] ) }
     /** @returns {vec4} */
-    get gbrb() { return new vec4( this[1], this[2], this[0], this[2] ) }
+    get gbrb() { return vec4.new( this[1], this[2], this[0], this[2] ) }
     /** @returns {vec4} */
-    get yzxw() { return new vec4( this[1], this[2], this[0], this[3] ) }
+    get yzxw() { return vec4.new( this[1], this[2], this[0], this[3] ) }
     /** @returns {vec4} */
-    get gbra() { return new vec4( this[1], this[2], this[0], this[3] ) }
+    get gbra() { return vec4.new( this[1], this[2], this[0], this[3] ) }
     /** @param {vec4Like} v */
     set yzxw( v ) { this[1] = v[0], this[2] = v[1], this[0] = v[2], this[3] = v[3] }
     /** @param {vec4Like} v */
     set gbra( v ) { this[1] = v[0], this[2] = v[1], this[0] = v[2], this[3] = v[3] }
     /** @returns {vec4} */
-    get yzyx() { return new vec4( this[1], this[2], this[1], this[0] ) }
+    get yzyx() { return vec4.new( this[1], this[2], this[1], this[0] ) }
     /** @returns {vec4} */
-    get gbgr() { return new vec4( this[1], this[2], this[1], this[0] ) }
+    get gbgr() { return vec4.new( this[1], this[2], this[1], this[0] ) }
     /** @returns {vec4} */
-    get yzyy() { return new vec4( this[1], this[2], this[1], this[1] ) }
+    get yzyy() { return vec4.new( this[1], this[2], this[1], this[1] ) }
     /** @returns {vec4} */
-    get gbgg() { return new vec4( this[1], this[2], this[1], this[1] ) }
+    get gbgg() { return vec4.new( this[1], this[2], this[1], this[1] ) }
     /** @returns {vec4} */
-    get yzyz() { return new vec4( this[1], this[2], this[1], this[2] ) }
+    get yzyz() { return vec4.new( this[1], this[2], this[1], this[2] ) }
     /** @returns {vec4} */
-    get gbgb() { return new vec4( this[1], this[2], this[1], this[2] ) }
+    get gbgb() { return vec4.new( this[1], this[2], this[1], this[2] ) }
     /** @returns {vec4} */
-    get yzyw() { return new vec4( this[1], this[2], this[1], this[3] ) }
+    get yzyw() { return vec4.new( this[1], this[2], this[1], this[3] ) }
     /** @returns {vec4} */
-    get gbga() { return new vec4( this[1], this[2], this[1], this[3] ) }
+    get gbga() { return vec4.new( this[1], this[2], this[1], this[3] ) }
     /** @returns {vec4} */
-    get yzzx() { return new vec4( this[1], this[2], this[2], this[0] ) }
+    get yzzx() { return vec4.new( this[1], this[2], this[2], this[0] ) }
     /** @returns {vec4} */
-    get gbbr() { return new vec4( this[1], this[2], this[2], this[0] ) }
+    get gbbr() { return vec4.new( this[1], this[2], this[2], this[0] ) }
     /** @returns {vec4} */
-    get yzzy() { return new vec4( this[1], this[2], this[2], this[1] ) }
+    get yzzy() { return vec4.new( this[1], this[2], this[2], this[1] ) }
     /** @returns {vec4} */
-    get gbbg() { return new vec4( this[1], this[2], this[2], this[1] ) }
+    get gbbg() { return vec4.new( this[1], this[2], this[2], this[1] ) }
     /** @returns {vec4} */
-    get yzzz() { return new vec4( this[1], this[2], this[2], this[2] ) }
+    get yzzz() { return vec4.new( this[1], this[2], this[2], this[2] ) }
     /** @returns {vec4} */
-    get gbbb() { return new vec4( this[1], this[2], this[2], this[2] ) }
+    get gbbb() { return vec4.new( this[1], this[2], this[2], this[2] ) }
     /** @returns {vec4} */
-    get yzzw() { return new vec4( this[1], this[2], this[2], this[3] ) }
+    get yzzw() { return vec4.new( this[1], this[2], this[2], this[3] ) }
     /** @returns {vec4} */
-    get gbba() { return new vec4( this[1], this[2], this[2], this[3] ) }
+    get gbba() { return vec4.new( this[1], this[2], this[2], this[3] ) }
     /** @returns {vec4} */
-    get yzwx() { return new vec4( this[1], this[2], this[3], this[0] ) }
+    get yzwx() { return vec4.new( this[1], this[2], this[3], this[0] ) }
     /** @returns {vec4} */
-    get gbar() { return new vec4( this[1], this[2], this[3], this[0] ) }
+    get gbar() { return vec4.new( this[1], this[2], this[3], this[0] ) }
     /** @param {vec4Like} v */
     set yzwx( v ) { this[1] = v[0], this[2] = v[1], this[3] = v[2], this[0] = v[3] }
     /** @param {vec4Like} v */
     set gbar( v ) { this[1] = v[0], this[2] = v[1], this[3] = v[2], this[0] = v[3] }
     /** @returns {vec4} */
-    get yzwy() { return new vec4( this[1], this[2], this[3], this[1] ) }
+    get yzwy() { return vec4.new( this[1], this[2], this[3], this[1] ) }
     /** @returns {vec4} */
-    get gbag() { return new vec4( this[1], this[2], this[3], this[1] ) }
+    get gbag() { return vec4.new( this[1], this[2], this[3], this[1] ) }
     /** @returns {vec4} */
-    get yzwz() { return new vec4( this[1], this[2], this[3], this[2] ) }
+    get yzwz() { return vec4.new( this[1], this[2], this[3], this[2] ) }
     /** @returns {vec4} */
-    get gbab() { return new vec4( this[1], this[2], this[3], this[2] ) }
+    get gbab() { return vec4.new( this[1], this[2], this[3], this[2] ) }
     /** @returns {vec4} */
-    get yzww() { return new vec4( this[1], this[2], this[3], this[3] ) }
+    get yzww() { return vec4.new( this[1], this[2], this[3], this[3] ) }
     /** @returns {vec4} */
-    get gbaa() { return new vec4( this[1], this[2], this[3], this[3] ) }
+    get gbaa() { return vec4.new( this[1], this[2], this[3], this[3] ) }
     /** @returns {vec4} */
-    get ywxx() { return new vec4( this[1], this[3], this[0], this[0] ) }
+    get ywxx() { return vec4.new( this[1], this[3], this[0], this[0] ) }
     /** @returns {vec4} */
-    get garr() { return new vec4( this[1], this[3], this[0], this[0] ) }
+    get garr() { return vec4.new( this[1], this[3], this[0], this[0] ) }
     /** @returns {vec4} */
-    get ywxy() { return new vec4( this[1], this[3], this[0], this[1] ) }
+    get ywxy() { return vec4.new( this[1], this[3], this[0], this[1] ) }
     /** @returns {vec4} */
-    get garg() { return new vec4( this[1], this[3], this[0], this[1] ) }
+    get garg() { return vec4.new( this[1], this[3], this[0], this[1] ) }
     /** @returns {vec4} */
-    get ywxz() { return new vec4( this[1], this[3], this[0], this[2] ) }
+    get ywxz() { return vec4.new( this[1], this[3], this[0], this[2] ) }
     /** @returns {vec4} */
-    get garb() { return new vec4( this[1], this[3], this[0], this[2] ) }
+    get garb() { return vec4.new( this[1], this[3], this[0], this[2] ) }
     /** @param {vec4Like} v */
     set ywxz( v ) { this[1] = v[0], this[3] = v[1], this[0] = v[2], this[2] = v[3] }
     /** @param {vec4Like} v */
     set garb( v ) { this[1] = v[0], this[3] = v[1], this[0] = v[2], this[2] = v[3] }
     /** @returns {vec4} */
-    get ywxw() { return new vec4( this[1], this[3], this[0], this[3] ) }
+    get ywxw() { return vec4.new( this[1], this[3], this[0], this[3] ) }
     /** @returns {vec4} */
-    get gara() { return new vec4( this[1], this[3], this[0], this[3] ) }
+    get gara() { return vec4.new( this[1], this[3], this[0], this[3] ) }
     /** @returns {vec4} */
-    get ywyx() { return new vec4( this[1], this[3], this[1], this[0] ) }
+    get ywyx() { return vec4.new( this[1], this[3], this[1], this[0] ) }
     /** @returns {vec4} */
-    get gagr() { return new vec4( this[1], this[3], this[1], this[0] ) }
+    get gagr() { return vec4.new( this[1], this[3], this[1], this[0] ) }
     /** @returns {vec4} */
-    get ywyy() { return new vec4( this[1], this[3], this[1], this[1] ) }
+    get ywyy() { return vec4.new( this[1], this[3], this[1], this[1] ) }
     /** @returns {vec4} */
-    get gagg() { return new vec4( this[1], this[3], this[1], this[1] ) }
+    get gagg() { return vec4.new( this[1], this[3], this[1], this[1] ) }
     /** @returns {vec4} */
-    get ywyz() { return new vec4( this[1], this[3], this[1], this[2] ) }
+    get ywyz() { return vec4.new( this[1], this[3], this[1], this[2] ) }
     /** @returns {vec4} */
-    get gagb() { return new vec4( this[1], this[3], this[1], this[2] ) }
+    get gagb() { return vec4.new( this[1], this[3], this[1], this[2] ) }
     /** @returns {vec4} */
-    get ywyw() { return new vec4( this[1], this[3], this[1], this[3] ) }
+    get ywyw() { return vec4.new( this[1], this[3], this[1], this[3] ) }
     /** @returns {vec4} */
-    get gaga() { return new vec4( this[1], this[3], this[1], this[3] ) }
+    get gaga() { return vec4.new( this[1], this[3], this[1], this[3] ) }
     /** @returns {vec4} */
-    get ywzx() { return new vec4( this[1], this[3], this[2], this[0] ) }
+    get ywzx() { return vec4.new( this[1], this[3], this[2], this[0] ) }
     /** @returns {vec4} */
-    get gabr() { return new vec4( this[1], this[3], this[2], this[0] ) }
+    get gabr() { return vec4.new( this[1], this[3], this[2], this[0] ) }
     /** @param {vec4Like} v */
     set ywzx( v ) { this[1] = v[0], this[3] = v[1], this[2] = v[2], this[0] = v[3] }
     /** @param {vec4Like} v */
     set gabr( v ) { this[1] = v[0], this[3] = v[1], this[2] = v[2], this[0] = v[3] }
     /** @returns {vec4} */
-    get ywzy() { return new vec4( this[1], this[3], this[2], this[1] ) }
+    get ywzy() { return vec4.new( this[1], this[3], this[2], this[1] ) }
     /** @returns {vec4} */
-    get gabg() { return new vec4( this[1], this[3], this[2], this[1] ) }
+    get gabg() { return vec4.new( this[1], this[3], this[2], this[1] ) }
     /** @returns {vec4} */
-    get ywzz() { return new vec4( this[1], this[3], this[2], this[2] ) }
+    get ywzz() { return vec4.new( this[1], this[3], this[2], this[2] ) }
     /** @returns {vec4} */
-    get gabb() { return new vec4( this[1], this[3], this[2], this[2] ) }
+    get gabb() { return vec4.new( this[1], this[3], this[2], this[2] ) }
     /** @returns {vec4} */
-    get ywzw() { return new vec4( this[1], this[3], this[2], this[3] ) }
+    get ywzw() { return vec4.new( this[1], this[3], this[2], this[3] ) }
     /** @returns {vec4} */
-    get gaba() { return new vec4( this[1], this[3], this[2], this[3] ) }
+    get gaba() { return vec4.new( this[1], this[3], this[2], this[3] ) }
     /** @returns {vec4} */
-    get ywwx() { return new vec4( this[1], this[3], this[3], this[0] ) }
+    get ywwx() { return vec4.new( this[1], this[3], this[3], this[0] ) }
     /** @returns {vec4} */
-    get gaar() { return new vec4( this[1], this[3], this[3], this[0] ) }
+    get gaar() { return vec4.new( this[1], this[3], this[3], this[0] ) }
     /** @returns {vec4} */
-    get ywwy() { return new vec4( this[1], this[3], this[3], this[1] ) }
+    get ywwy() { return vec4.new( this[1], this[3], this[3], this[1] ) }
     /** @returns {vec4} */
-    get gaag() { return new vec4( this[1], this[3], this[3], this[1] ) }
+    get gaag() { return vec4.new( this[1], this[3], this[3], this[1] ) }
     /** @returns {vec4} */
-    get ywwz() { return new vec4( this[1], this[3], this[3], this[2] ) }
+    get ywwz() { return vec4.new( this[1], this[3], this[3], this[2] ) }
     /** @returns {vec4} */
-    get gaab() { return new vec4( this[1], this[3], this[3], this[2] ) }
+    get gaab() { return vec4.new( this[1], this[3], this[3], this[2] ) }
     /** @returns {vec4} */
-    get ywww() { return new vec4( this[1], this[3], this[3], this[3] ) }
+    get ywww() { return vec4.new( this[1], this[3], this[3], this[3] ) }
     /** @returns {vec4} */
-    get gaaa() { return new vec4( this[1], this[3], this[3], this[3] ) }
+    get gaaa() { return vec4.new( this[1], this[3], this[3], this[3] ) }
     /** @returns {vec4} */
-    get zxxx() { return new vec4( this[2], this[0], this[0], this[0] ) }
+    get zxxx() { return vec4.new( this[2], this[0], this[0], this[0] ) }
     /** @returns {vec4} */
-    get brrr() { return new vec4( this[2], this[0], this[0], this[0] ) }
+    get brrr() { return vec4.new( this[2], this[0], this[0], this[0] ) }
     /** @returns {vec4} */
-    get zxxy() { return new vec4( this[2], this[0], this[0], this[1] ) }
+    get zxxy() { return vec4.new( this[2], this[0], this[0], this[1] ) }
     /** @returns {vec4} */
-    get brrg() { return new vec4( this[2], this[0], this[0], this[1] ) }
+    get brrg() { return vec4.new( this[2], this[0], this[0], this[1] ) }
     /** @returns {vec4} */
-    get zxxz() { return new vec4( this[2], this[0], this[0], this[2] ) }
+    get zxxz() { return vec4.new( this[2], this[0], this[0], this[2] ) }
     /** @returns {vec4} */
-    get brrb() { return new vec4( this[2], this[0], this[0], this[2] ) }
+    get brrb() { return vec4.new( this[2], this[0], this[0], this[2] ) }
     /** @returns {vec4} */
-    get zxxw() { return new vec4( this[2], this[0], this[0], this[3] ) }
+    get zxxw() { return vec4.new( this[2], this[0], this[0], this[3] ) }
     /** @returns {vec4} */
-    get brra() { return new vec4( this[2], this[0], this[0], this[3] ) }
+    get brra() { return vec4.new( this[2], this[0], this[0], this[3] ) }
     /** @returns {vec4} */
-    get zxyx() { return new vec4( this[2], this[0], this[1], this[0] ) }
+    get zxyx() { return vec4.new( this[2], this[0], this[1], this[0] ) }
     /** @returns {vec4} */
-    get brgr() { return new vec4( this[2], this[0], this[1], this[0] ) }
+    get brgr() { return vec4.new( this[2], this[0], this[1], this[0] ) }
     /** @returns {vec4} */
-    get zxyy() { return new vec4( this[2], this[0], this[1], this[1] ) }
+    get zxyy() { return vec4.new( this[2], this[0], this[1], this[1] ) }
     /** @returns {vec4} */
-    get brgg() { return new vec4( this[2], this[0], this[1], this[1] ) }
+    get brgg() { return vec4.new( this[2], this[0], this[1], this[1] ) }
     /** @returns {vec4} */
-    get zxyz() { return new vec4( this[2], this[0], this[1], this[2] ) }
+    get zxyz() { return vec4.new( this[2], this[0], this[1], this[2] ) }
     /** @returns {vec4} */
-    get brgb() { return new vec4( this[2], this[0], this[1], this[2] ) }
+    get brgb() { return vec4.new( this[2], this[0], this[1], this[2] ) }
     /** @returns {vec4} */
-    get zxyw() { return new vec4( this[2], this[0], this[1], this[3] ) }
+    get zxyw() { return vec4.new( this[2], this[0], this[1], this[3] ) }
     /** @returns {vec4} */
-    get brga() { return new vec4( this[2], this[0], this[1], this[3] ) }
+    get brga() { return vec4.new( this[2], this[0], this[1], this[3] ) }
     /** @param {vec4Like} v */
     set zxyw( v ) { this[2] = v[0], this[0] = v[1], this[1] = v[2], this[3] = v[3] }
     /** @param {vec4Like} v */
     set brga( v ) { this[2] = v[0], this[0] = v[1], this[1] = v[2], this[3] = v[3] }
     /** @returns {vec4} */
-    get zxzx() { return new vec4( this[2], this[0], this[2], this[0] ) }
+    get zxzx() { return vec4.new( this[2], this[0], this[2], this[0] ) }
     /** @returns {vec4} */
-    get brbr() { return new vec4( this[2], this[0], this[2], this[0] ) }
+    get brbr() { return vec4.new( this[2], this[0], this[2], this[0] ) }
     /** @returns {vec4} */
-    get zxzy() { return new vec4( this[2], this[0], this[2], this[1] ) }
+    get zxzy() { return vec4.new( this[2], this[0], this[2], this[1] ) }
     /** @returns {vec4} */
-    get brbg() { return new vec4( this[2], this[0], this[2], this[1] ) }
+    get brbg() { return vec4.new( this[2], this[0], this[2], this[1] ) }
     /** @returns {vec4} */
-    get zxzz() { return new vec4( this[2], this[0], this[2], this[2] ) }
+    get zxzz() { return vec4.new( this[2], this[0], this[2], this[2] ) }
     /** @returns {vec4} */
-    get brbb() { return new vec4( this[2], this[0], this[2], this[2] ) }
+    get brbb() { return vec4.new( this[2], this[0], this[2], this[2] ) }
     /** @returns {vec4} */
-    get zxzw() { return new vec4( this[2], this[0], this[2], this[3] ) }
+    get zxzw() { return vec4.new( this[2], this[0], this[2], this[3] ) }
     /** @returns {vec4} */
-    get brba() { return new vec4( this[2], this[0], this[2], this[3] ) }
+    get brba() { return vec4.new( this[2], this[0], this[2], this[3] ) }
     /** @returns {vec4} */
-    get zxwx() { return new vec4( this[2], this[0], this[3], this[0] ) }
+    get zxwx() { return vec4.new( this[2], this[0], this[3], this[0] ) }
     /** @returns {vec4} */
-    get brar() { return new vec4( this[2], this[0], this[3], this[0] ) }
+    get brar() { return vec4.new( this[2], this[0], this[3], this[0] ) }
     /** @returns {vec4} */
-    get zxwy() { return new vec4( this[2], this[0], this[3], this[1] ) }
+    get zxwy() { return vec4.new( this[2], this[0], this[3], this[1] ) }
     /** @returns {vec4} */
-    get brag() { return new vec4( this[2], this[0], this[3], this[1] ) }
+    get brag() { return vec4.new( this[2], this[0], this[3], this[1] ) }
     /** @param {vec4Like} v */
     set zxwy( v ) { this[2] = v[0], this[0] = v[1], this[3] = v[2], this[1] = v[3] }
     /** @param {vec4Like} v */
     set brag( v ) { this[2] = v[0], this[0] = v[1], this[3] = v[2], this[1] = v[3] }
     /** @returns {vec4} */
-    get zxwz() { return new vec4( this[2], this[0], this[3], this[2] ) }
+    get zxwz() { return vec4.new( this[2], this[0], this[3], this[2] ) }
     /** @returns {vec4} */
-    get brab() { return new vec4( this[2], this[0], this[3], this[2] ) }
+    get brab() { return vec4.new( this[2], this[0], this[3], this[2] ) }
     /** @returns {vec4} */
-    get zxww() { return new vec4( this[2], this[0], this[3], this[3] ) }
+    get zxww() { return vec4.new( this[2], this[0], this[3], this[3] ) }
     /** @returns {vec4} */
-    get braa() { return new vec4( this[2], this[0], this[3], this[3] ) }
+    get braa() { return vec4.new( this[2], this[0], this[3], this[3] ) }
     /** @returns {vec4} */
-    get zyxx() { return new vec4( this[2], this[1], this[0], this[0] ) }
+    get zyxx() { return vec4.new( this[2], this[1], this[0], this[0] ) }
     /** @returns {vec4} */
-    get bgrr() { return new vec4( this[2], this[1], this[0], this[0] ) }
+    get bgrr() { return vec4.new( this[2], this[1], this[0], this[0] ) }
     /** @returns {vec4} */
-    get zyxy() { return new vec4( this[2], this[1], this[0], this[1] ) }
+    get zyxy() { return vec4.new( this[2], this[1], this[0], this[1] ) }
     /** @returns {vec4} */
-    get bgrg() { return new vec4( this[2], this[1], this[0], this[1] ) }
+    get bgrg() { return vec4.new( this[2], this[1], this[0], this[1] ) }
     /** @returns {vec4} */
-    get zyxz() { return new vec4( this[2], this[1], this[0], this[2] ) }
+    get zyxz() { return vec4.new( this[2], this[1], this[0], this[2] ) }
     /** @returns {vec4} */
-    get bgrb() { return new vec4( this[2], this[1], this[0], this[2] ) }
+    get bgrb() { return vec4.new( this[2], this[1], this[0], this[2] ) }
     /** @returns {vec4} */
-    get zyxw() { return new vec4( this[2], this[1], this[0], this[3] ) }
+    get zyxw() { return vec4.new( this[2], this[1], this[0], this[3] ) }
     /** @returns {vec4} */
-    get bgra() { return new vec4( this[2], this[1], this[0], this[3] ) }
+    get bgra() { return vec4.new( this[2], this[1], this[0], this[3] ) }
     /** @param {vec4Like} v */
     set zyxw( v ) { this[2] = v[0], this[1] = v[1], this[0] = v[2], this[3] = v[3] }
     /** @param {vec4Like} v */
     set bgra( v ) { this[2] = v[0], this[1] = v[1], this[0] = v[2], this[3] = v[3] }
     /** @returns {vec4} */
-    get zyyx() { return new vec4( this[2], this[1], this[1], this[0] ) }
+    get zyyx() { return vec4.new( this[2], this[1], this[1], this[0] ) }
     /** @returns {vec4} */
-    get bggr() { return new vec4( this[2], this[1], this[1], this[0] ) }
+    get bggr() { return vec4.new( this[2], this[1], this[1], this[0] ) }
     /** @returns {vec4} */
-    get zyyy() { return new vec4( this[2], this[1], this[1], this[1] ) }
+    get zyyy() { return vec4.new( this[2], this[1], this[1], this[1] ) }
     /** @returns {vec4} */
-    get bggg() { return new vec4( this[2], this[1], this[1], this[1] ) }
+    get bggg() { return vec4.new( this[2], this[1], this[1], this[1] ) }
     /** @returns {vec4} */
-    get zyyz() { return new vec4( this[2], this[1], this[1], this[2] ) }
+    get zyyz() { return vec4.new( this[2], this[1], this[1], this[2] ) }
     /** @returns {vec4} */
-    get bggb() { return new vec4( this[2], this[1], this[1], this[2] ) }
+    get bggb() { return vec4.new( this[2], this[1], this[1], this[2] ) }
     /** @returns {vec4} */
-    get zyyw() { return new vec4( this[2], this[1], this[1], this[3] ) }
+    get zyyw() { return vec4.new( this[2], this[1], this[1], this[3] ) }
     /** @returns {vec4} */
-    get bgga() { return new vec4( this[2], this[1], this[1], this[3] ) }
+    get bgga() { return vec4.new( this[2], this[1], this[1], this[3] ) }
     /** @returns {vec4} */
-    get zyzx() { return new vec4( this[2], this[1], this[2], this[0] ) }
+    get zyzx() { return vec4.new( this[2], this[1], this[2], this[0] ) }
     /** @returns {vec4} */
-    get bgbr() { return new vec4( this[2], this[1], this[2], this[0] ) }
+    get bgbr() { return vec4.new( this[2], this[1], this[2], this[0] ) }
     /** @returns {vec4} */
-    get zyzy() { return new vec4( this[2], this[1], this[2], this[1] ) }
+    get zyzy() { return vec4.new( this[2], this[1], this[2], this[1] ) }
     /** @returns {vec4} */
-    get bgbg() { return new vec4( this[2], this[1], this[2], this[1] ) }
+    get bgbg() { return vec4.new( this[2], this[1], this[2], this[1] ) }
     /** @returns {vec4} */
-    get zyzz() { return new vec4( this[2], this[1], this[2], this[2] ) }
+    get zyzz() { return vec4.new( this[2], this[1], this[2], this[2] ) }
     /** @returns {vec4} */
-    get bgbb() { return new vec4( this[2], this[1], this[2], this[2] ) }
+    get bgbb() { return vec4.new( this[2], this[1], this[2], this[2] ) }
     /** @returns {vec4} */
-    get zyzw() { return new vec4( this[2], this[1], this[2], this[3] ) }
+    get zyzw() { return vec4.new( this[2], this[1], this[2], this[3] ) }
     /** @returns {vec4} */
-    get bgba() { return new vec4( this[2], this[1], this[2], this[3] ) }
+    get bgba() { return vec4.new( this[2], this[1], this[2], this[3] ) }
     /** @returns {vec4} */
-    get zywx() { return new vec4( this[2], this[1], this[3], this[0] ) }
+    get zywx() { return vec4.new( this[2], this[1], this[3], this[0] ) }
     /** @returns {vec4} */
-    get bgar() { return new vec4( this[2], this[1], this[3], this[0] ) }
+    get bgar() { return vec4.new( this[2], this[1], this[3], this[0] ) }
     /** @param {vec4Like} v */
     set zywx( v ) { this[2] = v[0], this[1] = v[1], this[3] = v[2], this[0] = v[3] }
     /** @param {vec4Like} v */
     set bgar( v ) { this[2] = v[0], this[1] = v[1], this[3] = v[2], this[0] = v[3] }
     /** @returns {vec4} */
-    get zywy() { return new vec4( this[2], this[1], this[3], this[1] ) }
+    get zywy() { return vec4.new( this[2], this[1], this[3], this[1] ) }
     /** @returns {vec4} */
-    get bgag() { return new vec4( this[2], this[1], this[3], this[1] ) }
+    get bgag() { return vec4.new( this[2], this[1], this[3], this[1] ) }
     /** @returns {vec4} */
-    get zywz() { return new vec4( this[2], this[1], this[3], this[2] ) }
+    get zywz() { return vec4.new( this[2], this[1], this[3], this[2] ) }
     /** @returns {vec4} */
-    get bgab() { return new vec4( this[2], this[1], this[3], this[2] ) }
+    get bgab() { return vec4.new( this[2], this[1], this[3], this[2] ) }
     /** @returns {vec4} */
-    get zyww() { return new vec4( this[2], this[1], this[3], this[3] ) }
+    get zyww() { return vec4.new( this[2], this[1], this[3], this[3] ) }
     /** @returns {vec4} */
-    get bgaa() { return new vec4( this[2], this[1], this[3], this[3] ) }
+    get bgaa() { return vec4.new( this[2], this[1], this[3], this[3] ) }
     /** @returns {vec4} */
-    get zzxx() { return new vec4( this[2], this[2], this[0], this[0] ) }
+    get zzxx() { return vec4.new( this[2], this[2], this[0], this[0] ) }
     /** @returns {vec4} */
-    get bbrr() { return new vec4( this[2], this[2], this[0], this[0] ) }
+    get bbrr() { return vec4.new( this[2], this[2], this[0], this[0] ) }
     /** @returns {vec4} */
-    get zzxy() { return new vec4( this[2], this[2], this[0], this[1] ) }
+    get zzxy() { return vec4.new( this[2], this[2], this[0], this[1] ) }
     /** @returns {vec4} */
-    get bbrg() { return new vec4( this[2], this[2], this[0], this[1] ) }
+    get bbrg() { return vec4.new( this[2], this[2], this[0], this[1] ) }
     /** @returns {vec4} */
-    get zzxz() { return new vec4( this[2], this[2], this[0], this[2] ) }
+    get zzxz() { return vec4.new( this[2], this[2], this[0], this[2] ) }
     /** @returns {vec4} */
-    get bbrb() { return new vec4( this[2], this[2], this[0], this[2] ) }
+    get bbrb() { return vec4.new( this[2], this[2], this[0], this[2] ) }
     /** @returns {vec4} */
-    get zzxw() { return new vec4( this[2], this[2], this[0], this[3] ) }
+    get zzxw() { return vec4.new( this[2], this[2], this[0], this[3] ) }
     /** @returns {vec4} */
-    get bbra() { return new vec4( this[2], this[2], this[0], this[3] ) }
+    get bbra() { return vec4.new( this[2], this[2], this[0], this[3] ) }
     /** @returns {vec4} */
-    get zzyx() { return new vec4( this[2], this[2], this[1], this[0] ) }
+    get zzyx() { return vec4.new( this[2], this[2], this[1], this[0] ) }
     /** @returns {vec4} */
-    get bbgr() { return new vec4( this[2], this[2], this[1], this[0] ) }
+    get bbgr() { return vec4.new( this[2], this[2], this[1], this[0] ) }
     /** @returns {vec4} */
-    get zzyy() { return new vec4( this[2], this[2], this[1], this[1] ) }
+    get zzyy() { return vec4.new( this[2], this[2], this[1], this[1] ) }
     /** @returns {vec4} */
-    get bbgg() { return new vec4( this[2], this[2], this[1], this[1] ) }
+    get bbgg() { return vec4.new( this[2], this[2], this[1], this[1] ) }
     /** @returns {vec4} */
-    get zzyz() { return new vec4( this[2], this[2], this[1], this[2] ) }
+    get zzyz() { return vec4.new( this[2], this[2], this[1], this[2] ) }
     /** @returns {vec4} */
-    get bbgb() { return new vec4( this[2], this[2], this[1], this[2] ) }
+    get bbgb() { return vec4.new( this[2], this[2], this[1], this[2] ) }
     /** @returns {vec4} */
-    get zzyw() { return new vec4( this[2], this[2], this[1], this[3] ) }
+    get zzyw() { return vec4.new( this[2], this[2], this[1], this[3] ) }
     /** @returns {vec4} */
-    get bbga() { return new vec4( this[2], this[2], this[1], this[3] ) }
+    get bbga() { return vec4.new( this[2], this[2], this[1], this[3] ) }
     /** @returns {vec4} */
-    get zzzx() { return new vec4( this[2], this[2], this[2], this[0] ) }
+    get zzzx() { return vec4.new( this[2], this[2], this[2], this[0] ) }
     /** @returns {vec4} */
-    get bbbr() { return new vec4( this[2], this[2], this[2], this[0] ) }
+    get bbbr() { return vec4.new( this[2], this[2], this[2], this[0] ) }
     /** @returns {vec4} */
-    get zzzy() { return new vec4( this[2], this[2], this[2], this[1] ) }
+    get zzzy() { return vec4.new( this[2], this[2], this[2], this[1] ) }
     /** @returns {vec4} */
-    get bbbg() { return new vec4( this[2], this[2], this[2], this[1] ) }
+    get bbbg() { return vec4.new( this[2], this[2], this[2], this[1] ) }
     /** @returns {vec4} */
-    get zzzz() { return new vec4( this[2], this[2], this[2], this[2] ) }
+    get zzzz() { return vec4.new( this[2], this[2], this[2], this[2] ) }
     /** @returns {vec4} */
-    get bbbb() { return new vec4( this[2], this[2], this[2], this[2] ) }
+    get bbbb() { return vec4.new( this[2], this[2], this[2], this[2] ) }
     /** @returns {vec4} */
-    get zzzw() { return new vec4( this[2], this[2], this[2], this[3] ) }
+    get zzzw() { return vec4.new( this[2], this[2], this[2], this[3] ) }
     /** @returns {vec4} */
-    get bbba() { return new vec4( this[2], this[2], this[2], this[3] ) }
+    get bbba() { return vec4.new( this[2], this[2], this[2], this[3] ) }
     /** @returns {vec4} */
-    get zzwx() { return new vec4( this[2], this[2], this[3], this[0] ) }
+    get zzwx() { return vec4.new( this[2], this[2], this[3], this[0] ) }
     /** @returns {vec4} */
-    get bbar() { return new vec4( this[2], this[2], this[3], this[0] ) }
+    get bbar() { return vec4.new( this[2], this[2], this[3], this[0] ) }
     /** @returns {vec4} */
-    get zzwy() { return new vec4( this[2], this[2], this[3], this[1] ) }
+    get zzwy() { return vec4.new( this[2], this[2], this[3], this[1] ) }
     /** @returns {vec4} */
-    get bbag() { return new vec4( this[2], this[2], this[3], this[1] ) }
+    get bbag() { return vec4.new( this[2], this[2], this[3], this[1] ) }
     /** @returns {vec4} */
-    get zzwz() { return new vec4( this[2], this[2], this[3], this[2] ) }
+    get zzwz() { return vec4.new( this[2], this[2], this[3], this[2] ) }
     /** @returns {vec4} */
-    get bbab() { return new vec4( this[2], this[2], this[3], this[2] ) }
+    get bbab() { return vec4.new( this[2], this[2], this[3], this[2] ) }
     /** @returns {vec4} */
-    get zzww() { return new vec4( this[2], this[2], this[3], this[3] ) }
+    get zzww() { return vec4.new( this[2], this[2], this[3], this[3] ) }
     /** @returns {vec4} */
-    get bbaa() { return new vec4( this[2], this[2], this[3], this[3] ) }
+    get bbaa() { return vec4.new( this[2], this[2], this[3], this[3] ) }
     /** @returns {vec4} */
-    get zwxx() { return new vec4( this[2], this[3], this[0], this[0] ) }
+    get zwxx() { return vec4.new( this[2], this[3], this[0], this[0] ) }
     /** @returns {vec4} */
-    get barr() { return new vec4( this[2], this[3], this[0], this[0] ) }
+    get barr() { return vec4.new( this[2], this[3], this[0], this[0] ) }
     /** @returns {vec4} */
-    get zwxy() { return new vec4( this[2], this[3], this[0], this[1] ) }
+    get zwxy() { return vec4.new( this[2], this[3], this[0], this[1] ) }
     /** @returns {vec4} */
-    get barg() { return new vec4( this[2], this[3], this[0], this[1] ) }
+    get barg() { return vec4.new( this[2], this[3], this[0], this[1] ) }
     /** @param {vec4Like} v */
     set zwxy( v ) { this[2] = v[0], this[3] = v[1], this[0] = v[2], this[1] = v[3] }
     /** @param {vec4Like} v */
     set barg( v ) { this[2] = v[0], this[3] = v[1], this[0] = v[2], this[1] = v[3] }
     /** @returns {vec4} */
-    get zwxz() { return new vec4( this[2], this[3], this[0], this[2] ) }
+    get zwxz() { return vec4.new( this[2], this[3], this[0], this[2] ) }
     /** @returns {vec4} */
-    get barb() { return new vec4( this[2], this[3], this[0], this[2] ) }
+    get barb() { return vec4.new( this[2], this[3], this[0], this[2] ) }
     /** @returns {vec4} */
-    get zwxw() { return new vec4( this[2], this[3], this[0], this[3] ) }
+    get zwxw() { return vec4.new( this[2], this[3], this[0], this[3] ) }
     /** @returns {vec4} */
-    get bara() { return new vec4( this[2], this[3], this[0], this[3] ) }
+    get bara() { return vec4.new( this[2], this[3], this[0], this[3] ) }
     /** @returns {vec4} */
-    get zwyx() { return new vec4( this[2], this[3], this[1], this[0] ) }
+    get zwyx() { return vec4.new( this[2], this[3], this[1], this[0] ) }
     /** @returns {vec4} */
-    get bagr() { return new vec4( this[2], this[3], this[1], this[0] ) }
+    get bagr() { return vec4.new( this[2], this[3], this[1], this[0] ) }
     /** @param {vec4Like} v */
     set zwyx( v ) { this[2] = v[0], this[3] = v[1], this[1] = v[2], this[0] = v[3] }
     /** @param {vec4Like} v */
     set bagr( v ) { this[2] = v[0], this[3] = v[1], this[1] = v[2], this[0] = v[3] }
     /** @returns {vec4} */
-    get zwyy() { return new vec4( this[2], this[3], this[1], this[1] ) }
+    get zwyy() { return vec4.new( this[2], this[3], this[1], this[1] ) }
     /** @returns {vec4} */
-    get bagg() { return new vec4( this[2], this[3], this[1], this[1] ) }
+    get bagg() { return vec4.new( this[2], this[3], this[1], this[1] ) }
     /** @returns {vec4} */
-    get zwyz() { return new vec4( this[2], this[3], this[1], this[2] ) }
+    get zwyz() { return vec4.new( this[2], this[3], this[1], this[2] ) }
     /** @returns {vec4} */
-    get bagb() { return new vec4( this[2], this[3], this[1], this[2] ) }
+    get bagb() { return vec4.new( this[2], this[3], this[1], this[2] ) }
     /** @returns {vec4} */
-    get zwyw() { return new vec4( this[2], this[3], this[1], this[3] ) }
+    get zwyw() { return vec4.new( this[2], this[3], this[1], this[3] ) }
     /** @returns {vec4} */
-    get baga() { return new vec4( this[2], this[3], this[1], this[3] ) }
+    get baga() { return vec4.new( this[2], this[3], this[1], this[3] ) }
     /** @returns {vec4} */
-    get zwzx() { return new vec4( this[2], this[3], this[2], this[0] ) }
+    get zwzx() { return vec4.new( this[2], this[3], this[2], this[0] ) }
     /** @returns {vec4} */
-    get babr() { return new vec4( this[2], this[3], this[2], this[0] ) }
+    get babr() { return vec4.new( this[2], this[3], this[2], this[0] ) }
     /** @returns {vec4} */
-    get zwzy() { return new vec4( this[2], this[3], this[2], this[1] ) }
+    get zwzy() { return vec4.new( this[2], this[3], this[2], this[1] ) }
     /** @returns {vec4} */
-    get babg() { return new vec4( this[2], this[3], this[2], this[1] ) }
+    get babg() { return vec4.new( this[2], this[3], this[2], this[1] ) }
     /** @returns {vec4} */
-    get zwzz() { return new vec4( this[2], this[3], this[2], this[2] ) }
+    get zwzz() { return vec4.new( this[2], this[3], this[2], this[2] ) }
     /** @returns {vec4} */
-    get babb() { return new vec4( this[2], this[3], this[2], this[2] ) }
+    get babb() { return vec4.new( this[2], this[3], this[2], this[2] ) }
     /** @returns {vec4} */
-    get zwzw() { return new vec4( this[2], this[3], this[2], this[3] ) }
+    get zwzw() { return vec4.new( this[2], this[3], this[2], this[3] ) }
     /** @returns {vec4} */
-    get baba() { return new vec4( this[2], this[3], this[2], this[3] ) }
+    get baba() { return vec4.new( this[2], this[3], this[2], this[3] ) }
     /** @returns {vec4} */
-    get zwwx() { return new vec4( this[2], this[3], this[3], this[0] ) }
+    get zwwx() { return vec4.new( this[2], this[3], this[3], this[0] ) }
     /** @returns {vec4} */
-    get baar() { return new vec4( this[2], this[3], this[3], this[0] ) }
+    get baar() { return vec4.new( this[2], this[3], this[3], this[0] ) }
     /** @returns {vec4} */
-    get zwwy() { return new vec4( this[2], this[3], this[3], this[1] ) }
+    get zwwy() { return vec4.new( this[2], this[3], this[3], this[1] ) }
     /** @returns {vec4} */
-    get baag() { return new vec4( this[2], this[3], this[3], this[1] ) }
+    get baag() { return vec4.new( this[2], this[3], this[3], this[1] ) }
     /** @returns {vec4} */
-    get zwwz() { return new vec4( this[2], this[3], this[3], this[2] ) }
+    get zwwz() { return vec4.new( this[2], this[3], this[3], this[2] ) }
     /** @returns {vec4} */
-    get baab() { return new vec4( this[2], this[3], this[3], this[2] ) }
+    get baab() { return vec4.new( this[2], this[3], this[3], this[2] ) }
     /** @returns {vec4} */
-    get zwww() { return new vec4( this[2], this[3], this[3], this[3] ) }
+    get zwww() { return vec4.new( this[2], this[3], this[3], this[3] ) }
     /** @returns {vec4} */
-    get baaa() { return new vec4( this[2], this[3], this[3], this[3] ) }
+    get baaa() { return vec4.new( this[2], this[3], this[3], this[3] ) }
     /** @returns {vec4} */
-    get wxxx() { return new vec4( this[3], this[0], this[0], this[0] ) }
+    get wxxx() { return vec4.new( this[3], this[0], this[0], this[0] ) }
     /** @returns {vec4} */
-    get arrr() { return new vec4( this[3], this[0], this[0], this[0] ) }
+    get arrr() { return vec4.new( this[3], this[0], this[0], this[0] ) }
     /** @returns {vec4} */
-    get wxxy() { return new vec4( this[3], this[0], this[0], this[1] ) }
+    get wxxy() { return vec4.new( this[3], this[0], this[0], this[1] ) }
     /** @returns {vec4} */
-    get arrg() { return new vec4( this[3], this[0], this[0], this[1] ) }
+    get arrg() { return vec4.new( this[3], this[0], this[0], this[1] ) }
     /** @returns {vec4} */
-    get wxxz() { return new vec4( this[3], this[0], this[0], this[2] ) }
+    get wxxz() { return vec4.new( this[3], this[0], this[0], this[2] ) }
     /** @returns {vec4} */
-    get arrb() { return new vec4( this[3], this[0], this[0], this[2] ) }
+    get arrb() { return vec4.new( this[3], this[0], this[0], this[2] ) }
     /** @returns {vec4} */
-    get wxxw() { return new vec4( this[3], this[0], this[0], this[3] ) }
+    get wxxw() { return vec4.new( this[3], this[0], this[0], this[3] ) }
     /** @returns {vec4} */
-    get arra() { return new vec4( this[3], this[0], this[0], this[3] ) }
+    get arra() { return vec4.new( this[3], this[0], this[0], this[3] ) }
     /** @returns {vec4} */
-    get wxyx() { return new vec4( this[3], this[0], this[1], this[0] ) }
+    get wxyx() { return vec4.new( this[3], this[0], this[1], this[0] ) }
     /** @returns {vec4} */
-    get argr() { return new vec4( this[3], this[0], this[1], this[0] ) }
+    get argr() { return vec4.new( this[3], this[0], this[1], this[0] ) }
     /** @returns {vec4} */
-    get wxyy() { return new vec4( this[3], this[0], this[1], this[1] ) }
+    get wxyy() { return vec4.new( this[3], this[0], this[1], this[1] ) }
     /** @returns {vec4} */
-    get argg() { return new vec4( this[3], this[0], this[1], this[1] ) }
+    get argg() { return vec4.new( this[3], this[0], this[1], this[1] ) }
     /** @returns {vec4} */
-    get wxyz() { return new vec4( this[3], this[0], this[1], this[2] ) }
+    get wxyz() { return vec4.new( this[3], this[0], this[1], this[2] ) }
     /** @returns {vec4} */
-    get argb() { return new vec4( this[3], this[0], this[1], this[2] ) }
+    get argb() { return vec4.new( this[3], this[0], this[1], this[2] ) }
     /** @param {vec4Like} v */
     set wxyz( v ) { this[3] = v[0], this[0] = v[1], this[1] = v[2], this[2] = v[3] }
     /** @param {vec4Like} v */
     set argb( v ) { this[3] = v[0], this[0] = v[1], this[1] = v[2], this[2] = v[3] }
     /** @returns {vec4} */
-    get wxyw() { return new vec4( this[3], this[0], this[1], this[3] ) }
+    get wxyw() { return vec4.new( this[3], this[0], this[1], this[3] ) }
     /** @returns {vec4} */
-    get arga() { return new vec4( this[3], this[0], this[1], this[3] ) }
+    get arga() { return vec4.new( this[3], this[0], this[1], this[3] ) }
     /** @returns {vec4} */
-    get wxzx() { return new vec4( this[3], this[0], this[2], this[0] ) }
+    get wxzx() { return vec4.new( this[3], this[0], this[2], this[0] ) }
     /** @returns {vec4} */
-    get arbr() { return new vec4( this[3], this[0], this[2], this[0] ) }
+    get arbr() { return vec4.new( this[3], this[0], this[2], this[0] ) }
     /** @returns {vec4} */
-    get wxzy() { return new vec4( this[3], this[0], this[2], this[1] ) }
+    get wxzy() { return vec4.new( this[3], this[0], this[2], this[1] ) }
     /** @returns {vec4} */
-    get arbg() { return new vec4( this[3], this[0], this[2], this[1] ) }
+    get arbg() { return vec4.new( this[3], this[0], this[2], this[1] ) }
     /** @param {vec4Like} v */
     set wxzy( v ) { this[3] = v[0], this[0] = v[1], this[2] = v[2], this[1] = v[3] }
     /** @param {vec4Like} v */
     set arbg( v ) { this[3] = v[0], this[0] = v[1], this[2] = v[2], this[1] = v[3] }
     /** @returns {vec4} */
-    get wxzz() { return new vec4( this[3], this[0], this[2], this[2] ) }
+    get wxzz() { return vec4.new( this[3], this[0], this[2], this[2] ) }
     /** @returns {vec4} */
-    get arbb() { return new vec4( this[3], this[0], this[2], this[2] ) }
+    get arbb() { return vec4.new( this[3], this[0], this[2], this[2] ) }
     /** @returns {vec4} */
-    get wxzw() { return new vec4( this[3], this[0], this[2], this[3] ) }
+    get wxzw() { return vec4.new( this[3], this[0], this[2], this[3] ) }
     /** @returns {vec4} */
-    get arba() { return new vec4( this[3], this[0], this[2], this[3] ) }
+    get arba() { return vec4.new( this[3], this[0], this[2], this[3] ) }
     /** @returns {vec4} */
-    get wxwx() { return new vec4( this[3], this[0], this[3], this[0] ) }
+    get wxwx() { return vec4.new( this[3], this[0], this[3], this[0] ) }
     /** @returns {vec4} */
-    get arar() { return new vec4( this[3], this[0], this[3], this[0] ) }
+    get arar() { return vec4.new( this[3], this[0], this[3], this[0] ) }
     /** @returns {vec4} */
-    get wxwy() { return new vec4( this[3], this[0], this[3], this[1] ) }
+    get wxwy() { return vec4.new( this[3], this[0], this[3], this[1] ) }
     /** @returns {vec4} */
-    get arag() { return new vec4( this[3], this[0], this[3], this[1] ) }
+    get arag() { return vec4.new( this[3], this[0], this[3], this[1] ) }
     /** @returns {vec4} */
-    get wxwz() { return new vec4( this[3], this[0], this[3], this[2] ) }
+    get wxwz() { return vec4.new( this[3], this[0], this[3], this[2] ) }
     /** @returns {vec4} */
-    get arab() { return new vec4( this[3], this[0], this[3], this[2] ) }
+    get arab() { return vec4.new( this[3], this[0], this[3], this[2] ) }
     /** @returns {vec4} */
-    get wxww() { return new vec4( this[3], this[0], this[3], this[3] ) }
+    get wxww() { return vec4.new( this[3], this[0], this[3], this[3] ) }
     /** @returns {vec4} */
-    get araa() { return new vec4( this[3], this[0], this[3], this[3] ) }
+    get araa() { return vec4.new( this[3], this[0], this[3], this[3] ) }
     /** @returns {vec4} */
-    get wyxx() { return new vec4( this[3], this[1], this[0], this[0] ) }
+    get wyxx() { return vec4.new( this[3], this[1], this[0], this[0] ) }
     /** @returns {vec4} */
-    get agrr() { return new vec4( this[3], this[1], this[0], this[0] ) }
+    get agrr() { return vec4.new( this[3], this[1], this[0], this[0] ) }
     /** @returns {vec4} */
-    get wyxy() { return new vec4( this[3], this[1], this[0], this[1] ) }
+    get wyxy() { return vec4.new( this[3], this[1], this[0], this[1] ) }
     /** @returns {vec4} */
-    get agrg() { return new vec4( this[3], this[1], this[0], this[1] ) }
+    get agrg() { return vec4.new( this[3], this[1], this[0], this[1] ) }
     /** @returns {vec4} */
-    get wyxz() { return new vec4( this[3], this[1], this[0], this[2] ) }
+    get wyxz() { return vec4.new( this[3], this[1], this[0], this[2] ) }
     /** @returns {vec4} */
-    get agrb() { return new vec4( this[3], this[1], this[0], this[2] ) }
+    get agrb() { return vec4.new( this[3], this[1], this[0], this[2] ) }
     /** @param {vec4Like} v */
     set wyxz( v ) { this[3] = v[0], this[1] = v[1], this[0] = v[2], this[2] = v[3] }
     /** @param {vec4Like} v */
     set agrb( v ) { this[3] = v[0], this[1] = v[1], this[0] = v[2], this[2] = v[3] }
     /** @returns {vec4} */
-    get wyxw() { return new vec4( this[3], this[1], this[0], this[3] ) }
+    get wyxw() { return vec4.new( this[3], this[1], this[0], this[3] ) }
     /** @returns {vec4} */
-    get agra() { return new vec4( this[3], this[1], this[0], this[3] ) }
+    get agra() { return vec4.new( this[3], this[1], this[0], this[3] ) }
     /** @returns {vec4} */
-    get wyyx() { return new vec4( this[3], this[1], this[1], this[0] ) }
+    get wyyx() { return vec4.new( this[3], this[1], this[1], this[0] ) }
     /** @returns {vec4} */
-    get aggr() { return new vec4( this[3], this[1], this[1], this[0] ) }
+    get aggr() { return vec4.new( this[3], this[1], this[1], this[0] ) }
     /** @returns {vec4} */
-    get wyyy() { return new vec4( this[3], this[1], this[1], this[1] ) }
+    get wyyy() { return vec4.new( this[3], this[1], this[1], this[1] ) }
     /** @returns {vec4} */
-    get aggg() { return new vec4( this[3], this[1], this[1], this[1] ) }
+    get aggg() { return vec4.new( this[3], this[1], this[1], this[1] ) }
     /** @returns {vec4} */
-    get wyyz() { return new vec4( this[3], this[1], this[1], this[2] ) }
+    get wyyz() { return vec4.new( this[3], this[1], this[1], this[2] ) }
     /** @returns {vec4} */
-    get aggb() { return new vec4( this[3], this[1], this[1], this[2] ) }
+    get aggb() { return vec4.new( this[3], this[1], this[1], this[2] ) }
     /** @returns {vec4} */
-    get wyyw() { return new vec4( this[3], this[1], this[1], this[3] ) }
+    get wyyw() { return vec4.new( this[3], this[1], this[1], this[3] ) }
     /** @returns {vec4} */
-    get agga() { return new vec4( this[3], this[1], this[1], this[3] ) }
+    get agga() { return vec4.new( this[3], this[1], this[1], this[3] ) }
     /** @returns {vec4} */
-    get wyzx() { return new vec4( this[3], this[1], this[2], this[0] ) }
+    get wyzx() { return vec4.new( this[3], this[1], this[2], this[0] ) }
     /** @returns {vec4} */
-    get agbr() { return new vec4( this[3], this[1], this[2], this[0] ) }
+    get agbr() { return vec4.new( this[3], this[1], this[2], this[0] ) }
     /** @param {vec4Like} v */
     set wyzx( v ) { this[3] = v[0], this[1] = v[1], this[2] = v[2], this[0] = v[3] }
     /** @param {vec4Like} v */
     set agbr( v ) { this[3] = v[0], this[1] = v[1], this[2] = v[2], this[0] = v[3] }
     /** @returns {vec4} */
-    get wyzy() { return new vec4( this[3], this[1], this[2], this[1] ) }
+    get wyzy() { return vec4.new( this[3], this[1], this[2], this[1] ) }
     /** @returns {vec4} */
-    get agbg() { return new vec4( this[3], this[1], this[2], this[1] ) }
+    get agbg() { return vec4.new( this[3], this[1], this[2], this[1] ) }
     /** @returns {vec4} */
-    get wyzz() { return new vec4( this[3], this[1], this[2], this[2] ) }
+    get wyzz() { return vec4.new( this[3], this[1], this[2], this[2] ) }
     /** @returns {vec4} */
-    get agbb() { return new vec4( this[3], this[1], this[2], this[2] ) }
+    get agbb() { return vec4.new( this[3], this[1], this[2], this[2] ) }
     /** @returns {vec4} */
-    get wyzw() { return new vec4( this[3], this[1], this[2], this[3] ) }
+    get wyzw() { return vec4.new( this[3], this[1], this[2], this[3] ) }
     /** @returns {vec4} */
-    get agba() { return new vec4( this[3], this[1], this[2], this[3] ) }
+    get agba() { return vec4.new( this[3], this[1], this[2], this[3] ) }
     /** @returns {vec4} */
-    get wywx() { return new vec4( this[3], this[1], this[3], this[0] ) }
+    get wywx() { return vec4.new( this[3], this[1], this[3], this[0] ) }
     /** @returns {vec4} */
-    get agar() { return new vec4( this[3], this[1], this[3], this[0] ) }
+    get agar() { return vec4.new( this[3], this[1], this[3], this[0] ) }
     /** @returns {vec4} */
-    get wywy() { return new vec4( this[3], this[1], this[3], this[1] ) }
+    get wywy() { return vec4.new( this[3], this[1], this[3], this[1] ) }
     /** @returns {vec4} */
-    get agag() { return new vec4( this[3], this[1], this[3], this[1] ) }
+    get agag() { return vec4.new( this[3], this[1], this[3], this[1] ) }
     /** @returns {vec4} */
-    get wywz() { return new vec4( this[3], this[1], this[3], this[2] ) }
+    get wywz() { return vec4.new( this[3], this[1], this[3], this[2] ) }
     /** @returns {vec4} */
-    get agab() { return new vec4( this[3], this[1], this[3], this[2] ) }
+    get agab() { return vec4.new( this[3], this[1], this[3], this[2] ) }
     /** @returns {vec4} */
-    get wyww() { return new vec4( this[3], this[1], this[3], this[3] ) }
+    get wyww() { return vec4.new( this[3], this[1], this[3], this[3] ) }
     /** @returns {vec4} */
-    get agaa() { return new vec4( this[3], this[1], this[3], this[3] ) }
+    get agaa() { return vec4.new( this[3], this[1], this[3], this[3] ) }
     /** @returns {vec4} */
-    get wzxx() { return new vec4( this[3], this[2], this[0], this[0] ) }
+    get wzxx() { return vec4.new( this[3], this[2], this[0], this[0] ) }
     /** @returns {vec4} */
-    get abrr() { return new vec4( this[3], this[2], this[0], this[0] ) }
+    get abrr() { return vec4.new( this[3], this[2], this[0], this[0] ) }
     /** @returns {vec4} */
-    get wzxy() { return new vec4( this[3], this[2], this[0], this[1] ) }
+    get wzxy() { return vec4.new( this[3], this[2], this[0], this[1] ) }
     /** @returns {vec4} */
-    get abrg() { return new vec4( this[3], this[2], this[0], this[1] ) }
+    get abrg() { return vec4.new( this[3], this[2], this[0], this[1] ) }
     /** @param {vec4Like} v */
     set wzxy( v ) { this[3] = v[0], this[2] = v[1], this[0] = v[2], this[1] = v[3] }
     /** @param {vec4Like} v */
     set abrg( v ) { this[3] = v[0], this[2] = v[1], this[0] = v[2], this[1] = v[3] }
     /** @returns {vec4} */
-    get wzxz() { return new vec4( this[3], this[2], this[0], this[2] ) }
+    get wzxz() { return vec4.new( this[3], this[2], this[0], this[2] ) }
     /** @returns {vec4} */
-    get abrb() { return new vec4( this[3], this[2], this[0], this[2] ) }
+    get abrb() { return vec4.new( this[3], this[2], this[0], this[2] ) }
     /** @returns {vec4} */
-    get wzxw() { return new vec4( this[3], this[2], this[0], this[3] ) }
+    get wzxw() { return vec4.new( this[3], this[2], this[0], this[3] ) }
     /** @returns {vec4} */
-    get abra() { return new vec4( this[3], this[2], this[0], this[3] ) }
+    get abra() { return vec4.new( this[3], this[2], this[0], this[3] ) }
     /** @returns {vec4} */
-    get wzyx() { return new vec4( this[3], this[2], this[1], this[0] ) }
+    get wzyx() { return vec4.new( this[3], this[2], this[1], this[0] ) }
     /** @returns {vec4} */
-    get abgr() { return new vec4( this[3], this[2], this[1], this[0] ) }
+    get abgr() { return vec4.new( this[3], this[2], this[1], this[0] ) }
     /** @param {vec4Like} v */
     set wzyx( v ) { this[3] = v[0], this[2] = v[1], this[1] = v[2], this[0] = v[3] }
     /** @param {vec4Like} v */
     set abgr( v ) { this[3] = v[0], this[2] = v[1], this[1] = v[2], this[0] = v[3] }
     /** @returns {vec4} */
-    get wzyy() { return new vec4( this[3], this[2], this[1], this[1] ) }
+    get wzyy() { return vec4.new( this[3], this[2], this[1], this[1] ) }
     /** @returns {vec4} */
-    get abgg() { return new vec4( this[3], this[2], this[1], this[1] ) }
+    get abgg() { return vec4.new( this[3], this[2], this[1], this[1] ) }
     /** @returns {vec4} */
-    get wzyz() { return new vec4( this[3], this[2], this[1], this[2] ) }
+    get wzyz() { return vec4.new( this[3], this[2], this[1], this[2] ) }
     /** @returns {vec4} */
-    get abgb() { return new vec4( this[3], this[2], this[1], this[2] ) }
+    get abgb() { return vec4.new( this[3], this[2], this[1], this[2] ) }
     /** @returns {vec4} */
-    get wzyw() { return new vec4( this[3], this[2], this[1], this[3] ) }
+    get wzyw() { return vec4.new( this[3], this[2], this[1], this[3] ) }
     /** @returns {vec4} */
-    get abga() { return new vec4( this[3], this[2], this[1], this[3] ) }
+    get abga() { return vec4.new( this[3], this[2], this[1], this[3] ) }
     /** @returns {vec4} */
-    get wzzx() { return new vec4( this[3], this[2], this[2], this[0] ) }
+    get wzzx() { return vec4.new( this[3], this[2], this[2], this[0] ) }
     /** @returns {vec4} */
-    get abbr() { return new vec4( this[3], this[2], this[2], this[0] ) }
+    get abbr() { return vec4.new( this[3], this[2], this[2], this[0] ) }
     /** @returns {vec4} */
-    get wzzy() { return new vec4( this[3], this[2], this[2], this[1] ) }
+    get wzzy() { return vec4.new( this[3], this[2], this[2], this[1] ) }
     /** @returns {vec4} */
-    get abbg() { return new vec4( this[3], this[2], this[2], this[1] ) }
+    get abbg() { return vec4.new( this[3], this[2], this[2], this[1] ) }
     /** @returns {vec4} */
-    get wzzz() { return new vec4( this[3], this[2], this[2], this[2] ) }
+    get wzzz() { return vec4.new( this[3], this[2], this[2], this[2] ) }
     /** @returns {vec4} */
-    get abbb() { return new vec4( this[3], this[2], this[2], this[2] ) }
+    get abbb() { return vec4.new( this[3], this[2], this[2], this[2] ) }
     /** @returns {vec4} */
-    get wzzw() { return new vec4( this[3], this[2], this[2], this[3] ) }
+    get wzzw() { return vec4.new( this[3], this[2], this[2], this[3] ) }
     /** @returns {vec4} */
-    get abba() { return new vec4( this[3], this[2], this[2], this[3] ) }
+    get abba() { return vec4.new( this[3], this[2], this[2], this[3] ) }
     /** @returns {vec4} */
-    get wzwx() { return new vec4( this[3], this[2], this[3], this[0] ) }
+    get wzwx() { return vec4.new( this[3], this[2], this[3], this[0] ) }
     /** @returns {vec4} */
-    get abar() { return new vec4( this[3], this[2], this[3], this[0] ) }
+    get abar() { return vec4.new( this[3], this[2], this[3], this[0] ) }
     /** @returns {vec4} */
-    get wzwy() { return new vec4( this[3], this[2], this[3], this[1] ) }
+    get wzwy() { return vec4.new( this[3], this[2], this[3], this[1] ) }
     /** @returns {vec4} */
-    get abag() { return new vec4( this[3], this[2], this[3], this[1] ) }
+    get abag() { return vec4.new( this[3], this[2], this[3], this[1] ) }
     /** @returns {vec4} */
-    get wzwz() { return new vec4( this[3], this[2], this[3], this[2] ) }
+    get wzwz() { return vec4.new( this[3], this[2], this[3], this[2] ) }
     /** @returns {vec4} */
-    get abab() { return new vec4( this[3], this[2], this[3], this[2] ) }
+    get abab() { return vec4.new( this[3], this[2], this[3], this[2] ) }
     /** @returns {vec4} */
-    get wzww() { return new vec4( this[3], this[2], this[3], this[3] ) }
+    get wzww() { return vec4.new( this[3], this[2], this[3], this[3] ) }
     /** @returns {vec4} */
-    get abaa() { return new vec4( this[3], this[2], this[3], this[3] ) }
+    get abaa() { return vec4.new( this[3], this[2], this[3], this[3] ) }
     /** @returns {vec4} */
-    get wwxx() { return new vec4( this[3], this[3], this[0], this[0] ) }
+    get wwxx() { return vec4.new( this[3], this[3], this[0], this[0] ) }
     /** @returns {vec4} */
-    get aarr() { return new vec4( this[3], this[3], this[0], this[0] ) }
+    get aarr() { return vec4.new( this[3], this[3], this[0], this[0] ) }
     /** @returns {vec4} */
-    get wwxy() { return new vec4( this[3], this[3], this[0], this[1] ) }
+    get wwxy() { return vec4.new( this[3], this[3], this[0], this[1] ) }
     /** @returns {vec4} */
-    get aarg() { return new vec4( this[3], this[3], this[0], this[1] ) }
+    get aarg() { return vec4.new( this[3], this[3], this[0], this[1] ) }
     /** @returns {vec4} */
-    get wwxz() { return new vec4( this[3], this[3], this[0], this[2] ) }
+    get wwxz() { return vec4.new( this[3], this[3], this[0], this[2] ) }
     /** @returns {vec4} */
-    get aarb() { return new vec4( this[3], this[3], this[0], this[2] ) }
+    get aarb() { return vec4.new( this[3], this[3], this[0], this[2] ) }
     /** @returns {vec4} */
-    get wwxw() { return new vec4( this[3], this[3], this[0], this[3] ) }
+    get wwxw() { return vec4.new( this[3], this[3], this[0], this[3] ) }
     /** @returns {vec4} */
-    get aara() { return new vec4( this[3], this[3], this[0], this[3] ) }
+    get aara() { return vec4.new( this[3], this[3], this[0], this[3] ) }
     /** @returns {vec4} */
-    get wwyx() { return new vec4( this[3], this[3], this[1], this[0] ) }
+    get wwyx() { return vec4.new( this[3], this[3], this[1], this[0] ) }
     /** @returns {vec4} */
-    get aagr() { return new vec4( this[3], this[3], this[1], this[0] ) }
+    get aagr() { return vec4.new( this[3], this[3], this[1], this[0] ) }
     /** @returns {vec4} */
-    get wwyy() { return new vec4( this[3], this[3], this[1], this[1] ) }
+    get wwyy() { return vec4.new( this[3], this[3], this[1], this[1] ) }
     /** @returns {vec4} */
-    get aagg() { return new vec4( this[3], this[3], this[1], this[1] ) }
+    get aagg() { return vec4.new( this[3], this[3], this[1], this[1] ) }
     /** @returns {vec4} */
-    get wwyz() { return new vec4( this[3], this[3], this[1], this[2] ) }
+    get wwyz() { return vec4.new( this[3], this[3], this[1], this[2] ) }
     /** @returns {vec4} */
-    get aagb() { return new vec4( this[3], this[3], this[1], this[2] ) }
+    get aagb() { return vec4.new( this[3], this[3], this[1], this[2] ) }
     /** @returns {vec4} */
-    get wwyw() { return new vec4( this[3], this[3], this[1], this[3] ) }
+    get wwyw() { return vec4.new( this[3], this[3], this[1], this[3] ) }
     /** @returns {vec4} */
-    get aaga() { return new vec4( this[3], this[3], this[1], this[3] ) }
+    get aaga() { return vec4.new( this[3], this[3], this[1], this[3] ) }
     /** @returns {vec4} */
-    get wwzx() { return new vec4( this[3], this[3], this[2], this[0] ) }
+    get wwzx() { return vec4.new( this[3], this[3], this[2], this[0] ) }
     /** @returns {vec4} */
-    get aabr() { return new vec4( this[3], this[3], this[2], this[0] ) }
+    get aabr() { return vec4.new( this[3], this[3], this[2], this[0] ) }
     /** @returns {vec4} */
-    get wwzy() { return new vec4( this[3], this[3], this[2], this[1] ) }
+    get wwzy() { return vec4.new( this[3], this[3], this[2], this[1] ) }
     /** @returns {vec4} */
-    get aabg() { return new vec4( this[3], this[3], this[2], this[1] ) }
+    get aabg() { return vec4.new( this[3], this[3], this[2], this[1] ) }
     /** @returns {vec4} */
-    get wwzz() { return new vec4( this[3], this[3], this[2], this[2] ) }
+    get wwzz() { return vec4.new( this[3], this[3], this[2], this[2] ) }
     /** @returns {vec4} */
-    get aabb() { return new vec4( this[3], this[3], this[2], this[2] ) }
+    get aabb() { return vec4.new( this[3], this[3], this[2], this[2] ) }
     /** @returns {vec4} */
-    get wwzw() { return new vec4( this[3], this[3], this[2], this[3] ) }
+    get wwzw() { return vec4.new( this[3], this[3], this[2], this[3] ) }
     /** @returns {vec4} */
-    get aaba() { return new vec4( this[3], this[3], this[2], this[3] ) }
+    get aaba() { return vec4.new( this[3], this[3], this[2], this[3] ) }
     /** @returns {vec4} */
-    get wwwx() { return new vec4( this[3], this[3], this[3], this[0] ) }
+    get wwwx() { return vec4.new( this[3], this[3], this[3], this[0] ) }
     /** @returns {vec4} */
-    get aaar() { return new vec4( this[3], this[3], this[3], this[0] ) }
+    get aaar() { return vec4.new( this[3], this[3], this[3], this[0] ) }
     /** @returns {vec4} */
-    get wwwy() { return new vec4( this[3], this[3], this[3], this[1] ) }
+    get wwwy() { return vec4.new( this[3], this[3], this[3], this[1] ) }
     /** @returns {vec4} */
-    get aaag() { return new vec4( this[3], this[3], this[3], this[1] ) }
+    get aaag() { return vec4.new( this[3], this[3], this[3], this[1] ) }
     /** @returns {vec4} */
-    get wwwz() { return new vec4( this[3], this[3], this[3], this[2] ) }
+    get wwwz() { return vec4.new( this[3], this[3], this[3], this[2] ) }
     /** @returns {vec4} */
-    get aaab() { return new vec4( this[3], this[3], this[3], this[2] ) }
+    get aaab() { return vec4.new( this[3], this[3], this[3], this[2] ) }
     /** @returns {vec4} */
-    get wwww() { return new vec4( this[3], this[3], this[3], this[3] ) }
+    get wwww() { return vec4.new( this[3], this[3], this[3], this[3] ) }
     /** @returns {vec4} */
-    get aaaa() { return new vec4( this[3], this[3], this[3], this[3] ) }
+    get aaaa() { return vec4.new( this[3], this[3], this[3], this[3] ) }
 
     /** @param {number|vec4Like} x @param {number} [y] @param {number} [z] @param {number} [w] @returns {vec4} */
     set( x, y, z, w ) {
@@ -1711,7 +1711,7 @@ export class vec4 {
 
     /** @returns {vec4} */
     clone() {
-        return new vec4( this )
+        return vec4.new(  this  )
     }
 
     *[Symbol.iterator]() {

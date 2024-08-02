@@ -388,3 +388,13 @@ export class FileBuilder {
         return file.trimEnd()
     }
 }
+
+
+
+// SNIPPETS ###########################################
+
+export function call( expression ) {
+    return function ( ...args ) {
+        return `${expression}( ${args.join( ", " )} )`
+    }
+}

@@ -6,7 +6,7 @@ import { join } from "path"
 const __dirname = path.dirname( url.fileURLToPath( import.meta.url ) )
 
 // Custom includes
-import { setIndent, forceIndent, Type, Fn, FileBuilder } from "./codegen.js"
+import { setIndent, forceIndent, Type, Fn, FileBuilder, call } from "./codegen.js"
 import { JSDoc } from "./docgen.js"
 /** @typedef {import("./docgen.js").JSDocStatement} JSDocStatement @typedef {import("./docgen.js").JSDocOptions} JSDocOptions */
 import { Range } from "./genlib.js"
@@ -147,6 +147,8 @@ function generateVector( dimension, typecheck ) {
 
     const Param_m = new Fn.Param( "m", MATTYPELIKE )
 
+    const cnew = call( `${TYPE}.new` )
+
     function bodyThis( statements ) {
         return [...statements, "return this"]
     }
@@ -170,6 +172,9 @@ function generateVector( dimension, typecheck ) {
     }
 
     function constructors() {
+        function newConstructor() {
+            return new Fn( "constructor", [], "super( 2 )" )
+        }
         function constructor() {
             const objectParamType = `${TYPELIKE_OR_NUM}|{${DMAP( i => `${iMapXYZW[i]}: number` )}}|{${DMAP( i => `${iMapRGBA[i]}: number` )}}`
             const params = [
@@ -177,49 +182,50 @@ function generateVector( dimension, typecheck ) {
                 ...DRANGE.slice( 1 ).map( i => new Fn.Param( iMapXYZW[i], NUMBER_TYPE, { optional: true } ) ),
             ]
             const body = `
+const vec = new ${TYPE}
 if ( typeof object === "number" )
     y === undefined
-        ? ( ${DMAP( i => `this[${i}] = object` )} )
-        : ( this[0] = object, this[1] = +y${DRANGE.slice( 2 ).map( i => `, this[${i}] = +( ${iMapXYZW[i]} ?? 0 )` ).join( "" )} )
+        ? ( ${DMAP( i => `vec[${i}] = object` )} )
+        : ( vec[0] = object, vec[1] = +y${DRANGE.slice( 2 ).map( i => `, vec[${i}] = +( ${iMapXYZW[i]} ?? 0 )` ).join( "" )} )
 else
-${DMAP( i => `    this[${i}] = +( object[${i}] ?? object.${iMapXYZW[i]} ?? object.${iMapRGBA[i]} ?? 0 )`, ",\n" )}
-${DMAP( i => `/** @type {number} ${iMapXYZW[i]}-coordinate of the vector */\nthis[${i}]`, "\n" )}
+${DMAP( i => `    vec[${i}] = +( object[${i}] ?? object.${iMapXYZW[i]} ?? object.${iMapRGBA[i]} ?? 0 )`, ",\n" )}
+return vec
             `
-            return new Fn( "constructor", params, body, { indentFn: setIndent, jsdocOpts: { multiline: true } } )
+            return new Fn( "new", params, body, { indentFn: setIndent, prefix: "static", type: TYPE, jsdocOpts: { multiline: true } } )
         }
         function fromArray() {
             const params = [new Fn.Param( "array", "ArrayLike<number>" ), new Fn.Param( "index", NUMBER_TYPE, { expr: "0" } ), new Fn.Param( "stride", NUMBER_TYPE, { expr: "1" } )]
-            const body = `return new ${TYPE}( ${DMAP( i => `array[${i} * stride + index]` )} )`
+            const body = `return ${cnew( DMAP( i => `array[${i} * stride + index]` ) )}`
             return new Fn( `fromArray`, params, body, { prefix: "static", type: TYPE } )
         }
         function fromFunction() {
             const params = new Fn.Param( "fn", "(index: number) => number" )
-            const body = `return new ${TYPE}( ${DMAP( i => `fn( ${i} )` )} )`
+            const body = `return ${cnew( DMAP( i => `fn( ${i} )` ) )}`
             return new Fn( `fromFunction`, params, body, { prefix: "static", type: TYPE } )
         }
         function fromAngle2() {
             const params = new Fn.Param( "angle", NUMBER_TYPE )
-            const body = `return new vec2( Math.cos( angle ), Math.sin( angle ) )`
+            const body = `return ${cnew( "Math.cos( angle ), Math.sin( angle )" )}`
             return new Fn( `fromAngle`, params, body, { prefix: "static", type: TYPE } )
         }
         function random() {
-            const body = `return new ${TYPE}( ${DMAP( _ => `Math.random()` )} )`
+            const body = `return ${cnew( DMAP( _ => `Math.random()` ) )}`
             return new Fn( `random`, [], body, { prefix: "static", type: TYPE } )
         }
         function randomNorm() {
-            const body = `return new ${TYPE}( ${DMAP( _ => `randomNorm()` )} )`
+            const body = `return ${cnew( DMAP( _ => `randomNorm()` ) )}`
             return new Fn( `randomNorm`, [], body, { prefix: "static", type: TYPE } )
         }
         function randomDir() {
-            const body = `return new ${TYPE}( ${DMAP( _ => `randomNorm()` )} ).normalize()`
+            const body = `return ${cnew( DMAP( _ => `randomNorm()` ) )}.normalize()`
             return new Fn( `randomDir`, [], body, { prefix: "static", type: TYPE } )
         }
         function randomSphere() {
-            const body = `return new ${TYPE}( ${DMAP( _ => `randomNorm()` )} ).setLength( Math.random() ** (1/${dimension}) )`
+            const body = `return ${cnew( DMAP( _ => `randomNorm()` ) )}.setLength( Math.random() ** (1/${dimension}) )`
             return new Fn( `randomSphere`, [], body, { prefix: "static", type: TYPE } )
         }
 
-        const functions = [constructor(), fromArray(), fromFunction()]
+        const functions = [newConstructor(), constructor(), fromArray(), fromFunction()]
         if ( dimension === 2 ) functions.push( fromAngle2() )
         functions.push( random(), randomNorm(), randomDir(), randomSphere() )
         return functions
@@ -253,7 +259,7 @@ ${DMAP( i => `/** @type {number} ${iMapXYZW[i]}-coordinate of the vector */\nthi
             }
 
             const type = `vec${dim}`
-            const getterBody = `return new ${type}( ${Range( dim ).map( i => `this[${perm[i]}]` ).join( ", " )} )`
+            const getterBody = `return ${cnew( ...Range( dim ).map( i => `this[${perm[i]}]` ) )}`
             const getter1 = new Fn( name1, [], getterBody, { prefix: "get", type: type, compact: true } )
             const getter2 = new Fn( name2, [], getterBody, { prefix: "get", type: type, compact: true } )
             const out = [getter1, getter2]
@@ -287,7 +293,7 @@ ${DMAP( i => `/** @type {number} ${iMapXYZW[i]}-coordinate of the vector */\nthi
     }
 
     function clone() {
-        return new Fn( "clone", [], `return new ${TYPE}( this )`, { type: TYPE } )
+        return new Fn( "clone", [], `return ${cnew( ` this ` )}`, { type: TYPE } )
     }
 
     function iterator() {
@@ -662,7 +668,7 @@ ${DMAP( i => `    const ${iMapRGBA[i]} = Math.min( Math.max( this[${i}] * 100, 0
         JSDoc( [
             ["typedef", `${TYPE}|ArrayLike<number>`, `${TYPE}Like`],
         ] ),
-        `export class ${TYPE} {`,
+        `export class ${TYPE} extends Float64Array {`,
         `    static get NaN() { return new ${TYPE}( ${DMAP( () => "NaN" )} ) }`,
         subtitle( "CONSTRUCTORS" ),
         constructors(),
