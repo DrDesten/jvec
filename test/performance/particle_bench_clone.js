@@ -9,9 +9,9 @@ class Particle {
     }
 
     update() {
-        this.vel.add( this.acc )
-        this.pos.add( this.vel )
-        this.acc.set( 0, 0 )
+        this.vel = vec2.add( this.vel, this.acc )
+        this.pos = vec2.add( this.pos, this.vel )
+        this.acc = vec2.new()
     }
 }
 
@@ -24,5 +24,5 @@ export default function bench( particleCount, simulationSteps ) {
         }
     }
     const end = performance.now()
-    return new PerformanceResult( "Particle Bench - 2D Inplace", end - start, { particleCount, simulationSteps } )
+    return new PerformanceResult( "Particle Bench - 2D Clone", end - start, { particleCount, simulationSteps } )
 }
