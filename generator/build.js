@@ -10,7 +10,7 @@ import { setIndent, forceIndent, Type, Fn, FileBuilder } from "./codegen.js"
 import { JSDoc } from "./docgen.js"
 /** @typedef {import("./docgen.js").JSDocStatement} JSDocStatement @typedef {import("./docgen.js").JSDocOptions} JSDocOptions */
 import { Range } from "./genlib.js"
-import { assign, binary, call, callall, index } from "./codegenutils.js"
+import { assign, binary, call, callall, property, index, ternary } from "./codegenutils.js"
 
 // Constants
 
@@ -150,9 +150,16 @@ function generateVector( dimension, typecheck ) {
 
     const add = binary("+")
     const mul = binary("*")
+    const ifnum = ternary('typeof x === "number"')
+
+    const ti = index( "this" ) // this index
+    const tp = property( "this" ) // this property
+    const sp = property( TYPE ) // static property
+
+    const tcall = call(tp) // this property call
+    const scall = call(sp) // static property call
 
     const cnew = call( `${TYPE}.new` )
-    const ti = index( "this" )
     const ati = assign( ti )
     const vi = index( "v" )
 
@@ -267,7 +274,7 @@ return vec
             }
 
             const type = `vec${dim}`
-            const getterBody = `return ${cnew( ...Range( dim ).map( i => `this[${perm[i]}]` ) )}`
+            const getterBody = `return ${call( `${type}.new`, Range( dim ).map( i => `this[${perm[i]}]` ) )}`
             const getter1 = new Fn( name1, [], getterBody, { prefix: "get", type: type, compact: true } )
             const getter2 = new Fn( name2, [], getterBody, { prefix: "get", type: type, compact: true } )
             const out = [getter1, getter2]
@@ -412,8 +419,9 @@ ${DMAP( i => `    const ${RGBA[i]} = Math.min( Math.max( ${ti( i )} * 100, 0 ), 
         ]
 
         function general( name ) {
-            const bodyNonstatic = `return ${IFNUM( `this.s${name}( x )`, `this.v${name}( x )` )}`
-            const bodyStatic = `return ${IFNUM( `${TYPE}.s${name}( v, x, target )`, `${TYPE}.v${name}( v, x, target )` )}`
+            //const bodyNonstatic = `return ${ifnum( `this.s${name}( x )`, `this.v${name}( x )` )}`
+            const bodyNonstatic = `return ${ifnum( `this.s${name}( x )`, `this.v${name}( x )` )}`
+            const bodyStatic = `return ${ifnum( `${TYPE}.s${name}( v, x, target )`, `${TYPE}.v${name}( v, x, target )` )}`
             return [
                 new Fn( name, [Param_x], bodyNonstatic, { type: TYPE } ),
                 new Fn( name, [Param_v, Param_x, Param_target], bodyStatic, { prefix: "static", type: TYPE } ),

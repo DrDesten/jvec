@@ -17,26 +17,23 @@ function curry( fn, ...args ) {
     }, fn.length - args.length)
 }
 
-export function resolve( oldargs, newargs ) {
-    const resolved = []
-    for ( let i = 0; i < oldargs.length; i++ ) {
-        if ( newargs.length === 0 ) {
-            resolved.push( ...oldargs.slice( i ) )
-            break
-        }
-
-        const arg = oldargs[i]
-        if ( primitive( arg ) ) {
-            resolved.push( arg )
-            continue
-        }
-        
-        const length = arg.length
-        const args = newargs.slice(0, length)
-        resolved.push( arg( ...args ) )
-        newargs = newargs.slice( length )
+function resolveArguments( unresolved, args ) {
+    const resolved = [...unresolved]
+    let p = 0
+    for ( const [i, arg] of resolved.entries() ) {
+        if ( p >= args.length ) break
+        if ( primitive( arg ) ) continue
+        resolved[i] = arg( ...args.slice( p, p += arg.length ) )
     }
     return resolved
+}
+function resolve( fn, ...args ) {
+    if ( primitive(...args) ) return fn( ...args )
+    const length = fnlengths( ...args )
+    return fnsetlength( function ( ...next ) {
+        const resolved = resolveArguments( args, next )
+        return resolve(fn, ...resolved)
+    }, length)
 }
 
 // Exported Functions /////////////////////////////////////////////////
@@ -49,52 +46,42 @@ export function index( target, ...exprs ) {
     }
     return curry(index, ...exprs)
 }
-export function field( target, ...exprs ) {
-    function field( expression ) {
+export function property( target, ...exprs ) {
+    function property( expression ) {
         return `${target}.${expression}`
     }
-    return curry(field, ...exprs)
+    return curry(property, ...exprs)
 }
-export function call( target, ...exprs ) {
-    function call( ...exprs ) {
-        return exprs.length ? `${target}( ${exprs.join( ", " )} )` : `${target}()`
+export function call( ...args ) {
+    function call( target, expression ) {
+        if ( primitive(target, expression ) )
+            return expression
+                ? `${target}( ${expression instanceof Array ? expression.join(", ") : expression} )` 
+                : `${target}()`
+        return resolve(call, target, expression)
     }
-    return exprs.length ? call(...exprs) : call
+    return curry(call, ...args)
 }
 
-/* export function binary( op, ...exprs ) {
+export function binary( op, ...args ) {
     function binary( left, right ) {
         if ( primitive(left, right) ) 
             return `${left} ${op} ${right}` 
-
-        const length = fnlengths(left, right)
-        return fnsetlength( function( ...args ) {
-            let i = 0
-            if (!primitive(left)) left = left(...args.slice(i, i += left.length))
-            if (!primitive(right)) right = right(...args.slice(i, i += right.length))
-            return `${left} ${op} ${right}`
-        }, length )
+        return resolve(binary, left, right)
     }
-
-    return curry(binary, ...exprs)
-} */
-export function binary( op, ...exprs ) {
-    function binary( left, right ) {
-        if ( primitive(left, right) ) 
-            return `${left} ${op} ${right}` 
-
-        const length = fnlengths( left, right )
-        return fnsetlength( function( ...args ) {
-            const resolved = resolve( [left, right], args )
-            const [rleft, rright] = resolved
-            return binary(rleft, rright)
-        }, length )
-    }
-
-    return curry(binary, ...exprs)
+    return curry(binary, ...args)
 }
 export function assign( ...exprs ) {
     return binary("=", ...exprs )
+}
+
+export function ternary( condition, ...args ) {
+    function ternary( truthy, falsy ) {
+        if ( primitive(truthy, falsy) ) 
+            return `${condition} ? ${truthy} : ${falsy}` 
+        return resolve(ternary, truthy, falsy)
+    }
+    return curry(ternary, ...args)
 }
 
 // Utils
@@ -103,4 +90,12 @@ export function callall( fn ) {
     return function ( x ) {
         return fn( ...Array.from( { length: fn.length }, () => x ) )
     }
+}
+export function select( ...args ) {
+    function select( truthy, falsy, condition ) {
+        if ( primitive( truthy, falsy, condition ) ) 
+            return condition ? truthy : falsy
+        return resolve(select, truthy, falsy, condition)
+    }
+    return curry(select, ...args)
 }

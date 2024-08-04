@@ -1,5 +1,5 @@
 import { strict as assert }  from "assert"
-import { assign, binary, call, field, index, resolve } from "./codegenutils.js";
+import { assign, binary, call, property, index, select } from "./codegenutils.js";
 
 class Tester {
     constructor() { this.tests = [] }
@@ -78,7 +78,7 @@ tester.addTest("primitive index", ()=>{
     assert.equal(f(1), "x[1]")
 })
 tester.addTest("primitive field", ()=>{
-    const f = field("x")
+    const f = property("x")
     assert.equal(typeof f, "function")
     assert.equal(f("a"), "x.a")
 })
@@ -143,7 +143,14 @@ tester.addTest("currying", ()=>{
     )
 })
 
-tester.addTest("resolve", () => {
+tester.addTest("select", ()=>{
+    const f = select("true", "false")
+    assert.equal(typeof f, "function")
+    assert.equal(f(true), "true")
+    assert.equal(f(false), "false")
+})
+
+/* tester.addTest("resolve", () => {
     const add = ( a, b ) => a + b 
     const oldargs = [add, add, add]
     const newargs = [1,1, 2,2, 3,3]
@@ -169,6 +176,6 @@ tester.addTest("resolve chain", () => {
             []), [1,1]), [2,2]), [3,3]),
         [2,4,6]
     )
-})
+}) */
 
 tester.runTests()
