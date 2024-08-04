@@ -1,3 +1,6 @@
 # jvec
 
-`jvec` is a lightweight JavaScript library for working with 2D, 3D, and 4D vectors. It provides classes `vec2`, `vec3`, and `vec4` for vector operations, making it easy to perform mathematical computations in graphics programming, physics simulations, and other applications requiring vector arithmetic.
+jvec is DrDestens JavaScript vector library.  
+It provides `vec2`, `vec3` and `vec4` classes for vector operations aswell as `mat2`, `mat3` and `mat4` matrix classes for working with 2D, 3D and 4D vectors.  
+
+jvec is not yet stable and the api is subject to change at any time. The aim of the library is to provide GLSL-like operations for vector math in JavaScript.  
