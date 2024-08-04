@@ -10,7 +10,7 @@ import { setIndent, forceIndent, Type, Fn, FileBuilder } from "./codegen.js"
 import { JSDoc } from "./docgen.js"
 /** @typedef {import("./docgen.js").JSDocStatement} JSDocStatement @typedef {import("./docgen.js").JSDocOptions} JSDocOptions */
 import { Range } from "./genlib.js"
-import { assign, binary, call, callall, property, index, ternary } from "./codegenutils.js"
+import { assign, binary, call, callall, property, index, ternary, ternarymap, select, returnexpr as ret, repeatmap, defer } from "./codegenutils.js"
 
 // Constants
 
@@ -151,6 +151,7 @@ function generateVector( dimension, typecheck ) {
     const add = binary("+")
     const mul = binary("*")
     const ifnum = ternary('typeof x === "number"')
+    const ifnumm = ternarymap('typeof x === "number"')
 
     const ti = index( "this" ) // this index
     const tp = property( "this" ) // this property
@@ -163,6 +164,9 @@ function generateVector( dimension, typecheck ) {
     const ati = assign( ti )
     const vi = index( "v" )
 
+    //const vdot = repeatmap( dimension, callall( mul(ident1, ident2) ), " + " )
+    console.log( repeatmap(3, ti, "\n") )
+    //console.log( vdot(ti, vi) )
 
     function bodyThis( statements ) {
         return [...statements, "return this"]
@@ -419,7 +423,6 @@ ${DMAP( i => `    const ${RGBA[i]} = Math.min( Math.max( ${ti( i )} * 100, 0 ), 
         ]
 
         function general( name ) {
-            //const bodyNonstatic = `return ${ifnum( `this.s${name}( x )`, `this.v${name}( x )` )}`
             const bodyNonstatic = `return ${ifnum( `this.s${name}( x )`, `this.v${name}( x )` )}`
             const bodyStatic = `return ${ifnum( `${TYPE}.s${name}( v, x, target )`, `${TYPE}.v${name}( v, x, target )` )}`
             return [
