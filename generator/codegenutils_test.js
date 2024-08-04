@@ -1,5 +1,5 @@
 import { strict as assert }  from "assert"
-import { assign, binary, index } from "./codegenutils.js";
+import { assign, binary, call, field, index, resolve } from "./codegenutils.js";
 
 class Tester {
     constructor() { this.tests = [] }
@@ -77,6 +77,18 @@ tester.addTest("primitive index", ()=>{
     assert.equal(typeof f, "function")
     assert.equal(f(1), "x[1]")
 })
+tester.addTest("primitive field", ()=>{
+    const f = field("x")
+    assert.equal(typeof f, "function")
+    assert.equal(f("a"), "x.a")
+})
+tester.addTest("primitive call", ()=>{
+    const f = call("x")
+    assert.equal(typeof f, "function")
+    assert.equal(f(), "x()")
+    assert.equal(f(1), "x( 1 )")
+    assert.equal(f(1,2), "x( 1, 2 )")
+})
 tester.addTest("primitive binary", ()=>{
     const f = binary("+")
     assert.equal(typeof f, "function")
@@ -128,6 +140,34 @@ tester.addTest("currying", ()=>{
         binary("+", 1)(2),
         binary("+", 1, 2),
         binary("+")(1, 2)
+    )
+})
+
+tester.addTest("resolve", () => {
+    const add = ( a, b ) => a + b 
+    const oldargs = [add, add, add]
+    const newargs = [1,1, 2,2, 3,3]
+    assert.deepEqual(
+        resolve(oldargs, newargs),
+        [2,4,6]
+    )
+})
+tester.addTest("resolve partial", () => {
+    const add = ( a, b ) => a + b 
+    const oldargs = [add, add, add]
+    const newargs = [1,1, 2,2]
+    assert.deepEqual(
+        resolve(oldargs, newargs),
+        [2,4,add]
+    )
+})
+tester.addTest("resolve chain", () => {
+    const add = ( a, b ) => a + b 
+    const oldargs = [add, add, add]
+    assert.deepEqual(
+        resolve( resolve( resolve( resolve( oldargs, 
+            []), [1,1]), [2,2]), [3,3]),
+        [2,4,6]
     )
 })
 

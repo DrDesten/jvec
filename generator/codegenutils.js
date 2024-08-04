@@ -10,15 +10,59 @@ function fnlengths( ...args ) {
     return args.reduce((count, x) => count + (primitive(x) ? 0 : x.length), 0)
 }
 
-export function index( target, expression = none ) {
-    function index( target, expression ) {
+function curry( fn, ...args ) {
+    if (fn.length <= args.length) return fn(...args)
+    return fnsetlength( function curried( ...next ) {
+        return curry(fn, ...args, ...next)
+    }, fn.length - args.length)
+}
+
+export function resolve( oldargs, newargs ) {
+    const resolved = []
+    for ( let i = 0; i < oldargs.length; i++ ) {
+        if ( newargs.length === 0 ) {
+            resolved.push( ...oldargs.slice( i ) )
+            break
+        }
+
+        const arg = oldargs[i]
+        if ( primitive( arg ) ) {
+            resolved.push( arg )
+            continue
+        }
+        
+        const length = arg.length
+        const args = newargs.slice(0, length)
+        resolved.push( arg( ...args ) )
+        newargs = newargs.slice( length )
+    }
+    return resolved
+}
+
+// Exported Functions /////////////////////////////////////////////////
+
+// Codegen
+
+export function index( target, ...exprs ) {
+    function index( expression ) {
         return `${target}[${expression}]`
     }
-
-    if (expression === none) return expression => index(target, expression)
-    return index(target, expression)
+    return curry(index, ...exprs)
 }
-export function binary( op, left = none, right = none ) {
+export function field( target, ...exprs ) {
+    function field( expression ) {
+        return `${target}.${expression}`
+    }
+    return curry(field, ...exprs)
+}
+export function call( target, ...exprs ) {
+    function call( ...exprs ) {
+        return exprs.length ? `${target}( ${exprs.join( ", " )} )` : `${target}()`
+    }
+    return exprs.length ? call(...exprs) : call
+}
+
+/* export function binary( op, ...exprs ) {
     function binary( left, right ) {
         if ( primitive(left, right) ) 
             return `${left} ${op} ${right}` 
@@ -32,16 +76,31 @@ export function binary( op, left = none, right = none ) {
         }, length )
     }
 
-    if ( left === none ) 
-        return (left, right = none ) =>
-            right === none 
-                ? right => binary(left, right)
-                : binary(left, right)
-    if (right === none)
-        return right => binary(left, right)
-    return binary(left, right)
+    return curry(binary, ...exprs)
+} */
+export function binary( op, ...exprs ) {
+    function binary( left, right ) {
+        if ( primitive(left, right) ) 
+            return `${left} ${op} ${right}` 
+
+        const length = fnlengths( left, right )
+        return fnsetlength( function( ...args ) {
+            const resolved = resolve( [left, right], args )
+            const [rleft, rright] = resolved
+            return binary(rleft, rright)
+        }, length )
+    }
+
+    return curry(binary, ...exprs)
+}
+export function assign( ...exprs ) {
+    return binary("=", ...exprs )
 }
 
-export function assign( left, right = none ) {
-    return binary("=")( left, right )
+// Utils
+
+export function callall( fn ) {
+    return function ( x ) {
+        return fn( ...Array.from( { length: fn.length }, () => x ) )
+    }
 }

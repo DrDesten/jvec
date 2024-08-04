@@ -6,10 +6,11 @@ import { join } from "path"
 const __dirname = path.dirname( url.fileURLToPath( import.meta.url ) )
 
 // Custom includes
-import { setIndent, forceIndent, Type, Fn, FileBuilder, call, index } from "./codegen.js"
+import { setIndent, forceIndent, Type, Fn, FileBuilder } from "./codegen.js"
 import { JSDoc } from "./docgen.js"
 /** @typedef {import("./docgen.js").JSDocStatement} JSDocStatement @typedef {import("./docgen.js").JSDocOptions} JSDocOptions */
 import { Range } from "./genlib.js"
+import { assign, binary, call, callall, index } from "./codegenutils.js"
 
 // Constants
 
@@ -147,8 +148,14 @@ function generateVector( dimension, typecheck ) {
 
     const Param_m = new Fn.Param( "m", MATTYPELIKE )
 
+    const add = binary("+")
+    const mul = binary("*")
+
     const cnew = call( `${TYPE}.new` )
     const ti = index( "this" )
+    const ati = assign( ti )
+    const vi = index( "v" )
+
 
     function bodyThis( statements ) {
         return [...statements, "return this"]
@@ -413,8 +420,10 @@ ${DMAP( i => `    const ${RGBA[i]} = Math.min( Math.max( ${ti( i )} * 100, 0 ), 
             ]
         }
         function operation( name, operation ) {
-            const bodyScalar = DRANGE.map( i => `${ti( i )} = ${ti( i )} ${operation} s` )
-            const bodyVector = DRANGE.map( i => `${ti( i )} = ${ti( i )} ${operation} v[${i}]` )
+            const scalar = callall( ati( binary( operation, ti, "s" ) ) )
+            const vector = callall( ati( binary( operation, ti, vi ) ) )
+            const bodyScalar = DRANGE.map( scalar )
+            const bodyVector = DRANGE.map( vector )
             return [
                 Fn.autoStatic( `s${name}`, [Param_s, [Param_v, Param_s]], bodyScalar, { type: TYPE }, ["this", "target"], [/\bthis\b/g, "v"] ),
                 Fn.autoStatic( `v${name}`, [Param_v, Params_v1v2], bodyVector, { type: TYPE }, ["this", "target"], [/\bthis\b/g, "v1"], [/\bv\b/g, "v2"] ),
@@ -438,10 +447,11 @@ ${DMAP( i => `    const ${RGBA[i]} = Math.min( Math.max( ${ti( i )} * 100, 0 ), 
             const pMV = new Fn.Param( "m", TYPELIKE )
             const pAS = new Fn.Param( "a", "number" )
             const pAV = new Fn.Param( "a", TYPELIKE )
-            const bodyS = DRANGE.map( i => `${ti( i )} = ${ti( i )} * m + a` )
-            const bodySV = DRANGE.map( i => `${ti( i )} = ${ti( i )} * m + a[${i}]` )
-            const bodyVS = DRANGE.map( i => `${ti( i )} = ${ti( i )} * m[${i}] + a` )
-            const bodyV = DRANGE.map( i => `${ti( i )} = ${ti( i )} * m[${i}] + a[${i}]` )
+            const fma = ( m, a ) => callall( ati( add( mul( ti, m ), a ) ) )
+            const bodyS = DRANGE.map( fma( "m", "a" ) )
+            const bodySV = DRANGE.map( fma( "m", index( "a" ) ) )
+            const bodyVS = DRANGE.map( fma( index( "m" ), "a" ) )
+            const bodyV = DRANGE.map( fma( index( "m" ), index( "a" ) ) )
             return [
                 new Fn( "fma", [pM, pA], bodyNonstatic, { type: TYPE, indentFn: setIndent } ),
                 new Fn( "fma", [Param_v, pM, pA, Param_target], bodyStatic, { prefix: "static", type: TYPE, indentFn: setIndent } ),
