@@ -152,11 +152,10 @@ export function repeatmap( ...args ) {
     return curry(repeatmap, ...args)
 }
 
-export function defer( fn, ...args ) {
-    function defer( _ ) {
-        return fn
+export function defer( _ ) {
+    return function identity( x ) {
+        return x
     }
-    return curry(defer, ...args)
 }
 
 // Meta

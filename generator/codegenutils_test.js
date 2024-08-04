@@ -1,5 +1,5 @@
 import { strict as assert }  from "assert"
-import { assign, binary, call, property, index, select } from "./codegenutils.js";
+import { assign, binary, call, property, index, select, callall, defer } from "./codegenutils.js";
 
 class Tester {
     constructor() { this.tests = [] }
@@ -179,3 +179,16 @@ tester.addTest("resolve chain", () => {
 }) */
 
 tester.runTests()
+
+const add = binary("+")
+
+console.log([
+    index("this", 0),
+    index("this")(0),
+    binary("+", 1, 2),
+    add(1, 2),
+    add(index("a"), index("b")),
+    callall( 
+        add(index("a", defer), index("b"))
+    )(0)(1),
+])

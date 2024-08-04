@@ -10,7 +10,7 @@ import { setIndent, forceIndent, Type, Fn, FileBuilder } from "./codegen.js"
 import { JSDoc } from "./docgen.js"
 /** @typedef {import("./docgen.js").JSDocStatement} JSDocStatement @typedef {import("./docgen.js").JSDocOptions} JSDocOptions */
 import { Range } from "./genlib.js"
-import { assign, binary, call, callall, property, index, ternary, ternarymap, select, returnexpr as ret, repeatmap, defer } from "./codegenutils.js"
+import { assign, binary, call, callall, property, index, ternary, ternarymap, select, returnexpr as ret, repeatmap, defer, returnexpr, custom } from "./codegenutils.js"
 
 // Constants
 
