@@ -10,7 +10,7 @@ import { setIndent, forceIndent, Type, Fn, FileBuilder } from "./codegen.js"
 import { JSDoc } from "./docgen.js"
 /** @typedef {import("./docgen.js").JSDocStatement} JSDocStatement @typedef {import("./docgen.js").JSDocOptions} JSDocOptions */
 import { Range } from "./genlib.js"
-import { assign, binary, call, callall, property, index, ternary, ternarymap, select, returnexpr as ret, repeatmap, defer, returnexpr, custom } from "./codegenutils.js"
+import { assign, binary, call, callall, property, index, ternary, ternarymap, select, returnexpr as ret, repeatmap, defer, custom, prepend, group, yieldexpr } from "./codegenutils.js"
 
 // Constants
 
@@ -145,28 +145,37 @@ function generateVector( dimension, typecheck ) {
     const Param_v2 = new Fn.Param( "v2", TYPELIKE )
     const Params_v1v2 = [Param_v1, Param_v2]
     const Param_target = new Fn.Param( "target", TYPE, { expr: `new ${TYPE}` } )
-
     const Param_m = new Fn.Param( "m", MATTYPELIKE )
 
-    const add = binary("+")
-    const mul = binary("*")
-    const ifnum = ternary('typeof x === "number"')
-    const ifnumm = ternarymap('typeof x === "number"')
+    const Replacers = {
+        target: [/\bthis\b(?=(\[\d+\])*\s*=[^=])/g, "target"],
+        v: [/\bthis\b(?!(\[\d+\])*\s*=[^=])/g, "v"],
+        v1: [/\bthis\b(?!(\[\d+\])*\s*=[^=])/g, "v1"],
+        v2: [/\bv\b/g, "v2"],
+    }
+
+    const bool = prepend( "!!" )
+    const num = prepend( "+" )
+    const gbool = bool( group() )
+    const gnum = num( group() )
+    const add = binary( "+" )
+    const mul = binary( "*" )
+    const ifnum = ternary( 'typeof x === "number"' )
+    const ifnumm = ternarymap( 'typeof x === "number"' )
 
     const ti = index( "this" ) // this index
     const tp = property( "this" ) // this property
     const sp = property( TYPE ) // static property
 
-    const tcall = call(tp) // this property call
-    const scall = call(sp) // static property call
+    const tcall = call( tp ) // this property call
+    const scall = call( sp ) // static property call
 
     const cnew = call( `${TYPE}.new` )
     const ati = assign( ti )
     const vi = index( "v" )
 
-    //const vdot = repeatmap( dimension, callall( mul(ident1, ident2) ), " + " )
-    console.log( repeatmap(3, ti, "\n") )
-    //console.log( vdot(ti, vi) )
+    const map = repeatmap( dimension )
+    const newmap = cnew( map( ", " ) )
 
     function bodyThis( statements ) {
         return [...statements, "return this"]
@@ -214,33 +223,30 @@ return vec
         }
         function fromArray() {
             const params = [new Fn.Param( "array", "ArrayLike<number>" ), new Fn.Param( "index", NUMBER_TYPE, { expr: "0" } ), new Fn.Param( "stride", NUMBER_TYPE, { expr: "1" } )]
-            const body = `return ${cnew( DMAP( i => `array[${i} * stride + index]` ) )}`
+            const body = ret( cnew( DMAP( i => `array[${i} * stride + index]` ) ) )
             return new Fn( `fromArray`, params, body, { prefix: "static", type: TYPE } )
         }
         function fromFunction() {
             const params = new Fn.Param( "fn", "(index: number) => number" )
-            const body = `return ${cnew( DMAP( i => `fn( ${i} )` ) )}`
-            return new Fn( `fromFunction`, params, body, { prefix: "static", type: TYPE } )
+            return new Fn( `fromFunction`, params, ret( newmap( call( "fn" ) ) ), { prefix: "static", type: TYPE } )
         }
         function fromAngle2() {
             const params = new Fn.Param( "angle", NUMBER_TYPE )
-            const body = `return ${cnew( "Math.cos( angle ), Math.sin( angle )" )}`
+            const body = ret( cnew( "Math.cos( angle ), Math.sin( angle )" ) )
             return new Fn( `fromAngle`, params, body, { prefix: "static", type: TYPE } )
         }
         function random() {
-            const body = `return ${cnew( DMAP( _ => `Math.random()` ) )}`
-            return new Fn( `random`, [], body, { prefix: "static", type: TYPE } )
+            return new Fn( `random`, [], ret( newmap( `Math.random()` ) ), { prefix: "static", type: TYPE } )
         }
         function randomNorm() {
-            const body = `return ${cnew( DMAP( _ => `randomNorm()` ) )}`
-            return new Fn( `randomNorm`, [], body, { prefix: "static", type: TYPE } )
+            return new Fn( `randomNorm`, [], ret( newmap( `randomNorm()` ) ), { prefix: "static", type: TYPE } )
         }
         function randomDir() {
-            const body = `return ${cnew( DMAP( _ => `randomNorm()` ) )}.normalize()`
+            const body = `return ${newmap( `randomNorm()` )}.normalize()`
             return new Fn( `randomDir`, [], body, { prefix: "static", type: TYPE } )
         }
         function randomSphere() {
-            const body = `return ${cnew( DMAP( _ => `randomNorm()` ) )}.setLength( Math.random() ** (1/${dimension}) )`
+            const body = `return ${newmap( `randomNorm()` )}.setLength( Math.random() ** (1/${dimension}) )`
             return new Fn( `randomSphere`, [], body, { prefix: "static", type: TYPE } )
         }
 
@@ -312,18 +318,20 @@ return vec
     }
 
     function clone() {
-        return new Fn( "clone", [], `return ${cnew( ` this ` )}`, { type: TYPE } )
+        const body = DRANGE.map( callall( assign( index( "target" ), ti ) ) )
+        const bodyStatic = DRANGE.map( callall( assign( index( "target" ), vi ) ) )
+        return [
+            new Fn( "clone", [], [`const target = new ${TYPE}`, ...body, "return target"], { type: TYPE } ),
+            new Fn( "clone", [Param_v, Param_target], [...bodyStatic, "return target"], { prefix: "static", type: TYPE } )
+        ]
     }
 
     function iterator() {
-        return setIndent( `
-            *[Symbol.iterator]() {
-${DMAP( i => `                yield ${ti( i )}`, "\n" )}
-            }`, 4 )
+        return new Fn( "*[Symbol.iterator]", [], map( "\n", yieldexpr( ti ) ) )
     }
 
     function conversion() {
-        const arrayExpr = `[${DMAP( i => `${ti( i )}` )}]`
+        const arrayExpr = `[${map( ", ", ti )}]`
         const conversions = [
             new Fn( "[Symbol.toStringTag]", [], `return "${TYPE}"`, { type: "string", compact: true } ),
             new Fn( "toString", [], `return \`(${DMAP( i => `\${${ti( i )}}` )})\``, { type: "string", compact: true } ),
@@ -356,22 +364,31 @@ ${DMAP( i => `    const ${RGBA[i]} = Math.min( Math.max( ${ti( i )} * 100, 0 ), 
     }
 
     function boolean() {
-        function eq() {
-            const body = [`return ${DMAP( i => `${ti( i )} === v[${i}]`, " && " )}`]
-            return Fn.autoStatic( "eq", [Param_v, Params_v1v2], body, { type: "boolean" }, [/\bthis\b/g, "v1"], [/\bv\b/g, "v2"] )
+        function booleanJoin( name, joiner ) {
+            const body = ret( map( joiner, bool( ti ) ) )
+            return Fn.autoStatic( name, [[], Param_v], body, { type: "boolean" }, Replacers.v )
         }
-        function neq() {
-            const body = [`return ${DMAP( i => `${ti( i )} !== v[${i}]`, " || " )}`]
-            return Fn.autoStatic( "neq", [Param_v, Params_v1v2], body, { type: "boolean" }, [/\bthis\b/g, "v1"], [/\bv\b/g, "v2"] )
+        function booleanUnary( name, assignment ) {
+            const body = map( "\n", callall( ati( assignment ) ) )
+            return Fn.autoStatic( name, [[], Param_v], body, { type: TYPE }, Replacers.target, Replacers.v )
         }
 
         function all() {
-            const body = [`return ${DMAP( i => `!!${ti( i )}`, " && " )}`]
-            return Fn.autoStatic( "all", [[], Param_v], body, { type: "boolean" }, [/\bthis\b/g, "v"] )
+            return booleanJoin( "all", " && " )
         }
         function any() {
-            const body = [`return ${DMAP( i => `!!${ti( i )}`, " || " )}`]
-            return Fn.autoStatic( "any", [[], Param_v], body, { type: "boolean" }, [/\bthis\b/g, "v"] )
+            return booleanJoin( "any", " || " )
+        }
+
+        function isinf() {
+            return booleanUnary( "isinf", gnum( custom( i => `${ti( i )} === -Infinity || ${ti( i )} === Infinity` ) ) )
+        }
+        function isnan() {
+            return booleanUnary( "isnan", gnum( binary( "!==", ti, ti ) ) )
+        }
+
+        function not() {
+            return booleanUnary( "not", prepend( "+!", ti ) )
         }
 
         const operations = [
@@ -385,27 +402,24 @@ ${DMAP( i => `    const ${RGBA[i]} = Math.min( Math.max( ${ti( i )} * 100, 0 ), 
 
         function operation( name, op ) {
             const body = DRANGE.map( i => `${ti( i )} = +( ${ti( i )} ${op} v[${i}] )` )
-            return Fn.autoStatic( name, [Param_v, Params_v1v2], body, { type: TYPE }, ["this", "target"], [/\bthis\b/g, "v1"], [/\bv\b/g, "v2"] )
+            return Fn.autoStatic( name, [Param_v, Params_v1v2], body, { type: TYPE }, Replacers.target, Replacers.v1, Replacers.v2 )
         }
 
-        function isinf() {
-            const body = DRANGE.map( i => `${ti( i )} = +( ${ti( i )} === -Infinity || ${ti( i )} === Infinity )` )
-            return Fn.autoStatic( "isinf", [[], Param_v], body, { type: TYPE }, ["this", "target"], [/\bthis\b/g, "v"] )
+        function eq() {
+            const body = `return ${DMAP( i => `${ti( i )} === v[${i}]`, " && " )}`
+            return Fn.autoStatic( "eq", [Param_v, Params_v1v2], body, { type: "boolean" }, Replacers.v1, Replacers.v2 )
         }
-        function isnan() {
-            const body = DRANGE.map( i => `${ti( i )} = +( ${ti( i )} !== ${ti( i )} )` )
-            return Fn.autoStatic( "isnan", [[], Param_v], body, { type: TYPE }, ["this", "target"], [/\bthis\b/g, "v"] )
-        }
-
-        function not() {
-            const body = DRANGE.map( i => `${ti( i )} = +!${ti( i )}` )
-            return Fn.autoStatic( "not", [[], Param_v], body, { type: TYPE }, ["this", "target"], [/\bthis\b/g, "v"] )
+        function neq() {
+            const body = `return ${DMAP( i => `${ti( i )} !== v[${i}]`, " || " )}`
+            return Fn.autoStatic( "neq", [Param_v, Params_v1v2], body, { type: "boolean" }, Replacers.v1, Replacers.v2 )
         }
 
         const functions = [
             eq(), neq(),
             all(), any(),
-            operations.flatMap( ( [name, op] ) => operation( name, op ) ),
+            operations.flatMap( ( [name, op] ) =>
+                operation( name, op )
+            ),
             not(),
             isinf(), isnan()
         ]
@@ -423,8 +437,8 @@ ${DMAP( i => `    const ${RGBA[i]} = Math.min( Math.max( ${ti( i )} * 100, 0 ), 
         ]
 
         function general( name ) {
-            const bodyNonstatic = `return ${ifnum( `this.s${name}( x )`, `this.v${name}( x )` )}`
-            const bodyStatic = `return ${ifnum( `${TYPE}.s${name}( v, x, target )`, `${TYPE}.v${name}( v, x, target )` )}`
+            const bodyNonstatic = ret( ifnum( `this.s${name}( x )`, `this.v${name}( x )` ) )
+            const bodyStatic = ret( ifnum( `${TYPE}.s${name}( v, x, target )`, `${TYPE}.v${name}( v, x, target )` ) )
             return [
                 new Fn( name, [Param_x], bodyNonstatic, { type: TYPE } ),
                 new Fn( name, [Param_v, Param_x, Param_target], bodyStatic, { prefix: "static", type: TYPE } ),
@@ -436,8 +450,8 @@ ${DMAP( i => `    const ${RGBA[i]} = Math.min( Math.max( ${ti( i )} * 100, 0 ), 
             const bodyScalar = DRANGE.map( scalar )
             const bodyVector = DRANGE.map( vector )
             return [
-                Fn.autoStatic( `s${name}`, [Param_s, [Param_v, Param_s]], bodyScalar, { type: TYPE }, ["this", "target"], [/\bthis\b/g, "v"] ),
-                Fn.autoStatic( `v${name}`, [Param_v, Params_v1v2], bodyVector, { type: TYPE }, ["this", "target"], [/\bthis\b/g, "v1"], [/\bv\b/g, "v2"] ),
+                Fn.autoStatic( `s${name}`, [Param_s, [Param_v, Param_s]], bodyScalar, { type: TYPE }, Replacers.target, Replacers.v ),
+                Fn.autoStatic( `v${name}`, [Param_v, Params_v1v2], bodyVector, { type: TYPE }, Replacers.target, Replacers.v1, Replacers.v2 ),
             ]
         }
         function fma() {
@@ -466,10 +480,10 @@ ${DMAP( i => `    const ${RGBA[i]} = Math.min( Math.max( ${ti( i )} * 100, 0 ), 
             return [
                 new Fn( "fma", [pM, pA], bodyNonstatic, { type: TYPE, indentFn: setIndent } ),
                 new Fn( "fma", [Param_v, pM, pA, Param_target], bodyStatic, { prefix: "static", type: TYPE, indentFn: setIndent } ),
-                Fn.autoStatic( `sfma`, [[pMS, pAS], [Param_v, pMS, pAS]], bodyS, { type: TYPE }, ["this", "target"], [/\bthis\b/g, "v"] ),
-                Fn.autoStatic( `svfma`, [[pMS, pAV], [Param_v, pMS, pAV]], bodySV, { type: TYPE }, ["this", "target"], [/\bthis\b/g, "v"] ),
-                Fn.autoStatic( `vsfma`, [[pMV, pAS], [Param_v, pMV, pAS]], bodyVS, { type: TYPE }, ["this", "target"], [/\bthis\b/g, "v"] ),
-                Fn.autoStatic( `vfma`, [[pMV, pAV], [Param_v, pMV, pAV]], bodyV, { type: TYPE }, ["this", "target"], [/\bthis\b/g, "v"] ),
+                Fn.autoStatic( `sfma`, [[pMS, pAS], [Param_v, pMS, pAS]], bodyS, { type: TYPE }, Replacers.target, Replacers.v ),
+                Fn.autoStatic( `svfma`, [[pMS, pAV], [Param_v, pMS, pAV]], bodySV, { type: TYPE }, Replacers.target, Replacers.v ),
+                Fn.autoStatic( `vsfma`, [[pMV, pAS], [Param_v, pMV, pAS]], bodyVS, { type: TYPE }, Replacers.target, Replacers.v ),
+                Fn.autoStatic( `vfma`, [[pMV, pAV], [Param_v, pMV, pAV]], bodyV, { type: TYPE }, Replacers.target, Replacers.v ),
             ]
         }
 
@@ -478,13 +492,13 @@ ${DMAP( i => `    const ${RGBA[i]} = Math.min( Math.max( ${ti( i )} * 100, 0 ), 
                 DRANGE.map( i => `const c${i} = ${ti( i )}` ),
                 DRANGE.map( i => `${ti( i )} = ${DMAP( c => `c${c} * m[${i + c * dimension}]`, " + " )}` ),
             )
-            return Fn.autoStatic( `mmul`, [Param_m, [Param_v, Param_m]], body, { type: TYPE }, [/\bthis\b(?=.*=)/, "target"], [/\bthis\b/g, "v"] )
+            return Fn.autoStatic( `mmul`, [Param_m, [Param_v, Param_m]], body, { type: TYPE }, Replacers.target, Replacers.v )
         }
 
         function apply() {
             const param = new Fn.Param( "fn", `(value: number, index: number) => number` )
             const body = DRANGE.map( i => `${ti( i )} = fn( ${ti( i )}, ${i} )` )
-            return Fn.autoStatic( "apply", [param, [Param_v, param]], body, { type: TYPE }, ["this", "target"], [/\bthis\b/, "v"] )
+            return Fn.autoStatic( "apply", [param, [Param_v, param]], body, { type: TYPE }, Replacers.target, Replacers.v )
         }
         function builtinMath( name ) {
             const body = bodyThis( DRANGE.map( i => `${ti( i )} = Math.${name}( ${ti( i )} )` ) )
@@ -515,11 +529,11 @@ ${DMAP( i => `    const ${RGBA[i]} = Math.min( Math.max( ${ti( i )} * 100, 0 ), 
     function properties() {
         function length() {
             const body = `return Math.sqrt( ${DMAP( i => `${ti( i )} * ${ti( i )}`, " + " )} )`
-            return Fn.autoStatic( `length`, [[], Param_v], body, { type: "number" }, [/\bthis\b/g, "v"] )
+            return Fn.autoStatic( `length`, [[], Param_v], body, { type: "number" }, Replacers.v )
         }
         function lengthSq() {
             const body = `return ${DMAP( i => `${ti( i )} * ${ti( i )}`, " + " )}`
-            return Fn.autoStatic( `lengthSq`, [[], Param_v], body, { type: "number" }, [/\bthis\b/g, "v"] )
+            return Fn.autoStatic( `lengthSq`, [[], Param_v], body, { type: "number" }, Replacers.v )
         }
         return [length(), lengthSq()]
     }
@@ -528,21 +542,21 @@ ${DMAP( i => `    const ${RGBA[i]} = Math.min( Math.max( ${ti( i )} * 100, 0 ), 
         function pointTo() {
             const params = [new Fn.Param( "from", TYPELIKE ), new Fn.Param( "to", TYPELIKE )]
             const body = DRANGE.map( i => `${ti( i )} = v[${i}] - ${ti( i )}` )
-            return Fn.autoStatic( `pointTo`, [Param_v, params], body, { type: TYPE }, ["this", "target"], [/\bthis\b/g, "from"], [/\bv\b/g, "to"] )
+            return Fn.autoStatic( `pointTo`, [Param_v, params], body, { type: TYPE }, Replacers.target, [/\bthis\b/g, "from"], [/\bv\b/g, "to"] )
         }
         function normalize() {
             const body = [
                 `const factor = 1 / Math.sqrt( ${DMAP( i => `${ti( i )} * ${ti( i )}`, " + " )} )`,
                 ...DRANGE.map( i => `${ti( i )} = ${ti( i )} * factor` )
             ]
-            return Fn.autoStatic( `normalize`, [[], Param_v], body, { type: TYPE }, [/\bthis\b(?=.*=)/, "target"], [/\bthis\b/g, "v"] )
+            return Fn.autoStatic( `normalize`, [[], Param_v], body, { type: TYPE }, Replacers.target, Replacers.v )
         }
         function setLength() {
             const body = [
                 `const factor = s / Math.sqrt( ${DMAP( i => `${ti( i )} * ${ti( i )}`, " + " )} )`,
                 ...DRANGE.map( i => `${ti( i )} = ${ti( i )} * factor` )
             ]
-            return Fn.autoStatic( `setLength`, [Param_s, [Param_v, Param_s]], body, { type: TYPE }, [/\bthis\b(?=.*=)/, "target"], [/\bthis\b/g, "v"] )
+            return Fn.autoStatic( `setLength`, [Param_s, [Param_v, Param_s]], body, { type: TYPE }, Replacers.target, Replacers.v )
         }
         function rotate2() {
             const Param_angle = new Fn.Param( "angle", "number" )
@@ -560,14 +574,14 @@ ${DMAP( i => `    const ${RGBA[i]} = Math.min( Math.max( ${ti( i )} * 100, 0 ), 
                 `this[1] = t1`,
             ]
             return [
-                Fn.autoStatic( `rotate`, [Param_angle, [Param_v, Param_angle]], body, { type: TYPE }, [/\bthis\b(?=.*=)/g, "target"], [/\bthis\b/g, "v"] ),
-                Fn.autoStatic( `rotate90`, [[], Param_v], body90, { type: TYPE }, [/\bthis\b(?=.*=)/g, "target"], [/\bthis\b/g, "v"] )
+                Fn.autoStatic( `rotate`, [Param_angle, [Param_v, Param_angle]], body, { type: TYPE }, Replacers.target, Replacers.v ),
+                Fn.autoStatic( `rotate90`, [[], Param_v], body90, { type: TYPE }, Replacers.target, Replacers.v )
             ]
         }
 
         function dot() {
             const body = `return ${DMAP( i => `${ti( i )} * v[${i}]`, " + " )}`
-            return Fn.autoStatic( `dot`, [Param_v, Params_v1v2], body, { type: "number" }, [/\bthis\b/g, "v1"], [/\bv\b/g, "v2"] )
+            return Fn.autoStatic( `dot`, [Param_v, Params_v1v2], body, { type: "number" }, Replacers.v1, Replacers.v2 )
         }
         function cross3() {
             const body = `
@@ -578,7 +592,7 @@ ${DMAP( i => `    const ${RGBA[i]} = Math.min( Math.max( ${ti( i )} * 100, 0 ), 
                 this[1] = t1
                 this[2] = t2
             `
-            return Fn.autoStatic( `cross`, [Param_v, Params_v1v2], body, { type: TYPE }, [/\bthis\b(?=.*=)/g, "target"], [/\bthis\b/g, "v1"], [/\bv\b/g, "v2"] )
+            return Fn.autoStatic( `cross`, [Param_v, Params_v1v2], body, { type: TYPE }, Replacers.target, Replacers.v1, Replacers.v2 )
         }
 
         const functions = [

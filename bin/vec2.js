@@ -232,9 +232,20 @@ export class vec2 extends Float64Array {
 
     /** @returns {vec2} */
     clone() {
-        return vec2.new(  this  )
+        const target = new vec2
+        target[0] = this[0]
+        target[1] = this[1]
+        return target
     }
 
+    /** @param {vec2Like} v @param {vec2} [target=new vec2] @returns {vec2} */
+    static clone( v, target = new vec2 ) {
+        target[0] = v[0]
+        target[1] = v[1]
+        return target
+    }
+
+    /**  */
     *[Symbol.iterator]() {
         yield this[0]
         yield this[1]

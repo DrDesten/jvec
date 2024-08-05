@@ -740,15 +740,35 @@ export class vec3 extends Float64Array {
     /** @returns {vec3} */
     clone() {
         let tc_return
-        tc_return = vec3.new(  this  )
+        const target = new vec3
+        target[0] = this[0]
+        target[1] = this[1]
+        target[2] = this[2]
+        tc_return = target
         tc_vec3( tc_return )
         return tc_return
     }
 
+    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
+    static clone( v, target = new vec3 ) {
+        let tc_return
+        tc_vec3Like( v )
+        tc_vec32( target )
+        target[0] = v[0]
+        target[1] = v[1]
+        target[2] = v[2]
+        tc_return = target
+        tc_vec3( tc_return )
+        return tc_return
+    }
+
+    /**  */
     *[Symbol.iterator]() {
+        let tc_return
         yield this[0]
         yield this[1]
         yield this[2]
+        return tc_return
     }
 
     // ---------------------------

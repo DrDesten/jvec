@@ -1,20 +1,26 @@
-const none = Object.create(null)
+/**
+ * @typedef {(...args) => string} CodegenFunction
+ * @typedef {(...args) => CurriedFunction} CurriedFunction
+ */
 
 function primitive( ...args ) {
     return args.every( x => typeof x !== "function" )
 }
+/** @template T @param {T} fn @param {number} length @returns {T} */
 function fnsetlength( fn, length ) {
-    return Object.defineProperty(fn, "length", { value: length })
+    return Object.defineProperty( fn, "length", { value: length } )
 }
+/** @returns {number} */
 function fnlengths( ...args ) {
-    return args.reduce((count, x) => count + (primitive(x) ? 0 : x.length), 0)
+    return args.reduce( ( count, x ) => count + ( primitive( x ) ? 0 : x.length ), 0 )
 }
 
+/** @param {CodegenFunction} fn @returns {CurriedFunction} */
 function curry( fn, ...args ) {
-    if (fn.length <= args.length) return fn(...args)
+    if ( fn.length <= args.length ) return fn( ...args )
     return fnsetlength( function curried( ...next ) {
-        return curry(fn, ...args, ...next)
-    }, fn.length - args.length)
+        return curry( fn, ...args, ...next )
+    }, fn.length - args.length )
 }
 
 function resolveArguments( unresolved, args ) {
@@ -32,83 +38,103 @@ function resolve( fn, ...args ) {
     const length = fnlengths( ...args )
     return fnsetlength( function ( ...next ) {
         const resolved = resolveArguments( args, next )
-        return resolve(fn, ...resolved)
-    }, length)
+        return resolve( fn, ...resolved )
+    }, length )
 }
 
 // Exported Functions /////////////////////////////////////////////////
 
 // Codegen
 
-export function returnexpr( ...args ) {
-    function returnexpr( expression ) {
-        if ( primitive( expression ) )
-            return `return ${expression}`
-        return resolve(returnexpr, expression)
+export function prepend( ...args ) {
+    function prepend( prefix, expression ) {
+        if ( primitive( prefix, expression ) )
+            return `${prefix}${expression}`
+        return resolve( prepend, prefix, expression )
     }
-    return curry(returnexpr, ...args)
+    return curry( prepend, ...args )
 }
+export function append( ...args ) {
+    function append( postfix, expression ) {
+        if ( primitive( postfix, expression ) )
+            return `${expression}${postfix}`
+        return resolve( append, postfix, expression )
+    }
+    return curry( append, ...args )
+}
+
+export const returnexpr = prepend( "return " )
+export const yieldexpr = prepend( "yield " )
 
 export function index( target, ...exprs ) {
     function index( expression ) {
         if ( primitive( expression ) )
             return `${target}[${expression}]`
-        return resolve(index, expression)
+        return resolve( index, expression )
     }
-    return curry(index, ...exprs)
+    return curry( index, ...exprs )
 }
 export function property( target, ...exprs ) {
     function property( expression ) {
         if ( primitive( expression ) )
             return `${target}.${expression}`
-        return resolve(property, expression)
+        return resolve( property, expression )
     }
-    return curry(property, ...exprs)
+    return curry( property, ...exprs )
 }
+
 export function call( ...args ) {
     function call( target, expression ) {
-        if ( primitive(target, expression ) )
-            return expression
-                ? `${target}( ${expression instanceof Array ? expression.join(", ") : expression} )` 
+        if ( primitive( target, expression ) )
+            return expression !== undefined
+                ? `${target}( ${expression instanceof Array ? expression.join( ", " ) : expression} )`
                 : `${target}()`
-        return resolve(call, target, expression)
+        return resolve( call, target, expression )
     }
-    return curry(call, ...args)
+    return curry( call, ...args )
 }
+
+export function group( ...args ) {
+    function group( expression ) {
+        if ( primitive( expression ) )
+            return `( ${expression} )`
+        return resolve( group, expression )
+    }
+    return curry( group, ...args )
+}
+
 
 export function binary( op, ...args ) {
     function binary( left, right ) {
-        if ( primitive(left, right) ) 
-            return `${left} ${op} ${right}` 
-        return resolve(binary, left, right)
+        if ( primitive( left, right ) )
+            return `${left} ${op} ${right}`
+        return resolve( binary, left, right )
     }
-    return curry(binary, ...args)
+    return curry( binary, ...args )
 }
-export function assign( ...exprs ) {
-    return binary("=", ...exprs )
-}
+export const assign = binary( "=" )
 
 export function ternary( condition, ...args ) {
     function ternary( truthy, falsy ) {
-        if ( primitive(truthy, falsy) ) 
-            return `${condition} ? ${truthy} : ${falsy}` 
-        return resolve(ternary, truthy, falsy)
+        if ( primitive( truthy, falsy ) )
+            return `${condition} ? ${truthy} : ${falsy}`
+        return resolve( ternary, truthy, falsy )
     }
-    return curry(ternary, ...args)
+    return curry( ternary, ...args )
 }
 export function ternarymap( condition, ...args ) {
     function ternarymap( truthy, falsy ) {
-        if ( !primitive(truthy) ) truthy = truthy( true )
-        if ( !primitive(falsy) ) falsy = falsy( false )
+        if ( !primitive( truthy ) ) truthy = truthy( true )
+        if ( !primitive( falsy ) ) falsy = falsy( false )
 
         function ternary( truthy, falsy ) {
-            if ( primitive(truthy, falsy) ) 
-                return `${condition} ? ${truthy} : ${falsy}` 
-            return resolve(ternary, truthy, falsy)
+            if ( primitive( truthy, falsy ) )
+                return `${condition} ? ${truthy} : ${falsy}`
+            return resolve( ternary, truthy, falsy )
         }
-        return ternary(truthy, falsy)
+        return ternary( truthy, falsy )
     }
-    return curry(ternarymap, ...args)
+    return curry( ternarymap, ...args )
 }
 
 // Utils
@@ -122,34 +148,34 @@ export function callall( fn ) {
 }
 export function select( ...args ) {
     function select( truthy, falsy, condition ) {
-        if ( primitive( truthy, falsy, condition ) ) 
+        if ( primitive( truthy, falsy, condition ) )
             return condition ? truthy : falsy
-        return resolve(select, truthy, falsy, condition)
+        return resolve( select, truthy, falsy, condition )
     }
-    return curry(select, ...args)
+    return curry( select, ...args )
 }
 export function join( ...args ) {
     function join( joiner, ...args ) {
-        if ( primitive( joiner, ...args ) ) 
+        if ( primitive( joiner, ...args ) )
             return args.join( joiner )
-        return resolve(join, joiner, ...args )
+        return resolve( join, joiner, ...args )
     }
-    return curry(join, ...args)
+    return curry( join, ...args )
 }
 export function repeat( ...args ) {
     function repeat( count, expression, joiner ) {
-        if ( primitive( count, expression, joiner ) ) 
-            return Array.from({length: count}, () => expression ).join( joiner )
-        return resolve(repeat, count, expression, joiner)
+        if ( primitive( count, expression, joiner ) )
+            return Array.from( { length: count }, () => expression ).join( joiner )
+        return resolve( repeat, count, expression, joiner )
     }
-    return curry(repeat, ...args)
+    return curry( repeat, ...args )
 }
 export function repeatmap( ...args ) {
-    function repeatmap( count, expression, joiner ) {
-        const elements = Array.from({length: count}, (_,i) => !primitive( expression ) ? expression(i) : expression )
+    function repeatmap( count, joiner, expression ) {
+        const elements = Array.from( { length: count }, ( _, i ) => !primitive( expression ) ? expression( i ) : expression )
         return join( joiner, ...elements )
     }
-    return curry(repeatmap, ...args)
+    return curry( repeatmap, ...args )
 }
 
 export function defer( _ ) {
@@ -160,15 +186,15 @@ export function defer( _ ) {
 
 // Meta
 
+/** @param {CodegenFunction} fn */
 export function custom( fn ) {
     return function custom( ...args ) {
         function wrapper( ...args ) {
-            //args = args.slice( 0, fn.length )
             if ( primitive( ...args ) )
                 return fn( ...args )
-            return resolve(wrapper, ...args)
+            return resolve( wrapper, ...args )
         }
-        fnsetlength(wrapper, fn.length)
-        return curry(wrapper, ...args)
-    }
+        fnsetlength( wrapper, fn.length )
+        return curry( wrapper, ...args )
+    }()
 }
