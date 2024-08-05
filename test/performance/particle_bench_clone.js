@@ -16,8 +16,8 @@ class Particle {
 }
 
 export default function bench( particleCount, simulationSteps ) {
-    const start = performance.now()
     const particles = Array.from( { length: particleCount }, () => new Particle( vec2.randomNorm() ) )
+    const start = performance.now()
     for ( let i = 0; i < simulationSteps; i++ ) {
         for ( const particle of particles ) {
             particle.update()
