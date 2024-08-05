@@ -18,7 +18,7 @@ import { mat4 } from "./mat4.js"
 
 export class vec3 extends Float64Array {
 
-    static get NaN() { return new vec3( NaN, NaN, NaN ) }
+    static get NaN() { return vec3.new( NaN, NaN, NaN ) }
 
     // ---------------------------
     //      CONSTRUCTORS
@@ -648,13 +648,6 @@ export class vec3 extends Float64Array {
         return target
     }
 
-    /**  */
-    *[Symbol.iterator]() {
-        yield this[0]
-        yield this[1]
-        yield this[2]
-    }
-
     // ---------------------------
     //      CONVERSION
     // ---------------------------
@@ -664,25 +657,25 @@ export class vec3 extends Float64Array {
     /** @returns {string} */
     toString() { return `(${this[0]}, ${this[1]}, ${this[2]})` }
     /** @returns {number[]} */
-    toArray() { return [this[0], this[1], this[2]] }
+    toArray() { return [...this] }
     /** @returns {Int8Array} */
-    toInt8Array() { return new Int8Array( [this[0], this[1], this[2]] ) }
+    toInt8Array() { return new Int8Array( this ) }
     /** @returns {Uint8Array} */
-    toUint8Array() { return new Uint8Array( [this[0], this[1], this[2]] ) }
+    toUint8Array() { return new Uint8Array( this ) }
     /** @returns {Uint8ClampedArray} */
-    toUint8ClampedArray() { return new Uint8ClampedArray( [this[0], this[1], this[2]] ) }
+    toUint8ClampedArray() { return new Uint8ClampedArray( this ) }
     /** @returns {Int16Array} */
-    toInt16Array() { return new Int16Array( [this[0], this[1], this[2]] ) }
+    toInt16Array() { return new Int16Array( this ) }
     /** @returns {Uint16Array} */
-    toUint16Array() { return new Uint16Array( [this[0], this[1], this[2]] ) }
+    toUint16Array() { return new Uint16Array( this ) }
     /** @returns {Int32Array} */
-    toInt32Array() { return new Int32Array( [this[0], this[1], this[2]] ) }
+    toInt32Array() { return new Int32Array( this ) }
     /** @returns {Uint32Array} */
-    toUint32Array() { return new Uint32Array( [this[0], this[1], this[2]] ) }
+    toUint32Array() { return new Uint32Array( this ) }
     /** @returns {Float32Array} */
-    toFloat32Array() { return new Float32Array( [this[0], this[1], this[2]] ) }
+    toFloat32Array() { return new Float32Array( this ) }
     /** @returns {Float64Array} */
-    toFloat64Array() { return new Float64Array( [this[0], this[1], this[2]] ) }
+    toFloat64Array() { return new Float64Array( this ) }
 
     /** @param {{hex?: boolean}} [options={}] @returns {string} */
     toCSSColor( options = {} ) {

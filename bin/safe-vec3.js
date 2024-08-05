@@ -93,7 +93,7 @@ import { mat4 } from "./mat4.js"
 
 export class vec3 extends Float64Array {
 
-    static get NaN() { return new vec3( NaN, NaN, NaN ) }
+    static get NaN() { return vec3.new( NaN, NaN, NaN ) }
 
     // ---------------------------
     //      CONSTRUCTORS
@@ -762,15 +762,6 @@ export class vec3 extends Float64Array {
         return tc_return
     }
 
-    /**  */
-    *[Symbol.iterator]() {
-        let tc_return
-        yield this[0]
-        yield this[1]
-        yield this[2]
-        return tc_return
-    }
-
     // ---------------------------
     //      CONVERSION
     // ---------------------------
@@ -780,25 +771,25 @@ export class vec3 extends Float64Array {
     /** @returns {string} */
     toString() { let tc_return; tc_return = `(${this[0]}, ${this[1]}, ${this[2]})`; return tc_return }
     /** @returns {number[]} */
-    toArray() { let tc_return; tc_return = [this[0], this[1], this[2]]; return tc_return }
+    toArray() { let tc_return; tc_return = [...this]; return tc_return }
     /** @returns {Int8Array} */
-    toInt8Array() { let tc_return; tc_return = new Int8Array( [this[0], this[1], this[2]] ); return tc_return }
+    toInt8Array() { let tc_return; tc_return = new Int8Array( this ); return tc_return }
     /** @returns {Uint8Array} */
-    toUint8Array() { let tc_return; tc_return = new Uint8Array( [this[0], this[1], this[2]] ); return tc_return }
+    toUint8Array() { let tc_return; tc_return = new Uint8Array( this ); return tc_return }
     /** @returns {Uint8ClampedArray} */
-    toUint8ClampedArray() { let tc_return; tc_return = new Uint8ClampedArray( [this[0], this[1], this[2]] ); return tc_return }
+    toUint8ClampedArray() { let tc_return; tc_return = new Uint8ClampedArray( this ); return tc_return }
     /** @returns {Int16Array} */
-    toInt16Array() { let tc_return; tc_return = new Int16Array( [this[0], this[1], this[2]] ); return tc_return }
+    toInt16Array() { let tc_return; tc_return = new Int16Array( this ); return tc_return }
     /** @returns {Uint16Array} */
-    toUint16Array() { let tc_return; tc_return = new Uint16Array( [this[0], this[1], this[2]] ); return tc_return }
+    toUint16Array() { let tc_return; tc_return = new Uint16Array( this ); return tc_return }
     /** @returns {Int32Array} */
-    toInt32Array() { let tc_return; tc_return = new Int32Array( [this[0], this[1], this[2]] ); return tc_return }
+    toInt32Array() { let tc_return; tc_return = new Int32Array( this ); return tc_return }
     /** @returns {Uint32Array} */
-    toUint32Array() { let tc_return; tc_return = new Uint32Array( [this[0], this[1], this[2]] ); return tc_return }
+    toUint32Array() { let tc_return; tc_return = new Uint32Array( this ); return tc_return }
     /** @returns {Float32Array} */
-    toFloat32Array() { let tc_return; tc_return = new Float32Array( [this[0], this[1], this[2]] ); return tc_return }
+    toFloat32Array() { let tc_return; tc_return = new Float32Array( this ); return tc_return }
     /** @returns {Float64Array} */
-    toFloat64Array() { let tc_return; tc_return = new Float64Array( [this[0], this[1], this[2]] ); return tc_return }
+    toFloat64Array() { let tc_return; tc_return = new Float64Array( this ); return tc_return }
 
     /** @param {{hex?: boolean}} [options={}] @returns {string} */
     toCSSColor( options = {} ) {

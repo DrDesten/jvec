@@ -326,25 +326,20 @@ return vec
         ]
     }
 
-    function iterator() {
-        return new Fn( "*[Symbol.iterator]", [], map( "\n", yieldexpr( ti ) ) )
-    }
-
     function conversion() {
-        const arrayExpr = `[${map( ", ", ti )}]`
         const conversions = [
             new Fn( "[Symbol.toStringTag]", [], `return "${TYPE}"`, { type: "string", compact: true } ),
             new Fn( "toString", [], `return \`(${DMAP( i => `\${${ti( i )}}` )})\``, { type: "string", compact: true } ),
-            new Fn( "toArray", [], `return ${arrayExpr}`, { type: "number[]", compact: true } ),
-            new Fn( "toInt8Array", [], `return new Int8Array( ${arrayExpr} )`, { type: "Int8Array", compact: true } ),
-            new Fn( "toUint8Array", [], `return new Uint8Array( ${arrayExpr} )`, { type: "Uint8Array", compact: true } ),
-            new Fn( "toUint8ClampedArray", [], `return new Uint8ClampedArray( ${arrayExpr} )`, { type: "Uint8ClampedArray", compact: true } ),
-            new Fn( "toInt16Array", [], `return new Int16Array( ${arrayExpr} )`, { type: "Int16Array", compact: true } ),
-            new Fn( "toUint16Array", [], `return new Uint16Array( ${arrayExpr} )`, { type: "Uint16Array", compact: true } ),
-            new Fn( "toInt32Array", [], `return new Int32Array( ${arrayExpr} )`, { type: "Int32Array", compact: true } ),
-            new Fn( "toUint32Array", [], `return new Uint32Array( ${arrayExpr} )`, { type: "Uint32Array", compact: true } ),
-            new Fn( "toFloat32Array", [], `return new Float32Array( ${arrayExpr} )`, { type: "Float32Array", compact: true } ),
-            new Fn( "toFloat64Array", [], `return new Float64Array( ${arrayExpr} )`, { type: "Float64Array", compact: true } ),
+            new Fn( "toArray", [], `return [...this]`, { type: "number[]", compact: true } ),
+            new Fn( "toInt8Array", [], `return new Int8Array( this )`, { type: "Int8Array", compact: true } ),
+            new Fn( "toUint8Array", [], `return new Uint8Array( this )`, { type: "Uint8Array", compact: true } ),
+            new Fn( "toUint8ClampedArray", [], `return new Uint8ClampedArray( this )`, { type: "Uint8ClampedArray", compact: true } ),
+            new Fn( "toInt16Array", [], `return new Int16Array( this )`, { type: "Int16Array", compact: true } ),
+            new Fn( "toUint16Array", [], `return new Uint16Array( this )`, { type: "Uint16Array", compact: true } ),
+            new Fn( "toInt32Array", [], `return new Int32Array( this )`, { type: "Int32Array", compact: true } ),
+            new Fn( "toUint32Array", [], `return new Uint32Array( this )`, { type: "Uint32Array", compact: true } ),
+            new Fn( "toFloat32Array", [], `return new Float32Array( this )`, { type: "Float32Array", compact: true } ),
+            new Fn( "toFloat64Array", [], `return new Float64Array( this )`, { type: "Float64Array", compact: true } ),
         ]
 
         function cssColor() {
@@ -705,14 +700,13 @@ ${DMAP( i => `    const ${RGBA[i]} = Math.min( Math.max( ${ti( i )} * 100, 0 ), 
             ["typedef", `${TYPE}|ArrayLike<number>`, `${TYPE}Like`],
         ] ),
         `export class ${TYPE} extends Float64Array {`,
-        `    static get NaN() { return new ${TYPE}( ${DMAP( () => "NaN" )} ) }`,
+        `    static get NaN() { return ${newmap( "NaN" )} }`,
         subtitle( "CONSTRUCTORS" ),
         constructors(),
         subtitle( "FIELDS" ),
         fields(),
         set(),
         clone(),
-        iterator(),
         subtitle( "CONVERSION" ),
         conversion(),
         subtitle( "BOOLEAN" ),
