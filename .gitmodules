@@ -1,0 +1,3 @@
+[submodule "RegLexer"]
+	path = RegLexer
+	url = https://www.github.com/DrDesten/RegLexer.git
