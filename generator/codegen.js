@@ -1,3 +1,4 @@
+import { ObjectHelper } from "./codegenutils.js"
 import { JSDoc } from "./docgen.js"
 /** @typedef {import("./docgen.js").JSDocStatement} JSDocStatement @typedef {import("./docgen.js").JSDocOptions} JSDocOptions */
 
@@ -152,6 +153,7 @@ export function setIndent( string, indent = 0 ) {
 class FnParameter {
     /** @type {FnParameterOpts} */
     static DefaultOpts = { expr: undefined, optional: false, rest: false }
+    static o = ObjectHelper( { optional: true, rest: true } )
     /** @param {string} name @param {Type|string} type @param {FnParameterOpts} [opts] */
     constructor( name, type, opts = {} ) {
         this.name = name
@@ -176,6 +178,7 @@ export class Fn {
     static P = FnParameter
     /** @type {FnOpts} */
     static DefaultOpts = { prefix: '', type: '', description: '', compact: false, indentFn: forceIndent, jsdocOpts: {} }
+    static o = ObjectHelper( { static: { prefix: "static" }, compact: true } )
     /** @param {string} name @param {FnParameter|FnParameter[]} params @param {string|string[]} body @param {FnOpts} [opts] */
     constructor( name, params, body, opts = {} ) {
         this.name = name
@@ -304,7 +307,7 @@ export class Fn {
         const fnNonstatic = new Fn( name, paramsNonstatic, bodyNonstatic, opts )
         const fnStatic = new Fn( name, paramsStatic, bodyStatic, { ...opts, prefix: "static" } )
 
-        fnNonstatic.replace( /([a-zA-Z_$][a-zA-Z_$0-9]*(?:\[\d+\])*)\s*=\s*\1\s*([+\-*/%]|\*\*)(?=\s*[a-zA-Z_$][a-zA-Z_$0-9]*(?:\[\d+\])*\s*$)/, "$1 $2=" )
+        fnNonstatic.replace( /([a-zA-Z_$][a-zA-Z_$0-9]*(?:\[\d+\])*)\s*=\s*\1\s*([+\-*/%]|\*\*)(?=\s*[a-zA-Z_$][a-zA-Z_$0-9]*(?:\[\d+\])*\s*$)/gm, "$1 $2=" )
         variableReplacers.forEach( ( [regex, replacement] ) => fnStatic.replace( regex, replacement ) )
 
         return [fnNonstatic, fnStatic]

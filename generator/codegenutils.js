@@ -1,10 +1,25 @@
 /**
+ * @typedef {string|symbol|number|bigint|boolean|null|undefined} Primitive
+ */
+/**
  * @template T
  * @typedef {{[key: string]: T}} ObjectMap
  */
 /**
- * @typedef {(...args) => string} CodegenFunction
- * @typedef {(...args) => CurriedFunction} CurriedFunction
+ * @template T 
+ * @typedef {(...args) => T} TargetFunction
+ */
+/**
+ * @template T
+ * @typedef {(...args) => T | CurriedFunction<T>} CurriedFunction
+ */
+/**
+ * @template T
+ * @typedef {(...args) => T | ResolvingFunction<T>} ResolvingFunction
+ */
+/**
+ * @template T
+ * @typedef {T|CurriedFunction<T|ResolvingFunction<T>>} CodegenFunction
  */
 
 function primitive( ...args ) {
@@ -19,7 +34,7 @@ function fnlengths( ...args ) {
     return args.reduce( ( count, x ) => count + ( primitive( x ) ? 0 : x.length ), 0 )
 }
 
-/** @param {CodegenFunction} fn @returns {CurriedFunction} */
+/** @template T @param {TargetFunction<T>} fn @returns {T|CurriedFunction<T>} */
 function curry( fn, ...args ) {
     if ( fn.length <= args.length ) return fn( ...args )
     return fnsetlength( function curried( ...next ) {
@@ -37,6 +52,7 @@ function resolveArguments( unresolved, args ) {
     }
     return resolved
 }
+/** @template T @param {TargetFunction<T>} fn @returns {T|ResolvingFunction<T>} */
 function resolve( fn, ...args ) {
     if ( primitive( ...args ) ) return fn( ...args )
     const length = fnlengths( ...args )
@@ -50,6 +66,7 @@ function resolve( fn, ...args ) {
 
 // Codegen
 
+/** @returns {CodegenFunction<string>} */
 export function prepend( ...args ) {
     function prepend( prefix, expression ) {
         if ( primitive( prefix, expression ) )
@@ -58,6 +75,7 @@ export function prepend( ...args ) {
     }
     return curry( prepend, ...args )
 }
+/** @returns {CodegenFunction<string>} */
 export function append( ...args ) {
     function append( postfix, expression ) {
         if ( primitive( postfix, expression ) )
@@ -70,6 +88,7 @@ export function append( ...args ) {
 export const returnexpr = prepend( "return " )
 export const yieldexpr = prepend( "yield " )
 
+/** @returns {CodegenFunction<string>} */
 export function index( target, ...exprs ) {
     function index( expression ) {
         if ( primitive( expression ) )
@@ -78,6 +97,7 @@ export function index( target, ...exprs ) {
     }
     return curry( index, ...exprs )
 }
+/** @returns {CodegenFunction<string>} */
 export function property( ...exprs ) {
     function property( target, expression ) {
         if ( primitive( target, expression ) )
@@ -87,6 +107,7 @@ export function property( ...exprs ) {
     return curry( property, ...exprs )
 }
 
+/** @returns {CodegenFunction<string>} */
 export function call( ...args ) {
     function call( target, expression ) {
         if ( primitive( target, expression ) )
@@ -98,6 +119,7 @@ export function call( ...args ) {
     return curry( call, ...args )
 }
 
+/** @returns {CodegenFunction<string>} */
 export function group( ...args ) {
     function group( expression ) {
         if ( primitive( expression ) )
@@ -108,6 +130,7 @@ export function group( ...args ) {
 }
 
 
+/** @returns {CodegenFunction<string>} */
 export function binary( op, ...args ) {
     function binary( left, right ) {
         if ( primitive( left, right ) )
@@ -118,6 +141,7 @@ export function binary( op, ...args ) {
 }
 export const assign = binary( "=" )
 
+/** @returns {CodegenFunction<string>} */
 export function ternary( condition, ...args ) {
     function ternary( truthy, falsy ) {
         if ( primitive( truthy, falsy ) )
@@ -126,6 +150,7 @@ export function ternary( condition, ...args ) {
     }
     return curry( ternary, ...args )
 }
+/** @returns {CodegenFunction<string>} */
 export function ternarymap( condition, ...args ) {
     function ternarymap( truthy, falsy ) {
         if ( !primitive( truthy ) ) truthy = truthy( true )
@@ -150,6 +175,7 @@ export function callall( fn ) {
             : fn
     }
 }
+/** @returns {CodegenFunction<string>} */
 export function select( ...args ) {
     function select( truthy, falsy, condition ) {
         if ( primitive( truthy, falsy, condition ) )
@@ -158,6 +184,7 @@ export function select( ...args ) {
     }
     return curry( select, ...args )
 }
+/** @returns {CodegenFunction<string>} */
 export function join( ...args ) {
     function join( joiner, ...args ) {
         if ( primitive( joiner, ...args ) )
@@ -166,6 +193,7 @@ export function join( ...args ) {
     }
     return curry( join, ...args )
 }
+/** @returns {CodegenFunction<string>} */
 export function repeat( ...args ) {
     function repeat( count, expression, joiner ) {
         if ( primitive( count, expression, joiner ) )
@@ -174,6 +202,7 @@ export function repeat( ...args ) {
     }
     return curry( repeat, ...args )
 }
+/** @returns {CodegenFunction<string>} */
 export function repeatmap( ...args ) {
     function repeatmap( count, joiner, expression ) {
         const elements = Array.from( { length: count }, ( _, i ) => !primitive( expression ) ? expression( i ) : expression )
@@ -192,7 +221,7 @@ export function defer( _ ) {
 
 // Meta
 
-/** @param {CodegenFunction} fn */
+/** @template T @param {TargetFunction<T>} fn @returns {CodegenFunction<T>} */
 export function custom( fn ) {
     return function custom( ...args ) {
         function wrapper( ...args ) {
@@ -207,10 +236,8 @@ export function custom( fn ) {
 
 // JS Utils
 
-// o.prefix.static()
-// { prefix: "static" }
 
-const objHelperPrimitives = {
+const objectHelperPrimitives = {
     undefined: undefined,
     null: null,
     false: false,
@@ -218,32 +245,41 @@ const objHelperPrimitives = {
     NaN: NaN,
 }
 
-/** 
- * @typedef {() => ObjectMap<string|number|boolean|null|undefined>} ObjectHelper
- * 
- * @param {...string} properties  
- * @returns {ObjectMap<ObjectHelper>}
- */
-function objHelper( ...properties ) {
-    return new Proxy( function () {}, {
-        get( _, property ) { return objHelper( ...properties, property ) },
-        set() { return false },
-        apply() {
+/** @param {{[trigger: string]: Primitive | {[key: string]: any}}} options  */
+export function ObjectHelper( options ) {
+    return function ObjectHelperChain( ...properties ) {
+        return new Proxy( function ObjectHelperBuilder() {
+            /** @type {{[key: string]: any}} */
             const obj = Object.create( null )
-            for ( let i = 0; i < properties.length; i += 2 ) {
-                let key = properties[i], value = properties[i + 1]
-                if ( value in objHelperPrimitives ) {
-                    obj[key] = objHelperPrimitives[value]
+            for ( let i = 0; i < properties.length; ) {
+                const key = properties[i++]
+                if ( key in options ) {
+                    const value = options[key]
+                    if ( value && typeof value === "object" )
+                        Object.assign( obj, value )
+                    else
+                        obj[key] = value
+                    continue
+                }
+
+                const value = properties[i++]
+                if ( value in objectHelperPrimitives ) {
+                    obj[key] = objectHelperPrimitives[value]
                     continue
                 }
                 if ( value && !isNaN( +value ) ) {
                     obj[key] = +value
                     continue
                 }
+
                 obj[key] = value
             }
             return obj
-        }
-    } )
+        }, {
+            get( _, property ) { return ObjectHelperChain( ...properties, property ) },
+            set() { return false },
+        } )
+    }()
 }
-export const o = objHelper()
+
+export const o = ObjectHelper( {} )
