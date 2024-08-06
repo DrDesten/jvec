@@ -175,7 +175,7 @@ export class vec3 extends Float64Array {
     /** @returns {vec3} */
     static randomSphere() {
         let tc_return
-        tc_return = vec3.new( randomNorm(), randomNorm(), randomNorm() ).setLength( Math.random() ** (1/3) )
+        tc_return = vec3.new( randomNorm(), randomNorm(), randomNorm() ).setLength( Math.random() ** ( 1 / 3 ) )
         tc_vec3( tc_return )
         return tc_return
     }
@@ -876,6 +876,78 @@ export class vec3 extends Float64Array {
         return tc_return
     }
 
+    /** @returns {vec3} */
+    not() {
+        let tc_return
+        this[0] = +!this[0]
+        this[1] = +!this[1]
+        this[2] = +!this[2]
+        tc_return = this
+        tc_vec3( tc_return )
+        return tc_return
+    }
+
+    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
+    static not( v, target = new vec3 ) {
+        let tc_return
+        tc_vec3Like( v )
+        tc_vec32( target )
+        target[0] = +!v[0]
+        target[1] = +!v[1]
+        target[2] = +!v[2]
+        tc_return = target
+        tc_vec3( tc_return )
+        return tc_return
+    }
+
+    /** @returns {vec3} */
+    isinf() {
+        let tc_return
+        this[0] = +( this[0] === -Infinity || this[0] === Infinity )
+        this[1] = +( this[1] === -Infinity || this[1] === Infinity )
+        this[2] = +( this[2] === -Infinity || this[2] === Infinity )
+        tc_return = this
+        tc_vec3( tc_return )
+        return tc_return
+    }
+
+    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
+    static isinf( v, target = new vec3 ) {
+        let tc_return
+        tc_vec3Like( v )
+        tc_vec32( target )
+        target[0] = +( v[0] === -Infinity || v[0] === Infinity )
+        target[1] = +( v[1] === -Infinity || v[1] === Infinity )
+        target[2] = +( v[2] === -Infinity || v[2] === Infinity )
+        tc_return = target
+        tc_vec3( tc_return )
+        return tc_return
+    }
+
+    /** @returns {vec3} */
+    isnan() {
+        let tc_return
+        this[0] = +( this[0] !== this[0] )
+        this[1] = +( this[1] !== this[1] )
+        this[2] = +( this[2] !== this[2] )
+        tc_return = this
+        tc_vec3( tc_return )
+        return tc_return
+    }
+
+    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
+    static isnan( v, target = new vec3 ) {
+        let tc_return
+        tc_vec3Like( v )
+        tc_vec32( target )
+        target[0] = +( v[0] !== v[0] )
+        target[1] = +( v[1] !== v[1] )
+        target[2] = +( v[2] !== v[2] )
+        tc_return = target
+        tc_vec3( tc_return )
+        return tc_return
+    }
+
     /** @param {vec3Like} v @returns {vec3} */
     greaterThan( v ) {
         let tc_return
@@ -1027,78 +1099,6 @@ export class vec3 extends Float64Array {
         target[0] = +( v1[0] !== v2[0] )
         target[1] = +( v1[1] !== v2[1] )
         target[2] = +( v1[2] !== v2[2] )
-        tc_return = target
-        tc_vec3( tc_return )
-        return tc_return
-    }
-
-    /** @returns {vec3} */
-    not() {
-        let tc_return
-        this[0] = +!this[0]
-        this[1] = +!this[1]
-        this[2] = +!this[2]
-        tc_return = this
-        tc_vec3( tc_return )
-        return tc_return
-    }
-
-    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
-    static not( v, target = new vec3 ) {
-        let tc_return
-        tc_vec3Like( v )
-        tc_vec32( target )
-        target[0] = +!v[0]
-        target[1] = +!v[1]
-        target[2] = +!v[2]
-        tc_return = target
-        tc_vec3( tc_return )
-        return tc_return
-    }
-
-    /** @returns {vec3} */
-    isinf() {
-        let tc_return
-        this[0] = +( this[0] === -Infinity || this[0] === Infinity )
-        this[1] = +( this[1] === -Infinity || this[1] === Infinity )
-        this[2] = +( this[2] === -Infinity || this[2] === Infinity )
-        tc_return = this
-        tc_vec3( tc_return )
-        return tc_return
-    }
-
-    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
-    static isinf( v, target = new vec3 ) {
-        let tc_return
-        tc_vec3Like( v )
-        tc_vec32( target )
-        target[0] = +( v[0] === -Infinity || v[0] === Infinity )
-        target[1] = +( v[1] === -Infinity || v[1] === Infinity )
-        target[2] = +( v[2] === -Infinity || v[2] === Infinity )
-        tc_return = target
-        tc_vec3( tc_return )
-        return tc_return
-    }
-
-    /** @returns {vec3} */
-    isnan() {
-        let tc_return
-        this[0] = +( this[0] !== this[0] )
-        this[1] = +( this[1] !== this[1] )
-        this[2] = +( this[2] !== this[2] )
-        tc_return = this
-        tc_vec3( tc_return )
-        return tc_return
-    }
-
-    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
-    static isnan( v, target = new vec3 ) {
-        let tc_return
-        tc_vec3Like( v )
-        tc_vec32( target )
-        target[0] = +( v[0] !== v[0] )
-        target[1] = +( v[1] !== v[1] )
-        target[2] = +( v[2] !== v[2] )
         tc_return = target
         tc_vec3( tc_return )
         return tc_return

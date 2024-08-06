@@ -145,20 +145,20 @@ export function setIndent( string, indent = 0 ) {
 }
 
 /**
- * @typedef {{expr?: string, optional?: boolean, rest?: boolean}} FnParamOpts
+ * @typedef {{expr?: string, optional?: boolean, rest?: boolean}} FnParameterOpts
  * @typedef {{prefix?: string, type?: string|Type, description?: string, compact?: boolean, indentFn?: (text:string, indent:number) => string, jsdocOpts?: JSDocOptions}} FnOpts
  */
 
-class FnParam {
-    /** @type {FnParamOpts} */
+class FnParameter {
+    /** @type {FnParameterOpts} */
     static DefaultOpts = { expr: undefined, optional: false, rest: false }
-    /** @param {string} name @param {Type|string} type @param {FnParamOpts} [opts] */
+    /** @param {string} name @param {Type|string} type @param {FnParameterOpts} [opts] */
     constructor( name, type, opts = {} ) {
         this.name = name
         this.type = type
 
         opts.optional ||= !!opts.expr
-        this.opts = { ...FnParam.DefaultOpts, ...opts }
+        this.opts = { ...FnParameter.DefaultOpts, ...opts }
     }
     /** @returns {string} */
     string() {
@@ -173,10 +173,10 @@ class FnParam {
 }
 
 export class Fn {
-    static Param = FnParam
+    static P = FnParameter
     /** @type {FnOpts} */
     static DefaultOpts = { prefix: '', type: '', description: '', compact: false, indentFn: forceIndent, jsdocOpts: {} }
-    /** @param {string} name @param {FnParam|FnParam[]} params @param {string|string[]} body @param {FnOpts} [opts] */
+    /** @param {string} name @param {FnParameter|FnParameter[]} params @param {string|string[]} body @param {FnOpts} [opts] */
     constructor( name, params, body, opts = {} ) {
         this.name = name
         this.params = params instanceof Array ? params : [params]
@@ -291,7 +291,7 @@ export class Fn {
 
     // Statics
 
-    /** @param {string} name @param {[FnParam|FnParam[],FnParam|FnParam[]]} params @param {string|string[]} body @param {FnOpts} [opts] @param {...[RegExp|string,string]} variableReplacers */
+    /** @param {string} name @param {[FnParameter|FnParameter[],FnParameter|FnParameter[]]} params @param {string|string[]} body @param {FnOpts} [opts] @param {...[RegExp|string,string]} variableReplacers */
     static autoStatic( name, [paramsNonstatic, paramsStatic], body, opts, ...variableReplacers ) {
         body = body instanceof Array ? body : [body]
         paramsStatic = paramsStatic instanceof Array ? [...paramsStatic] : [paramsStatic]
@@ -299,7 +299,7 @@ export class Fn {
         const returns = body.some( stmt => /\breturn\b/.test( stmt ) )
         const bodyNonstatic = returns ? body : [...body, "return this"]
         const bodyStatic = returns ? body : [...body, "return target"]
-        returns || paramsStatic.push( new FnParam( "target", opts.type, { expr: `new ${opts.type}` } ) )
+        returns || paramsStatic.push( new FnParameter( "target", opts.type, { expr: `new ${opts.type}` } ) )
 
         const fnNonstatic = new Fn( name, paramsNonstatic, bodyNonstatic, opts )
         const fnStatic = new Fn( name, paramsStatic, bodyStatic, { ...opts, prefix: "static" } )

@@ -75,7 +75,7 @@ export class vec3 extends Float64Array {
 
     /** @returns {vec3} */
     static randomSphere() {
-        return vec3.new( randomNorm(), randomNorm(), randomNorm() ).setLength( Math.random() ** (1/3) )
+        return vec3.new( randomNorm(), randomNorm(), randomNorm() ).setLength( Math.random() ** ( 1 / 3 ) )
     }
 
     // ---------------------------
@@ -736,6 +736,54 @@ export class vec3 extends Float64Array {
         return !!v[0] || !!v[1] || !!v[2]
     }
 
+    /** @returns {vec3} */
+    not() {
+        this[0] = +!this[0]
+        this[1] = +!this[1]
+        this[2] = +!this[2]
+        return this
+    }
+
+    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
+    static not( v, target = new vec3 ) {
+        target[0] = +!v[0]
+        target[1] = +!v[1]
+        target[2] = +!v[2]
+        return target
+    }
+
+    /** @returns {vec3} */
+    isinf() {
+        this[0] = +( this[0] === -Infinity || this[0] === Infinity )
+        this[1] = +( this[1] === -Infinity || this[1] === Infinity )
+        this[2] = +( this[2] === -Infinity || this[2] === Infinity )
+        return this
+    }
+
+    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
+    static isinf( v, target = new vec3 ) {
+        target[0] = +( v[0] === -Infinity || v[0] === Infinity )
+        target[1] = +( v[1] === -Infinity || v[1] === Infinity )
+        target[2] = +( v[2] === -Infinity || v[2] === Infinity )
+        return target
+    }
+
+    /** @returns {vec3} */
+    isnan() {
+        this[0] = +( this[0] !== this[0] )
+        this[1] = +( this[1] !== this[1] )
+        this[2] = +( this[2] !== this[2] )
+        return this
+    }
+
+    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
+    static isnan( v, target = new vec3 ) {
+        target[0] = +( v[0] !== v[0] )
+        target[1] = +( v[1] !== v[1] )
+        target[2] = +( v[2] !== v[2] )
+        return target
+    }
+
     /** @param {vec3Like} v @returns {vec3} */
     greaterThan( v ) {
         this[0] = +( this[0] > v[0] )
@@ -829,54 +877,6 @@ export class vec3 extends Float64Array {
         target[0] = +( v1[0] !== v2[0] )
         target[1] = +( v1[1] !== v2[1] )
         target[2] = +( v1[2] !== v2[2] )
-        return target
-    }
-
-    /** @returns {vec3} */
-    not() {
-        this[0] = +!this[0]
-        this[1] = +!this[1]
-        this[2] = +!this[2]
-        return this
-    }
-
-    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
-    static not( v, target = new vec3 ) {
-        target[0] = +!v[0]
-        target[1] = +!v[1]
-        target[2] = +!v[2]
-        return target
-    }
-
-    /** @returns {vec3} */
-    isinf() {
-        this[0] = +( this[0] === -Infinity || this[0] === Infinity )
-        this[1] = +( this[1] === -Infinity || this[1] === Infinity )
-        this[2] = +( this[2] === -Infinity || this[2] === Infinity )
-        return this
-    }
-
-    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
-    static isinf( v, target = new vec3 ) {
-        target[0] = +( v[0] === -Infinity || v[0] === Infinity )
-        target[1] = +( v[1] === -Infinity || v[1] === Infinity )
-        target[2] = +( v[2] === -Infinity || v[2] === Infinity )
-        return target
-    }
-
-    /** @returns {vec3} */
-    isnan() {
-        this[0] = +( this[0] !== this[0] )
-        this[1] = +( this[1] !== this[1] )
-        this[2] = +( this[2] !== this[2] )
-        return this
-    }
-
-    /** @param {vec3Like} v @param {vec3} [target=new vec3] @returns {vec3} */
-    static isnan( v, target = new vec3 ) {
-        target[0] = +( v[0] !== v[0] )
-        target[1] = +( v[1] !== v[1] )
-        target[2] = +( v[2] !== v[2] )
         return target
     }
 

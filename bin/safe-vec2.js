@@ -172,7 +172,7 @@ export class vec2 extends Float64Array {
     /** @returns {vec2} */
     static randomSphere() {
         let tc_return
-        tc_return = vec2.new( randomNorm(), randomNorm() ).setLength( Math.random() ** (1/2) )
+        tc_return = vec2.new( randomNorm(), randomNorm() ).setLength( Math.random() ** ( 1 / 2 ) )
         tc_vec2( tc_return )
         return tc_return
     }
@@ -450,6 +450,72 @@ export class vec2 extends Float64Array {
         return tc_return
     }
 
+    /** @returns {vec2} */
+    not() {
+        let tc_return
+        this[0] = +!this[0]
+        this[1] = +!this[1]
+        tc_return = this
+        tc_vec2( tc_return )
+        return tc_return
+    }
+
+    /** @param {vec2Like} v @param {vec2} [target=new vec2] @returns {vec2} */
+    static not( v, target = new vec2 ) {
+        let tc_return
+        tc_vec2Like( v )
+        tc_vec21( target )
+        target[0] = +!v[0]
+        target[1] = +!v[1]
+        tc_return = target
+        tc_vec2( tc_return )
+        return tc_return
+    }
+
+    /** @returns {vec2} */
+    isinf() {
+        let tc_return
+        this[0] = +( this[0] === -Infinity || this[0] === Infinity )
+        this[1] = +( this[1] === -Infinity || this[1] === Infinity )
+        tc_return = this
+        tc_vec2( tc_return )
+        return tc_return
+    }
+
+    /** @param {vec2Like} v @param {vec2} [target=new vec2] @returns {vec2} */
+    static isinf( v, target = new vec2 ) {
+        let tc_return
+        tc_vec2Like( v )
+        tc_vec21( target )
+        target[0] = +( v[0] === -Infinity || v[0] === Infinity )
+        target[1] = +( v[1] === -Infinity || v[1] === Infinity )
+        tc_return = target
+        tc_vec2( tc_return )
+        return tc_return
+    }
+
+    /** @returns {vec2} */
+    isnan() {
+        let tc_return
+        this[0] = +( this[0] !== this[0] )
+        this[1] = +( this[1] !== this[1] )
+        tc_return = this
+        tc_vec2( tc_return )
+        return tc_return
+    }
+
+    /** @param {vec2Like} v @param {vec2} [target=new vec2] @returns {vec2} */
+    static isnan( v, target = new vec2 ) {
+        let tc_return
+        tc_vec2Like( v )
+        tc_vec21( target )
+        target[0] = +( v[0] !== v[0] )
+        target[1] = +( v[1] !== v[1] )
+        tc_return = target
+        tc_vec2( tc_return )
+        return tc_return
+    }
+
     /** @param {vec2Like} v @returns {vec2} */
     greaterThan( v ) {
         let tc_return
@@ -589,72 +655,6 @@ export class vec2 extends Float64Array {
         tc_vec21( target )
         target[0] = +( v1[0] !== v2[0] )
         target[1] = +( v1[1] !== v2[1] )
-        tc_return = target
-        tc_vec2( tc_return )
-        return tc_return
-    }
-
-    /** @returns {vec2} */
-    not() {
-        let tc_return
-        this[0] = +!this[0]
-        this[1] = +!this[1]
-        tc_return = this
-        tc_vec2( tc_return )
-        return tc_return
-    }
-
-    /** @param {vec2Like} v @param {vec2} [target=new vec2] @returns {vec2} */
-    static not( v, target = new vec2 ) {
-        let tc_return
-        tc_vec2Like( v )
-        tc_vec21( target )
-        target[0] = +!v[0]
-        target[1] = +!v[1]
-        tc_return = target
-        tc_vec2( tc_return )
-        return tc_return
-    }
-
-    /** @returns {vec2} */
-    isinf() {
-        let tc_return
-        this[0] = +( this[0] === -Infinity || this[0] === Infinity )
-        this[1] = +( this[1] === -Infinity || this[1] === Infinity )
-        tc_return = this
-        tc_vec2( tc_return )
-        return tc_return
-    }
-
-    /** @param {vec2Like} v @param {vec2} [target=new vec2] @returns {vec2} */
-    static isinf( v, target = new vec2 ) {
-        let tc_return
-        tc_vec2Like( v )
-        tc_vec21( target )
-        target[0] = +( v[0] === -Infinity || v[0] === Infinity )
-        target[1] = +( v[1] === -Infinity || v[1] === Infinity )
-        tc_return = target
-        tc_vec2( tc_return )
-        return tc_return
-    }
-
-    /** @returns {vec2} */
-    isnan() {
-        let tc_return
-        this[0] = +( this[0] !== this[0] )
-        this[1] = +( this[1] !== this[1] )
-        tc_return = this
-        tc_vec2( tc_return )
-        return tc_return
-    }
-
-    /** @param {vec2Like} v @param {vec2} [target=new vec2] @returns {vec2} */
-    static isnan( v, target = new vec2 ) {
-        let tc_return
-        tc_vec2Like( v )
-        tc_vec21( target )
-        target[0] = +( v[0] !== v[0] )
-        target[1] = +( v[1] !== v[1] )
         tc_return = target
         tc_vec2( tc_return )
         return tc_return

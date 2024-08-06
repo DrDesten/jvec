@@ -10,7 +10,7 @@ import { setIndent, forceIndent, Type, Fn, FileBuilder } from "./codegen.js"
 import { JSDoc } from "./docgen.js"
 /** @typedef {import("./docgen.js").JSDocStatement} JSDocStatement @typedef {import("./docgen.js").JSDocOptions} JSDocOptions */
 import { Range } from "./genlib.js"
-import { assign, binary, call, callall, property, index, ternary, ternarymap, select, returnexpr as ret, repeatmap, defer, custom, prepend, group, yieldexpr } from "./codegenutils.js"
+import { assign, binary, call, callall, property, index, ternary, ternarymap, select, returnexpr as ret, repeatmap, defer, custom, prepend, group, yieldexpr, identity, o } from "./codegenutils.js"
 
 // Constants
 
@@ -138,14 +138,14 @@ function generateVector( dimension, typecheck ) {
         return DRANGE.map( callback ).join( join )
     }
 
-    const Param_s = new Fn.Param( "s", NUMBER_TYPE )
-    const Param_v = new Fn.Param( "v", TYPELIKE )
-    const Param_x = new Fn.Param( "x", TYPELIKE_OR_NUM )
-    const Param_v1 = new Fn.Param( "v1", TYPELIKE )
-    const Param_v2 = new Fn.Param( "v2", TYPELIKE )
+    const Param_s = new Fn.P( "s", NUMBER_TYPE )
+    const Param_v = new Fn.P( "v", TYPELIKE )
+    const Param_x = new Fn.P( "x", TYPELIKE_OR_NUM )
+    const Param_v1 = new Fn.P( "v1", TYPELIKE )
+    const Param_v2 = new Fn.P( "v2", TYPELIKE )
     const Params_v1v2 = [Param_v1, Param_v2]
-    const Param_target = new Fn.Param( "target", TYPE, { expr: `new ${TYPE}` } )
-    const Param_m = new Fn.Param( "m", MATTYPELIKE )
+    const Param_target = new Fn.P( "target", TYPE, { expr: `new ${TYPE}` } )
+    const Param_m = new Fn.P( "m", MATTYPELIKE )
 
     const Replacers = {
         target: [/\bthis\b(?=(\[\d+\])*\s*=[^=])/g, "target"],
@@ -164,11 +164,6 @@ function generateVector( dimension, typecheck ) {
     const ifnumm = ternarymap( 'typeof x === "number"' )
 
     const ti = index( "this" ) // this index
-    const tp = property( "this" ) // this property
-    const sp = property( TYPE ) // static property
-
-    const tcall = call( tp ) // this property call
-    const scall = call( sp ) // static property call
 
     const cnew = call( `${TYPE}.new` )
     const ati = assign( ti )
@@ -176,6 +171,7 @@ function generateVector( dimension, typecheck ) {
 
     const map = repeatmap( dimension )
     const newmap = cnew( map( ", " ) )
+    const vdot = ( a, b ) => map( " + ", callall( mul( a, b ) ) )
 
     function bodyThis( statements ) {
         return [...statements, "return this"]
@@ -200,14 +196,18 @@ function generateVector( dimension, typecheck ) {
     }
 
     function constructors() {
+        function simpleConstructor( name, body, params = [] ) {
+            return new Fn( name, params, body, { prefix: "static", type: TYPE } )
+        }
+
         function newConstructor() {
             return new Fn( "constructor", [], "super( 2 )" )
         }
         function constructor() {
             const objectParamType = `${TYPELIKE_OR_NUM}|{${DMAP( i => `${XYZW[i]}: number` )}}|{${DMAP( i => `${RGBA[i]}: number` )}}`
             const params = [
-                new Fn.Param( "object", objectParamType, { expr: "0" } ),
-                ...DRANGE.slice( 1 ).map( i => new Fn.Param( XYZW[i], NUMBER_TYPE, { optional: true } ) ),
+                new Fn.P( "object", objectParamType, { expr: "0" } ),
+                ...DRANGE.slice( 1 ).map( i => new Fn.P( XYZW[i], NUMBER_TYPE, { optional: true } ) ),
             ]
             const body = `
 const vec = new ${TYPE}
@@ -222,37 +222,30 @@ return vec
             return new Fn( "new", params, body, { indentFn: setIndent, prefix: "static", type: TYPE, jsdocOpts: { multiline: true } } )
         }
         function fromArray() {
-            const params = [new Fn.Param( "array", "ArrayLike<number>" ), new Fn.Param( "index", NUMBER_TYPE, { expr: "0" } ), new Fn.Param( "stride", NUMBER_TYPE, { expr: "1" } )]
+            const params = [new Fn.P( "array", "ArrayLike<number>" ), new Fn.P( "index", NUMBER_TYPE, { expr: "0" } ), new Fn.P( "stride", NUMBER_TYPE, { expr: "1" } )]
             const body = ret( cnew( DMAP( i => `array[${i} * stride + index]` ) ) )
             return new Fn( `fromArray`, params, body, { prefix: "static", type: TYPE } )
         }
         function fromFunction() {
-            const params = new Fn.Param( "fn", "(index: number) => number" )
+            const params = new Fn.P( "fn", "(index: number) => number" )
             return new Fn( `fromFunction`, params, ret( newmap( call( "fn" ) ) ), { prefix: "static", type: TYPE } )
         }
         function fromAngle2() {
-            const params = new Fn.Param( "angle", NUMBER_TYPE )
+            const params = new Fn.P( "angle", NUMBER_TYPE )
             const body = ret( cnew( "Math.cos( angle ), Math.sin( angle )" ) )
             return new Fn( `fromAngle`, params, body, { prefix: "static", type: TYPE } )
         }
-        function random() {
-            return new Fn( `random`, [], ret( newmap( `Math.random()` ) ), { prefix: "static", type: TYPE } )
-        }
-        function randomNorm() {
-            return new Fn( `randomNorm`, [], ret( newmap( `randomNorm()` ) ), { prefix: "static", type: TYPE } )
-        }
-        function randomDir() {
-            const body = `return ${newmap( `randomNorm()` )}.normalize()`
-            return new Fn( `randomDir`, [], body, { prefix: "static", type: TYPE } )
-        }
-        function randomSphere() {
-            const body = `return ${newmap( `randomNorm()` )}.setLength( Math.random() ** (1/${dimension}) )`
-            return new Fn( `randomSphere`, [], body, { prefix: "static", type: TYPE } )
-        }
+
+        const constructors = [
+            simpleConstructor( "random", ret( newmap( "Math.random()" ) ) ),
+            simpleConstructor( "randomNorm", ret( newmap( "randomNorm()" ) ) ),
+            simpleConstructor( "randomDir", ret( `${newmap( "randomNorm()" )}.normalize()` ) ),
+            simpleConstructor( "randomSphere", ret( `${newmap( "randomNorm()" )}.setLength( Math.random() ** ( 1 / ${dimension} ) )` ) ),
+        ]
 
         const functions = [newConstructor(), constructor(), fromArray(), fromFunction()]
         if ( dimension === 2 ) functions.push( fromAngle2() )
-        functions.push( random(), randomNorm(), randomDir(), randomSphere() )
+        functions.push( ...constructors )
         return functions
     }
 
@@ -290,7 +283,7 @@ return vec
             const out = [getter1, getter2]
 
             if ( new Set( perm ).size === dim ) {
-                const setterParam = new Fn.Param( "v", VECTORLIKE_TYPES[dim] )
+                const setterParam = new Fn.P( "v", VECTORLIKE_TYPES[dim] )
                 const setterBody = Range( dim ).map( i => `this[${perm[i]}] = v[${i}]` ).join( ", " )
                 const setter1 = new Fn( name1, setterParam, setterBody, { prefix: "set", compact: true } )
                 const setter2 = new Fn( name2, setterParam, setterBody, { prefix: "set", compact: true } )
@@ -305,8 +298,8 @@ return vec
 
     function set() {
         const params = [
-            new Fn.Param( "x", TYPELIKE_OR_NUM ),
-            ...DRANGE.slice( 1 ).map( i => new Fn.Param( XYZW[i], "number", { optional: true } ) )
+            new Fn.P( "x", TYPELIKE_OR_NUM ),
+            ...DRANGE.slice( 1 ).map( i => new Fn.P( XYZW[i], "number", { optional: true } ) )
         ]
         const body = [
             `typeof x === "number"`,
@@ -343,7 +336,7 @@ return vec
         ]
 
         function cssColor() {
-            const params = new Fn.Param( "options", "{hex?: boolean}", { expr: "{}" } )
+            const params = new Fn.P( "options", "{hex?: boolean}", { expr: "{}" } )
             const body = `
 if ( options.hex ) {
 ${DMAP( i => `    const ${RGBA[i]} = Math.round( Math.min( Math.max( ${ti( i )} * 255, 0 ), 255 ) ).toString( 16 ).padStart( 2, 0 )`, "\n" )}
@@ -367,56 +360,44 @@ ${DMAP( i => `    const ${RGBA[i]} = Math.min( Math.max( ${ti( i )} * 100, 0 ), 
             const body = map( "\n", callall( ati( assignment ) ) )
             return Fn.autoStatic( name, [[], Param_v], body, { type: TYPE }, Replacers.target, Replacers.v )
         }
-
-        function all() {
-            return booleanJoin( "all", " && " )
-        }
-        function any() {
-            return booleanJoin( "any", " || " )
+        function booleanBinary( [name, operation] ) {
+            const body = DRANGE.map( i => `this[${i}] = +( this[${i}] ${operation} v[${i}] )` )
+            return Fn.autoStatic( name, [Param_v, Params_v1v2], body, { type: TYPE }, Replacers.target, Replacers.v1, Replacers.v2 )
         }
 
-        function isinf() {
-            return booleanUnary( "isinf", gnum( custom( i => `${ti( i )} === -Infinity || ${ti( i )} === Infinity` ) ) )
-        }
-        function isnan() {
-            return booleanUnary( "isnan", gnum( binary( "!==", ti, ti ) ) )
-        }
+        const booleanJoins = [
+            booleanJoin( "all", " && " ),
+            booleanJoin( "any", " || " ),
+        ]
+        const booleanUnaries = [
+            booleanUnary( "not", prepend( "+!", ti ) ),
+            booleanUnary( "isinf", gnum( custom( i => `this[${i}] === -Infinity || this[${i}] === Infinity` ) ) ),
+            booleanUnary( "isnan", gnum( binary( "!==", ti, ti ) ) ),
+        ]
 
-        function not() {
-            return booleanUnary( "not", prepend( "+!", ti ) )
-        }
-
-        const operations = [
+        const booleanBinaries = [
             ["greaterThan", ">"],
             ["greaterThanEqual", ">="],
             ["lessThan", "<"],
             ["lessThanEqual", "<="],
             ["equal", "==="],
             ["notEqual", "!=="]
-        ]
-
-        function operation( name, op ) {
-            const body = DRANGE.map( i => `${ti( i )} = +( ${ti( i )} ${op} v[${i}] )` )
-            return Fn.autoStatic( name, [Param_v, Params_v1v2], body, { type: TYPE }, Replacers.target, Replacers.v1, Replacers.v2 )
-        }
+        ].map( booleanBinary )
 
         function eq() {
-            const body = `return ${DMAP( i => `${ti( i )} === v[${i}]`, " && " )}`
+            const body = `return ${DMAP( i => `this[${i}] === v[${i}]`, " && " )}`
             return Fn.autoStatic( "eq", [Param_v, Params_v1v2], body, { type: "boolean" }, Replacers.v1, Replacers.v2 )
         }
         function neq() {
-            const body = `return ${DMAP( i => `${ti( i )} !== v[${i}]`, " || " )}`
+            const body = `return ${DMAP( i => `this[${i}] !== v[${i}]`, " || " )}`
             return Fn.autoStatic( "neq", [Param_v, Params_v1v2], body, { type: "boolean" }, Replacers.v1, Replacers.v2 )
         }
 
         const functions = [
             eq(), neq(),
-            all(), any(),
-            operations.flatMap( ( [name, op] ) =>
-                operation( name, op )
-            ),
-            not(),
-            isinf(), isnan()
+            ...booleanJoins,
+            ...booleanUnaries,
+            ...booleanBinaries,
         ]
         return functions
     }
@@ -450,8 +431,8 @@ ${DMAP( i => `    const ${RGBA[i]} = Math.min( Math.max( ${ti( i )} * 100, 0 ), 
             ]
         }
         function fma() {
-            const pM = new Fn.Param( "m", TYPELIKE_OR_NUM )
-            const pA = new Fn.Param( "a", TYPELIKE_OR_NUM )
+            const pM = new Fn.P( "m", TYPELIKE_OR_NUM )
+            const pA = new Fn.P( "a", TYPELIKE_OR_NUM )
             const bodyNonstatic = `return ${IFNUM(
                 `( ${IFNUM( `this.sfma( m, a )`, `this.svfma( m, a )`, "a" )} )`,
                 `( ${IFNUM( `this.vsfma( m, a )`, `this.vfma( m, a )`, "a" )} )`,
@@ -463,10 +444,10 @@ ${DMAP( i => `    const ${RGBA[i]} = Math.min( Math.max( ${ti( i )} * 100, 0 ), 
                 "m", true
             )}`
 
-            const pMS = new Fn.Param( "m", "number" )
-            const pMV = new Fn.Param( "m", TYPELIKE )
-            const pAS = new Fn.Param( "a", "number" )
-            const pAV = new Fn.Param( "a", TYPELIKE )
+            const pMS = new Fn.P( "m", "number" )
+            const pMV = new Fn.P( "m", TYPELIKE )
+            const pAS = new Fn.P( "a", "number" )
+            const pAV = new Fn.P( "a", TYPELIKE )
             const fma = ( m, a ) => callall( ati( add( mul( ti, m ), a ) ) )
             const bodyS = DRANGE.map( fma( "m", "a" ) )
             const bodySV = DRANGE.map( fma( "m", index( "a" ) ) )
@@ -491,7 +472,7 @@ ${DMAP( i => `    const ${RGBA[i]} = Math.min( Math.max( ${ti( i )} * 100, 0 ), 
         }
 
         function apply() {
-            const param = new Fn.Param( "fn", `(value: number, index: number) => number` )
+            const param = new Fn.P( "fn", `(value: number, index: number) => number` )
             const body = DRANGE.map( i => `${ti( i )} = fn( ${ti( i )}, ${i} )` )
             return Fn.autoStatic( "apply", [param, [Param_v, param]], body, { type: TYPE }, Replacers.target, Replacers.v )
         }
@@ -535,7 +516,7 @@ ${DMAP( i => `    const ${RGBA[i]} = Math.min( Math.max( ${ti( i )} * 100, 0 ), 
 
     function vectorOperations() {
         function pointTo() {
-            const params = [new Fn.Param( "from", TYPELIKE ), new Fn.Param( "to", TYPELIKE )]
+            const params = [new Fn.P( "from", TYPELIKE ), new Fn.P( "to", TYPELIKE )]
             const body = DRANGE.map( i => `${ti( i )} = v[${i}] - ${ti( i )}` )
             return Fn.autoStatic( `pointTo`, [Param_v, params], body, { type: TYPE }, Replacers.target, [/\bthis\b/g, "from"], [/\bv\b/g, "to"] )
         }
@@ -554,7 +535,7 @@ ${DMAP( i => `    const ${RGBA[i]} = Math.min( Math.max( ${ti( i )} * 100, 0 ), 
             return Fn.autoStatic( `setLength`, [Param_s, [Param_v, Param_s]], body, { type: TYPE }, Replacers.target, Replacers.v )
         }
         function rotate2() {
-            const Param_angle = new Fn.Param( "angle", "number" )
+            const Param_angle = new Fn.P( "angle", "number" )
             const body = [
                 `const sin = Math.sin( angle ), cos = Math.cos( angle )`,
                 `const t0 = this[0] * cos - this[1] * sin`,
@@ -603,7 +584,7 @@ ${DMAP( i => `    const ${RGBA[i]} = Math.min( Math.max( ${ti( i )} * 100, 0 ), 
 
     function utilityFunctions() {
         function noop() {
-            return new Fn( "noop", new Fn.Param( "v", TYPELIKE, { rest: true } ), "return", { prefix: "static" } )
+            return new Fn( "noop", new Fn.P( "v", TYPELIKE, { rest: true } ), "return", { prefix: "static" } )
         }
 
         function distance() {
@@ -622,7 +603,7 @@ ${DMAP( i => `    const ${RGBA[i]} = Math.min( Math.max( ${ti( i )} * 100, 0 ), 
         }
 
         function min() {
-            const param = new Fn.Param( "values", `...(${TYPELIKE_OR_NUM})`, { rest: true } )
+            const param = new Fn.P( "values", `...(${TYPELIKE_OR_NUM})`, { rest: true } )
             const body = bodyTarget( [
                 `const target = new ${TYPE}`,
                 ...DRANGE.map( i => `target[${i}] = Math.min( ...values.map( x => typeof x === "number" ? x : x[${i}] ) )` )
@@ -630,7 +611,7 @@ ${DMAP( i => `    const ${RGBA[i]} = Math.min( Math.max( ${ti( i )} * 100, 0 ), 
             return new Fn( `min`, param, body, { prefix: "static", type: TYPE } )
         }
         function max() {
-            const param = new Fn.Param( "values", `...(${TYPELIKE_OR_NUM})`, { rest: true } )
+            const param = new Fn.P( "values", `...(${TYPELIKE_OR_NUM})`, { rest: true } )
             const body = bodyTarget( [
                 `const target = new ${TYPE}`,
                 ...DRANGE.map( i => `target[${i}] = Math.max( ...values.map( x => typeof x === "number" ? x : x[${i}] ) )` )
@@ -638,12 +619,12 @@ ${DMAP( i => `    const ${RGBA[i]} = Math.min( Math.max( ${ti( i )} * 100, 0 ), 
             return new Fn( `max`, param, body, { prefix: "static", type: TYPE } )
         }
         function clamp() {
-            const pMin = new Fn.Param( "min", TYPELIKE_OR_NUM )
-            const pMax = new Fn.Param( "max", TYPELIKE_OR_NUM )
-            const pSMin = new Fn.Param( "min", NUMBER_TYPE )
-            const pSMax = new Fn.Param( "max", NUMBER_TYPE )
-            const pVMin = new Fn.Param( "min", TYPELIKE )
-            const pVMax = new Fn.Param( "max", TYPELIKE )
+            const pMin = new Fn.P( "min", TYPELIKE_OR_NUM )
+            const pMax = new Fn.P( "max", TYPELIKE_OR_NUM )
+            const pSMin = new Fn.P( "min", NUMBER_TYPE )
+            const pSMax = new Fn.P( "max", NUMBER_TYPE )
+            const pVMin = new Fn.P( "min", TYPELIKE )
+            const pVMax = new Fn.P( "max", TYPELIKE )
 
             const body = `return ${IFNUM(
                 `( ${IFNUM( `${TYPE}.sclamp( v, min, max, target )`, `${TYPE}.svclamp( v, min, max, target )`, "max" )} )`,
@@ -669,7 +650,7 @@ ${DMAP( i => `    const ${RGBA[i]} = Math.min( Math.max( ${ti( i )} * 100, 0 ), 
             return new Fn( `saturate`, [Param_v, Param_target], body, { prefix: "static", type: TYPE } )
         }
         function mix() {
-            const params = [Param_v1, Param_v2, new Fn.Param( "t", "number" ), Param_target]
+            const params = [Param_v1, Param_v2, new Fn.P( "t", "number" ), Param_target]
             const body = bodyTarget( DRANGE.map( i => `target[${i}] = v1[${i}] * ( 1 - t ) + v2[${i}] * t` ) )
             return new Fn( `mix`, params, body, { prefix: "static", type: TYPE } )
         }
@@ -745,13 +726,13 @@ function generateMatrix( dimension ) {
     const TYPELIKE = `${TYPE}Like`
     const TYPELIKE_OR_NUM = `number|${TYPELIKE}`
 
-    const Param_s = new Fn.Param( "s", "number" )
-    const Param_m = new Fn.Param( "m", TYPELIKE )
-    const Param_x = new Fn.Param( "x", TYPELIKE_OR_NUM )
-    const Param_m1 = new Fn.Param( "m1", TYPELIKE )
-    const Param_m2 = new Fn.Param( "m2", TYPELIKE )
+    const Param_s = new Fn.P( "s", "number" )
+    const Param_m = new Fn.P( "m", TYPELIKE )
+    const Param_x = new Fn.P( "x", TYPELIKE_OR_NUM )
+    const Param_m1 = new Fn.P( "m1", TYPELIKE )
+    const Param_m2 = new Fn.P( "m2", TYPELIKE )
     const Params_m1m2 = [Param_m1, Param_m2]
-    const Param_target = new Fn.Param( "target", TYPELIKE )
+    const Param_target = new Fn.P( "target", TYPELIKE )
 
     /** @param {number} x @param {number} y @param {string} [prefix=""]  */
     function id( x, y, prefix = "" ) {
@@ -796,7 +777,7 @@ function generateMatrix( dimension ) {
 
     function constructors() {
         function constructor() {
-            const param = new Fn.Param( "object", TYPELIKE, { optional: true } )
+            const param = new Fn.P( "object", TYPELIKE, { optional: true } )
             const body = `
                 ${CJOIN( ( { x, y }, i ) => `/** @type {number} */\nthis[${i}] = +( object?.[${i}] ?? ${+( x === y )} )`, "\n" )}
             `
@@ -804,7 +785,7 @@ function generateMatrix( dimension ) {
         }
         function fromMatrix() {
             function general() {
-                const param = new Fn.Param( "m", "mat2Like|mat3Like|mat4Like" )
+                const param = new Fn.P( "m", "mat2Like|mat3Like|mat4Like" )
                 const body = `
                     switch ( m.constructor ) {
                         case mat2: return ${TYPE}.fromMat2( m )
@@ -821,7 +802,7 @@ function generateMatrix( dimension ) {
                 return new Fn( "fromMatrix", param, body, { prefix: "static", type: TYPE, indentFn: setIndent } )
             }
             function matrix( d ) {
-                const param = new Fn.Param( "m", `mat${d}Like` )
+                const param = new Fn.P( "m", `mat${d}Like` )
                 const body = `return new ${TYPE}( ${array( ( { x, y } ) => {
                     return x < d && y < d ? `m[${x + y * d}]` : `${+( x === y )}`
                 } )} )`
@@ -831,14 +812,14 @@ function generateMatrix( dimension ) {
         }
 
         function scale() {
-            const param = new Fn.Param( "v", VECLIKERange( dimension ) )
+            const param = new Fn.P( "v", VECLIKERange( dimension ) )
             const body = `
 return new ${TYPE}( ${array( ( { x, y } ) => x === y ? `v[${x}] ?? 1` : `0` )} )
             `
             return new Fn( "scale", param, body, { prefix: "static", type: TYPE, indentFn: setIndent } )
         }
         function translate() {
-            const param = new Fn.Param( "v", VECLIKERange( dimension - 1 ) )
+            const param = new Fn.P( "v", VECLIKERange( dimension - 1 ) )
             const body = `
 return new ${TYPE}( ${array( ( { x, y } ) => y === dimension - 1 && x < dimension - 1 ? `v[${x}] ?? 0` : `${+( x === y )}` )
                 } )
@@ -847,8 +828,8 @@ return new ${TYPE}( ${array( ( { x, y } ) => y === dimension - 1 && x < dimensio
         }
         function scaleTranslate() {
             const params = [
-                new Fn.Param( "scale", VECLIKERange( dimension - 1 ) ),
-                new Fn.Param( "translation", VECLIKERange( dimension - 1 ) ),
+                new Fn.P( "scale", VECLIKERange( dimension - 1 ) ),
+                new Fn.P( "translation", VECLIKERange( dimension - 1 ) ),
             ]
             const body = `
 return new ${TYPE}( ${array( ( { x, y } ) => {
@@ -871,12 +852,12 @@ return new ${TYPE}( ${array( ( { x, y } ) => {
 
     function fields() {
         function col() {
-            const param = new Fn.Param( "column", "number" )
+            const param = new Fn.P( "column", "number" )
             const body = `return new ${VEC[dimension]}( ${DJOIN( d => `this[column * ${dimension}${d !== 0 ? ` + ${d}` : ""}]` )} )`
             return Fn.autoStatic( "col", [param, [Param_m, param]], body, { type: VEC[dimension] }, [/\bthis\b/g, "m"] )
         }
         function row() {
-            const param = new Fn.Param( "row", "number" )
+            const param = new Fn.P( "row", "number" )
             const body = `return new ${VEC[dimension]}( ${DJOIN( d => `this[row${d !== 0 ? ` + ${dimension * d}` : ""}]` )} )`
             return Fn.autoStatic( "row", [param, [Param_m, param]], body, { type: VEC[dimension] }, [/\bthis\b/g, "m"] )
         }

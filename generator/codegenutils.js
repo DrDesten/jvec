@@ -1,4 +1,8 @@
 /**
+ * @template T
+ * @typedef {{[key: string]: T}} ObjectMap
+ */
+/**
  * @typedef {(...args) => string} CodegenFunction
  * @typedef {(...args) => CurriedFunction} CurriedFunction
  */
@@ -74,11 +78,11 @@ export function index( target, ...exprs ) {
     }
     return curry( index, ...exprs )
 }
-export function property( target, ...exprs ) {
-    function property( expression ) {
-        if ( primitive( expression ) )
+export function property( ...exprs ) {
+    function property( target, expression ) {
+        if ( primitive( target, expression ) )
             return `${target}.${expression}`
-        return resolve( property, expression )
+        return resolve( property, target, expression )
     }
     return curry( property, ...exprs )
 }
@@ -178,10 +182,12 @@ export function repeatmap( ...args ) {
     return curry( repeatmap, ...args )
 }
 
+/** @template T @param {T} x  */
+export function identity( x ) {
+    return x
+}
 export function defer( _ ) {
-    return function identity( x ) {
-        return x
-    }
+    return identity
 }
 
 // Meta
@@ -198,3 +204,46 @@ export function custom( fn ) {
         return curry( wrapper, ...args )
     }()
 }
+
+// JS Utils
+
+// o.prefix.static()
+// { prefix: "static" }
+
+const objHelperPrimitives = {
+    undefined: undefined,
+    null: null,
+    false: false,
+    true: true,
+    NaN: NaN,
+}
+
+/** 
+ * @typedef {() => ObjectMap<string|number|boolean|null|undefined>} ObjectHelper
+ * 
+ * @param {...string} properties  
+ * @returns {ObjectMap<ObjectHelper>}
+ */
+function objHelper( ...properties ) {
+    return new Proxy( function () {}, {
+        get( _, property ) { return objHelper( ...properties, property ) },
+        set() { return false },
+        apply() {
+            const obj = Object.create( null )
+            for ( let i = 0; i < properties.length; i += 2 ) {
+                let key = properties[i], value = properties[i + 1]
+                if ( value in objHelperPrimitives ) {
+                    obj[key] = objHelperPrimitives[value]
+                    continue
+                }
+                if ( value && !isNaN( +value ) ) {
+                    obj[key] = +value
+                    continue
+                }
+                obj[key] = value
+            }
+            return obj
+        }
+    } )
+}
+export const o = objHelper()
