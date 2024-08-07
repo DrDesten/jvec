@@ -83,9 +83,10 @@ const Tokens = [
 ]
 
 const Test = [
-    "null", "boolean", "bigint", "number", "symbol", "string", "any",
-    "null[]", "boolean[]", "bigint[]", "number[][]", "symbol[][]", "string[][]", "any[][]",
-    "null & null", "boolean & boolean", "bigint & bigint", "number & number & number", "symbol & symbol & symbol", "string & string & string", "any & any & any",
+    "number", "any",
+    "number[]", "any[]", "number[][]", "any[][]",
+    "boolean|number",
+    "(boolean|number)[]",
 ]
 
 const Lexer = new RegLexer( Tokens )
@@ -111,7 +112,11 @@ function ParseType( string ) {
     function advanceIf( name ) {
         return peek() && peek().name === name ? advance() : false
     }
-
+    function expect( name ) {
+        const token = advanceIf( name )
+        if ( !token ) throw new Error(`Expected Token "${name}" but got "${token.name}"`)
+        return token
+    }
     function parse() {
         return parseOr()
     }
@@ -152,6 +157,11 @@ function ParseType( string ) {
 
     function parseAtom() {
         const token = advance()
+        if ( token.name === "LParen" ) {
+            const node = parse()
+            expect("RParen")
+            return node
+        }
         return new ( {
             undefined: NUndefined,
             null: NNull,
@@ -167,6 +177,6 @@ function ParseType( string ) {
 
 
 for ( const test of Test ) {
-    console.log( ParseType( test ) )
+    //console.log( ParseType( test ) )
     console.log( ParseType( test ).check() )
 }
